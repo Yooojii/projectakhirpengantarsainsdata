@@ -79,3 +79,12 @@ def test_tabel_pelatihan_identik_dengan_fitur_tim(df, tabel):
 def test_tabel_pelatihan_membuang_laga_klub_dengan_kurang_dari_tiga_riwayat(df, tabel):
     assert len(tabel) < len(df)
     assert tabel["tanggal"].min() > df["tanggal"].min()
+
+def test_rata_rata_liga_tidak_memakai_laga_setelah_tanggal_prediksi(df):
+    # Luton: promosi, 0 laga sebelum 2023-08-12 -> cabang rata-rata liga aktif
+    sebelum = pd.Timestamp("2023-08-12")
+    riwayat = df[((df.tim_kandang == "Luton") | (df.tim_tandang == "Luton")) & (df.tanggal < sebelum)]
+    assert len(riwayat) < 3
+    penuh = fitur_tim(df, "Luton", sebelum, kandang=True)
+    dipotong = fitur_tim(df[df.tanggal < sebelum].copy(), "Luton", sebelum, kandang=True)
+    assert penuh == dipotong

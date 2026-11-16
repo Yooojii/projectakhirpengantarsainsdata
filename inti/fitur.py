@@ -21,6 +21,7 @@ NAMA_FITUR: list[str] = [
 UKURAN_JENDELA = 10
 MINIMUM_LAGA = 3
 LAGA_POIN = 5
+LAGA_LIGA = 380  # satu musim penuh, dasar rata-rata liga untuk klub tanpa riwayat
 
 # Kolom statistik per laga dari sudut pandang satu klub, urutannya tetap.
 _STAT = ["tembakan", "tepat", "pojok", "pelanggaran", "kuning", "gol", "kebobolan", "poin"]
@@ -84,10 +85,17 @@ def _matriks(p: pd.DataFrame) -> np.ndarray:
 
 
 def _rata_liga(df: pd.DataFrame, sebelum) -> np.ndarray:
-    """Rata-rata liga (per klub per laga) pada musim yang memuat `sebelum`."""
-    sesudah = df[df["tanggal"] >= sebelum]
-    musim = sesudah.iloc[0]["musim"] if len(sesudah) else df.iloc[-1]["musim"]
-    return _matriks(_panjang(df[df["musim"] == musim]))
+    """Rata-rata liga (per klub per laga) dari 380 laga terakhir sebelum `sebelum`."""
+    df = df.sort_values("tanggal", kind="stable")
+    lampau = df[df["tanggal"] < sebelum]
+    if len(lampau):
+        return _matriks(_panjang(lampau.tail(LAGA_LIGA)))
+    # Satu-satunya cabang yang TIDAK bebas kebocoran: belum ada laga sebelum
+    # `sebelum` (hanya laga pembuka 2000/01), jadi tidak ada sepak bola
+    # sebelumnya di dataset. Tak terhindarkan, dan tidak terjangkau dari
+    # pelatihan (`tabel_pelatihan` membuang baris itu) maupun dasbor (setiap
+    # klub saat ini punya minimal 9 laga). Dipakai 380 laga paling awal.
+    return _matriks(_panjang(df.head(LAGA_LIGA)))
 
 
 def fitur_tim(df: pd.DataFrame, klub: str, sebelum: pd.Timestamp, kandang: bool) -> dict[str, float]:
