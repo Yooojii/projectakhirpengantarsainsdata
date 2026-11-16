@@ -1,7 +1,4 @@
-"""Halaman Prediksi & Simulasi. Rintisan; diisi pada tugas berikutnya."""
-import streamlit as st
+"""Halaman Prediksi & Simulasi: mengekspor implementasi dari prediksi_simulasi."""
+from halaman.prediksi_simulasi import hitung_prediksi, selisih, siapkan_sesi, tampil
 
-
-def tampil() -> None:
-    st.subheader("Prediksi & Simulasi")
-    st.write(f"Klub saya: {st.session_state['klub']}. Halaman ini belum diisi.")
+__all__ = ["tampil", "siapkan_sesi", "hitung_prediksi", "selisih"]
