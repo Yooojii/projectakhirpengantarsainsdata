@@ -1,5 +1,7 @@
+import math
+
 import pandas as pd
-from inti.data import muat_pertandingan
+from inti.data import klub_musim, muat_pertandingan
 from inti.jadwal import jadwal_sisa
 
 def test_melengkapi_setengah_kompetisi_ganda():
@@ -27,7 +29,25 @@ def test_tidak_ada_klub_bermain_dua_kali_pada_tanggal_yang_sama():
         assert len(klub) == len(set(klub))
 
 def test_jadwal_padat_tanpa_ekor_panjang():
-    # 290 laga, maksimal 10 per tanggal -> minimal 29 tanggal; jangan jauh lebih panjang
-    sisa = jadwal_sisa(muat_pertandingan())
-    assert sisa.tanggal.nunique() <= 32
-    assert sisa.groupby("tanggal").size().min() >= 5
+    df = muat_pertandingan()
+    sisa = jadwal_sisa(df)
+    n_klub = len(klub_musim(df, "2026/27"))
+    minimum = math.ceil(len(sisa) / (n_klub // 2))
+    assert minimum <= sisa.tanggal.nunique() <= minimum + 3
+
+def test_deterministik():
+    df = muat_pertandingan()
+    pd.testing.assert_frame_equal(jadwal_sisa(df), jadwal_sisa(df))
+
+def test_mulai_setelah_laga_terakhir_yang_dimainkan():
+    df = muat_pertandingan()
+    maju = df.copy()
+    maju.loc[maju.index[-1], "tanggal"] = pd.Timestamp("2026-12-01")  # Selasa
+    sisa = jadwal_sisa(maju)
+    assert sisa.tanggal.min() == pd.Timestamp("2026-12-05")
+
+def test_tanpa_sisa_tetap_bertipe_tanggal():
+    sisa = jadwal_sisa(muat_pertandingan(), musim="1900/01")
+    assert len(sisa) == 0
+    assert pd.api.types.is_datetime64_any_dtype(sisa.tanggal)
+    assert list(sisa.columns) == ["tanggal", "tim_kandang", "tim_tandang"]

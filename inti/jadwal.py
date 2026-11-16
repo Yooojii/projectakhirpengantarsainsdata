@@ -6,7 +6,6 @@ import pandas as pd
 from inti.data import klub_musim
 
 SABTU_PERTAMA = pd.Timestamp("2026-11-07")
-LAGA_MAKS_PER_TANGGAL = 10
 
 
 def _putaran(sisa: set[tuple[str, str]], klub: list[str]) -> list[tuple[str, str]]:
@@ -40,12 +39,29 @@ def jadwal_sisa(df: pd.DataFrame, musim: str = "2026/27") -> pd.DataFrame:
     dimainkan = set(zip(ada.tim_kandang, ada.tim_tandang))
     sisa = set(permutations(klub, 2)) - dimainkan
 
+    # Dua batas bawah: SABTU_PERTAMA menjaga keluaran tetap sama selama data
+    # berhenti 2 November 2026; Sabtu setelah laga terakhir yang dimainkan
+    # menjaga jadwal simulasi tidak bertanggal sebelum laga nyata saat data
+    # hasil scraping bertambah.
+    mulai = SABTU_PERTAMA
+    if len(ada):
+        terakhir = ada.tanggal.max().normalize()
+        sabtu_berikut = terakhir + pd.Timedelta(days=(5 - terakhir.dayofweek) % 7 or 7)
+        mulai = max(mulai, sabtu_berikut)
+
+    maks = len(klub) // 2
     baris = []
-    tanggal = SABTU_PERTAMA
+    tanggal = mulai
     while sisa:
-        putaran = _putaran(sisa, klub)[:LAGA_MAKS_PER_TANGGAL]
+        putaran = _putaran(sisa, klub)[:maks]
+        if not putaran:
+            raise RuntimeError(
+                f"Jadwal macet: {len(sisa)} laga tidak bisa ditempatkan pada musim {musim}"
+            )
         for h, a in putaran:
             baris.append({"tanggal": tanggal, "tim_kandang": h, "tim_tandang": a})
         sisa -= set(putaran)
         tanggal += pd.Timedelta(days=7)
-    return pd.DataFrame(baris, columns=["tanggal", "tim_kandang", "tim_tandang"])
+    hasil = pd.DataFrame(baris, columns=["tanggal", "tim_kandang", "tim_tandang"])
+    hasil["tanggal"] = pd.to_datetime(hasil["tanggal"])
+    return hasil
