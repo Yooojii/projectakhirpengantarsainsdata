@@ -29,7 +29,7 @@ def test_jalur_proyek_absolut_dan_data_ada():
 def test_keterangan_cakupan_memuat_rentang_dan_tanggal_terakhir():
     df = pd.DataFrame({"musim": ["2000/01", "2026/27"],
                        "tanggal": pd.to_datetime(["2000-08-19", "2026-11-02"])})
-    assert keterangan_cakupan(df) == "2000/01 sampai 2026/27, laga terakhir 2 November 2026"
+    assert keterangan_cakupan(df) == "2000/01 sampai 2026/27, laga terakhir 2 November 2026"
 
 
 def test_skuad_dibangkitkan_sekali_dan_objeknya_sama():

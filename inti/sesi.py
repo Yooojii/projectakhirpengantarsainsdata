@@ -35,5 +35,5 @@ def skuad_klub(keadaan, df: pd.DataFrame, klub: str) -> list:
 def keterangan_cakupan(df: pd.DataFrame) -> str:
     """Satu baris: rentang musim dan tanggal laga terakhir."""
     akhir = df["tanggal"].max()
-    tanggal = f"{akhir.day} {BULAN[akhir.month - 1]} {akhir.year}"
+    tanggal = f"{akhir.day} {BULAN[akhir.month - 1]} {akhir.year}"
     return f"{df['musim'].min()} sampai {df['musim'].max()}, laga terakhir {tanggal}"

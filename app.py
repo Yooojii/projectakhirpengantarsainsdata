@@ -29,15 +29,12 @@ def _siapkan_sesi(df) -> None:
 def _sidebar(df) -> None:
     klub_daftar = klub_musim(df, MUSIM_BERJALAN)
     with st.sidebar:
-        kolom_logo, kolom_pilih = st.columns([1, 4], vertical_alignment="center")
-        with kolom_pilih:
-            klub = st.selectbox("Klub saya", klub_daftar, key="klub")
-        with kolom_logo:
-            jalur = logo_klub(klub)
-            if jalur is not None:
-                st.image(str(jalur), width=28)
-            else:
-                st.write(singkatan(klub))
+        jalur = logo_klub(st.session_state.get("klub", klub_daftar[0]))
+        if jalur is not None:
+            st.image(str(jalur), width=24)
+        else:
+            st.write(singkatan(st.session_state.get("klub", klub_daftar[0])))
+        st.selectbox("Klub saya", klub_daftar, key="klub")
         st.radio("Halaman", list(HALAMAN), key="halaman", label_visibility="collapsed")
         st.caption(keterangan_cakupan(df))
 

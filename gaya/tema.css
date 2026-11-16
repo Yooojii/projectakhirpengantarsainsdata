@@ -166,3 +166,15 @@ table.tabel th.teks, table.tabel td.teks {
 @media (prefers-reduced-motion: reduce) {
   .angka-prediksi.berubah { animation: none; }
 }
+
+/* ---- Navigasi sidebar: empat kata biasa, tanpa lingkaran radio ---- */
+.stApp [data-testid="stSidebar"] [data-testid="stRadio"] label > div:first-child { display: none; }
+.stApp [data-testid="stSidebar"] [data-testid="stRadio"] label {
+  padding: 4px 0; cursor: pointer;
+}
+.stApp [data-testid="stSidebar"] [data-testid="stRadio"] label p {
+  font-size: 16px; font-weight: 400; color: var(--teks-2);
+}
+.stApp [data-testid="stSidebar"] [data-testid="stRadio"] label:has(input:checked) p {
+  font-weight: 600; color: var(--aksen);
+}
