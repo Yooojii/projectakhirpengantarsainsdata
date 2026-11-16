@@ -15,7 +15,10 @@
 - Seluruh antarmuka berbahasa Indonesia. Istilah statistik diterjemahkan ke bahasa pelatih: "peluang menang", "gol yang diharapkan", "apa yang paling menentukan".
 - Model hanya boleh memakai sepuluh fitur dasar di spec §8.2. Odds, statistik API, `xg_kandang`, dan `xg_tandang` dilarang sebagai fitur.
 - Angka buatan hanya di lapisan pemain dan jadwal. Statistik lanjutan dan 45 laga hilang di 2003/04–2004/05 dibiarkan apa adanya (spec §7.7).
-- Warna, nilai tepat: latar `#F4F6F2`, teks utama `#0E1F18`, teks sekunder `#6B7A72`, garis `#CFD6CC`, permukaan `#FFFFFF`, peringatan `#E0A800`, bahaya `#C8102E`. Aksen diambil dari klub terpilih.
+- **Palet dikoreksi 16 Nov 2026** (tiga nilai awal gagal ambang kontras; lihat spec 9.2): teks sekunder
+  `#6B7A72`→`#65736C`, peringatan `#E0A800`→`#8A6400`, bahaya `#C8102E`→`#A4161A`. Nilai di bawah
+  sudah yang terbaru. Warna bermakna tidak boleh identik dengan aksen klub mana pun.
+- Warna, nilai tepat: latar `#F4F6F2`, teks utama `#0E1F18`, teks sekunder `#65736C`, garis `#CFD6CC`, permukaan `#FFFFFF`, peringatan `#8A6400`, bahaya `#A4161A`. Aksen diambil dari klub terpilih.
 - Tipografi: IBM Plex Sans untuk prosa, IBM Plex Sans Condensed untuk angka dan tabel. Papan skor 64px/600, nama klub 24px/500, judul bagian 22px/600, prosa 16px/1.6 maksimal 68 karakter per baris, label 13px, angka tabel 15px/500.
 - Jarak kelipatan 8px; antarbagian 48px, dalam bagian 16px. Sudut membulat 4px seragam. **Tanpa bayangan sama sekali.**
 - Tema terang dikunci. Tidak ada mode gelap.
@@ -130,7 +133,7 @@ git commit -m "feat: pemuatan data dan pengelompokan kolom"
 **Interfaces:**
 - Consumes: `klub_musim` dari Task 1.
 - Produces:
-  - `warna_klub(nama: str) -> str` — hex. Klub tak dikenal mengembalikan `"#6B7A72"`.
+  - `warna_klub(nama: str) -> str` — hex. Klub tak dikenal mengembalikan `"#65736C"`.
   - `singkatan(nama: str) -> str` — tiga huruf kapital untuk tabel sempit.
 
 - [ ] **Step 1: Tulis tes yang gagal**
@@ -145,7 +148,7 @@ def test_semua_klub_musim_berjalan_punya_warna():
         assert warna_klub(nama).startswith("#") and len(warna_klub(nama)) == 7
 
 def test_klub_tak_dikenal_dapat_warna_netral():
-    assert warna_klub("Klub Antah Berantah") == "#6B7A72"
+    assert warna_klub("Klub Antah Berantah") == "#65736C"
 
 def test_singkatan_tiga_huruf():
     assert singkatan("Man United") == "MUN"
@@ -675,7 +678,7 @@ from gaya.komponen import papan_skor, bar_atribut, BACA_CSS
 
 def test_css_memuat_token_warna_dan_tanpa_bayangan():
     css = BACA_CSS()
-    for warna in ["#F4F6F2", "#0E1F18", "#6B7A72", "#CFD6CC", "#E0A800", "#C8102E"]:
+    for warna in ["#F4F6F2", "#0E1F18", "#65736C", "#CFD6CC", "#8A6400", "#A4161A"]:
         assert warna in css
     assert "box-shadow" not in css.replace("box-shadow: none", "")
     assert "IBM Plex Sans Condensed" in css
@@ -690,7 +693,7 @@ def test_papan_skor_memuat_kedua_klub_dan_tiga_peluang():
 def test_bar_atribut_delapan_ruas_terisi_proporsional():
     assert bar_atribut(99, "#EF0107").count("ruas") == 8
     assert bar_atribut(99, "#EF0107").count("terisi") > bar_atribut(20, "#EF0107").count("terisi")
-    assert "#6B7A72" in bar_atribut(80, None)
+    assert "#65736C" in bar_atribut(80, None)
 ```
 
 - [ ] **Step 2: Jalankan tes, pastikan gagal**
@@ -975,7 +978,7 @@ Expected: FAIL
 
 Lima bagian sesuai spec §6.5. Dropdown lawan berisi 19 klub lain musim berjalan, bukan 46 klub sepanjang masa.
 
-Tiga keadaan riwayat ditangani persis seperti tabel di spec §6.5: `kosong` mengganti rekor dengan kalimat "Belum pernah bertemu di Liga Inggris." dan menyembunyikan daftar pertemuan, sementara bentuk permainan dan klasemen tetap tampil; `tipis` menampilkan semuanya ditambah baris peringatan berwarna `#E0A800`; `penuh` menampilkan semuanya.
+Tiga keadaan riwayat ditangani persis seperti tabel di spec §6.5: `kosong` mengganti rekor dengan kalimat "Belum pernah bertemu di Liga Inggris." dan menyembunyikan daftar pertemuan, sementara bentuk permainan dan klasemen tetap tampil; `tipis` menampilkan semuanya ditambah baris peringatan berwarna `#8A6400`; `penuh` menampilkan semuanya.
 
 Klasemen diberi keterangan tanggal, bukan nomor pekan: "Klasemen sampai 2 November 2026."
 

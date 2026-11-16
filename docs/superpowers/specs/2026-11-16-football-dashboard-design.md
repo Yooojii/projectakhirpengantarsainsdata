@@ -470,12 +470,24 @@ Kalau model akhirnya tidak bisa menerima vektor fitur, dashboard memakai lapisan
 |---|---|---|
 | Latar | `#F4F6F2` | putih dingin bersemu hijau, seperti kertas program pertandingan |
 | Teks utama | `#0E1F18` | hijau kehitaman, bukan abu-abu gelap |
-| Teks sekunder | `#6B7A72` | |
+| Teks sekunder | `#65736C` | |
 | Garis | `#CFD6CC` | setipis rambut, dipakai sebagai garis lapangan |
 | Permukaan terangkat | `#FFFFFF` | tanpa bayangan, dibedakan hanya oleh garis |
-| Peringatan | `#E0A800` | kuning kartu, hanya untuk risiko |
-| Bahaya | `#C8102E` | merah kartu, hanya untuk risiko |
+| Peringatan | `#8A6400` | kuning kartu yang digelapkan, hanya untuk risiko |
+| Bahaya | `#A4161A` | merah kartu yang digelapkan, hanya untuk risiko |
 | Aksen | warna klub terpilih | satu-satunya warna yang bebas |
+
+**Koreksi kedua, 16 November 2026.** Warna peringatan semula `#E0A800` dan bahaya `#C8102E`. Keduanya bermasalah dan keduanya kesalahan penulis dokumen ini, bukan pelaksana.
+
+Kuning kartu `#E0A800` hanya mencapai rasio 1,98:1 terhadap latar. Dokumen ini sendiri memakainya untuk **teks** peringatan di halaman History, sehingga baris peringatan itu praktis tidak terbaca — kegagalan yang persis berlawanan dengan maksudnya. Diganti `#8A6400`, rasio 4,95:1, masih jelas terbaca sebagai amber peringatan.
+
+Merah kartu `#C8102E` ternyata identik dengan warna merek Liverpool, sehingga aksen klub itu sama persis dengan warna yang dipakai aplikasi untuk menandai risiko. Aturan "warna kartu hanya untuk risiko" kehilangan artinya kalau warna itu juga berarti sebuah klub. Diganti `#A4161A`, rasio 7,13:1, dan tidak identik dengan satu pun dari 46 aksen klub.
+
+Pelajarannya ditulis di sini supaya tidak terulang: setiap warna dalam palet ini harus diukur rasio kontrasnya terhadap `#F4F6F2` sebelum ditetapkan, dan warna bermakna tetap tidak boleh bertabrakan dengan aksen klub mana pun.
+
+**Koreksi, 16 November 2026.** Teks sekunder semula ditetapkan `#6B7A72`. Nilai itu hanya mencapai rasio kontras 4,15:1 terhadap latar, di bawah ambang 4,5:1 yang diminta WCAG AA untuk teks kecil — padahal warna ini justru dipakai untuk label 13px. Diganti `#65736C`, lima persen lebih gelap pada hue yang sama, rasio 4,57:1. Keterbacaan menang atas nilai yang terlanjur ditulis.
+
+**Logo klub.** Berkas logo tersedia untuk 20 klub musim berjalan, tidak untuk 17 klub lama. Logo dipakai **hemat**, hanya di dua tempat yang pekerjaannya memang mengenali klub: papan skor dan pemilih klub di sidebar. Ukurannya kecil dan tidak pernah lebih besar daripada nama klub di sebelahnya. Tabel, daftar, dan grafik tetap memakai kode tiga huruf. Klub tanpa logo memakai kode tiga huruf itu tanpa kasus khusus. Alasannya: 20 lencana berwarna penuh di dalam satu tabel klasemen akan melawan seluruh dasar desain ini, sementara dua lencana di papan skor membantu pengenalan tanpa mengganggu.
 
 Warna klub diambil dari warna utama tiap klub dan disimpan dalam satu tabel. Ia dipakai untuk: sorotan klub saya di grafik, bar atribut pemain klub saya, dan titik penanda hasil. Tidak untuk tombol, tidak untuk latar belakang blok.
 
