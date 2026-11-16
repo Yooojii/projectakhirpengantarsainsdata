@@ -25,8 +25,9 @@ def test_hasil_sama_setiap_dipanggil(df):
 
 def test_atribut_dalam_rentang_satu_sampai_sembilan_puluh_sembilan(df):
     for p in bangkitkan_skuad(df, "Man City", TGL):
-        for a in ATRIBUT:
+        for a in p.atribut:  # termasuk refleks milik kiper
             assert 1 <= p.atribut[a] <= 99
+    assert any("refleks" in p.atribut for p in bangkitkan_skuad(df, "Man City", TGL))
 
 def test_klub_berkonversi_lebih_baik_punya_penyelesaian_lebih_tinggi(df):
     from inti.fitur import fitur_tim
@@ -71,3 +72,35 @@ def test_nama_unik_dan_klub_berbeda_bernama_berbeda(df):
     b = bangkitkan_skuad(df, "Everton", TGL)
     assert len({p.nama for p in a}) == 18
     assert [p.nama for p in a] != [p.nama for p in b]
+
+def test_hasil_stabil_antar_sesi(df):
+    # Nilai tetap: seed berbasis hash() akan acak per proses dan gagal di sini.
+    s = bangkitkan_skuad(df, "Arsenal", TGL)
+    assert [p.nama for p in s][:4] == ["Marco Pearce", "Stefan Hughes", "Jack Moreau", "Julian Nolan"]
+    assert [p.atribut["refleks"] for p in s if p.posisi == "KIP"] == [86, 79]
+
+def _dibiarkan(df):
+    from inti.pemain import _tembakan_dibiarkan
+    lampau = df[df["tanggal"] < TGL]
+    klub = sorted(set(df[df["musim"] == "2026/27"]["tim_kandang"]))
+    return klub, {k: _tembakan_dibiarkan(lampau, k) for k in klub}
+
+def test_penguasaan_terbalik_terhadap_tembakan_dibiarkan(df):
+    klub, d = _dibiarkan(df)
+    sedikit, banyak = min(d, key=d.get), max(d, key=d.get)
+    assert d[sedikit] < d[banyak]
+    assert _rata(df, sedikit, "penguasaan") > _rata(df, banyak, "penguasaan")
+
+def test_rebutan_terbalik_pada_tembakan_dibiarkan(df):
+    # Pelanggaran ikut menentukan rebutan, jadi bandingkan dua klub dengan
+    # pelanggaran paling mirip dari sepertiga atas dan bawah tembakan dibiarkan.
+    from inti.fitur import fitur_tim
+    klub, d = _dibiarkan(df)
+    urut = sorted(klub, key=d.get)
+    sepertiga = len(urut) // 3
+    pel = {k: fitur_tim(df, k, TGL, True)["rata_pelanggaran"] for k in klub}
+    sedikit, banyak = min(
+        ((a, b) for a in urut[:sepertiga] for b in urut[-sepertiga:]),
+        key=lambda ab: abs(pel[ab[0]] - pel[ab[1]]),
+    )
+    assert _rata(df, sedikit, "rebutan") > _rata(df, banyak, "rebutan")

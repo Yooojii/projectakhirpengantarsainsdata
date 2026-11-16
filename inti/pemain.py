@@ -80,8 +80,9 @@ def _rng(klub: str) -> np.random.Generator:
 
 
 def _tembakan_dibiarkan(lampau: pd.DataFrame, klub: str) -> float:
-    """Rata-rata tembakan lawan di sepuluh laga terakhir klub sebelum `sebelum`;
-    kurang dari tiga laga memakai rata-rata liga 380 laga terakhir."""
+    """Rata-rata tembakan lawan di `UKURAN_JENDELA` laga terakhir klub dalam `lampau`
+    (laga yang sudah lewat); kurang dari `MINIMUM_LAGA` laga memakai rata-rata
+    liga dari `LAGA_LIGA` laga terakhir di `lampau`."""
     kandang = lampau[lampau["tim_kandang"] == klub]
     tandang = lampau[lampau["tim_tandang"] == klub]
     laga = pd.concat([
