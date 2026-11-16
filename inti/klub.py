@@ -51,7 +51,7 @@ WARNA = {
     "West Brom": "#122F67",
     "West Ham": "#7A263A",
     "Wigan": "#1F5FA8",
-    "Wolves": "#B8860B",
+    "Wolves": "#FDB913",
 }
 
 # Kode eksplisit untuk semua klub yang akan bertabrakan bila diturunkan dari
