@@ -7,7 +7,7 @@ def test_semua_klub_musim_berjalan_punya_warna():
         assert nama in WARNA
         warna = warna_klub(nama)
         assert warna.startswith("#") and len(warna) == 7
-        assert warna != "#6B7A72"
+        assert warna != "#65736C"
 
 
 def test_warna_mencakup_klub_semua_musim_persis():
@@ -17,7 +17,7 @@ def test_warna_mencakup_klub_semua_musim_persis():
 
 
 def test_klub_tak_dikenal_dapat_warna_netral():
-    assert warna_klub("Klub Antah Berantah") == "#6B7A72"
+    assert warna_klub("Klub Antah Berantah") == "#65736C"
 
 
 def test_singkatan_tiga_huruf():

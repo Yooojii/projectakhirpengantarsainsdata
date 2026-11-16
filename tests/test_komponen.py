@@ -14,10 +14,12 @@ from gaya.komponen import (
     pasang_tema,
     warna_aksen,
 )
-from inti.klub import NETRAL, WARNA, warna_klub
+from inti.data import klub_musim, muat_pertandingan
+from inti.klub import NETRAL, WARNA, logo_klub, singkatan, warna_klub
 
 LATAR = "#F4F6F2"
 GARIS = "#CFD6CC"
+ARSENAL = warna_aksen("#EF0107")  # sudah lolos 4,5:1 setelah digelapkan
 
 
 def _luminans(heks: str) -> float:
@@ -89,8 +91,6 @@ def test_aksen_idempoten_dan_netral_lolos():
 
 def test_css_memuat_token_warna_dan_tanpa_bayangan():
     css = BACA_CSS()
-    for warna in ["#F4F6F2", "#0E1F18", "#6B7A72", "#CFD6CC", "#FFFFFF", "#E0A800", "#C8102E"]:
-        assert warna in css
     for nilai in re.findall(r"box-shadow\s*:\s*([^;}]+)", css):
         assert nilai.replace("!important", "").strip() == "none"
     assert "text-shadow" not in css and "drop-shadow" not in css
@@ -157,20 +157,20 @@ PELUANG = {"menang": 0.54, "seri": 0.24, "kalah": 0.22}
 
 
 def test_papan_skor_memuat_kedua_klub_dan_tiga_peluang():
-    h = papan_skor("Arsenal", "Tottenham", (2, 1), PELUANG, "#DB0007")
+    h = papan_skor("Arsenal", "Tottenham", (2, 1), PELUANG, ARSENAL)
     assert "Arsenal" in h and "Tottenham" in h
     assert "54" in h and "24" in h and "22" in h
     assert "→" not in h
 
 
 def test_papan_skor_kandang_sebelum_skor_sebelum_tamu():
-    h = papan_skor("Arsenal", "Tottenham", (2, 1), PELUANG, "#DB0007")
+    h = papan_skor("Arsenal", "Tottenham", (2, 1), PELUANG, ARSENAL)
     assert h.index("Arsenal") < h.index(">2<") < h.index(">1<") < h.index("Tottenham")
 
 
 def test_papan_skor_tanpa_gambar_dan_nama_di_escape():
-    h = papan_skor("A<b>", "C&D", (0, 0), PELUANG, "#DB0007")
-    assert "<img" not in h.lower() and "<svg" not in h.lower()
+    h = papan_skor("A<b>", "C&D", (0, 0), PELUANG, ARSENAL)
+    assert "<svg" not in h.lower() and h.lower().count("<img") <= 2
     assert "<b>" not in h and "&lt;b&gt;" in h and "C&amp;D" in h
 
 
@@ -181,23 +181,23 @@ def _terisi(h):
 
 
 def test_bar_atribut_delapan_ruas_terisi_proporsional():
-    assert bar_atribut(99, "#DB0007").count("ruas") == 8
-    assert _terisi(bar_atribut(99, "#DB0007")) == 8
-    assert _terisi(bar_atribut(50, "#DB0007")) == 4
-    assert _terisi(bar_atribut(0, "#DB0007")) == 0
-    assert _terisi(bar_atribut(99, "#DB0007")) > _terisi(bar_atribut(20, "#DB0007"))
+    assert bar_atribut(99, ARSENAL).count("ruas") == 8
+    assert _terisi(bar_atribut(99, ARSENAL)) == 8
+    assert _terisi(bar_atribut(50, ARSENAL)) == 4
+    assert _terisi(bar_atribut(0, ARSENAL)) == 0
+    assert _terisi(bar_atribut(99, ARSENAL)) > _terisi(bar_atribut(20, ARSENAL))
 
 
 def test_bar_atribut_angka_di_samping_dan_nilai_di_luar_batas():
-    assert ">80<" in bar_atribut(80, "#DB0007")
-    assert _terisi(bar_atribut(150, "#DB0007")) == 8
-    assert _terisi(bar_atribut(-5, "#DB0007")) == 0
+    assert ">80<" in bar_atribut(80, ARSENAL)
+    assert _terisi(bar_atribut(150, ARSENAL)) == 8
+    assert _terisi(bar_atribut(-5, ARSENAL)) == 0
 
 
 def test_bar_atribut_lawan_abu_dan_klub_saya_aksen():
-    assert "#6B7A72" in bar_atribut(80, None)
-    assert "#DB0007" not in bar_atribut(80, None)
-    assert "#DB0007" in bar_atribut(80, "#DB0007")
+    assert "#65736C" in bar_atribut(80, None)
+    assert ARSENAL not in bar_atribut(80, None)
+    assert ARSENAL in bar_atribut(80, ARSENAL)
 
 
 def test_bar_atribut_aksen_pucat_digelapkan():
@@ -223,7 +223,7 @@ def _skala(spec):
 
 def test_grafik_dasar_judul_dari_pemanggil_dan_tanpa_bingkai(data):
     j = "Arsenal mencetak lebih banyak gol tiap musim"
-    g = grafik_dasar(data, "musim", "gol_per_laga", j, "Arsenal", "#DB0007",
+    g = grafik_dasar(data, "musim", "gol_per_laga", j, "Arsenal", ARSENAL,
                      label_x="Musim", label_y="Gol per pertandingan")
     assert isinstance(g, alt.TopLevelMixin)
     s = g.to_dict()
@@ -233,17 +233,17 @@ def test_grafik_dasar_judul_dari_pemanggil_dan_tanpa_bingkai(data):
 
 
 def test_grafik_dasar_kisi_horizontal_saja_warna_garis(data):
-    s = grafik_dasar(data, "musim", "gol_per_laga", "J", "Arsenal", "#DB0007").to_dict()
+    s = grafik_dasar(data, "musim", "gol_per_laga", "J", "Arsenal", ARSENAL).to_dict()
     assert s["config"]["axisX"]["grid"] is False
     assert s["config"]["axisY"]["grid"] is True
     assert s["config"]["axisY"]["gridColor"] == GARIS
 
 
 def test_grafik_dasar_satu_deret_aksen_sisanya_abu(data):
-    s = grafik_dasar(data, "musim", "gol_per_laga", "J", "Arsenal", "#DB0007").to_dict()
+    s = grafik_dasar(data, "musim", "gol_per_laga", "J", "Arsenal", ARSENAL).to_dict()
     sk = _skala(s)
     peta = dict(zip(sk["domain"], sk["range"]))
-    assert peta["Arsenal"].upper() == "#DB0007"
+    assert peta["Arsenal"].upper() == ARSENAL
     assert peta["Chelsea"] == GARIS and peta["Everton"] == GARIS
     assert None in _cari(s, "legend")
 
@@ -255,12 +255,178 @@ def test_grafik_dasar_aksen_pucat_digelapkan(data):
 
 
 def test_grafik_dasar_tanpa_sorotan_semua_abu(data):
-    s = grafik_dasar(data, "musim", "gol_per_laga", "J", None, "#DB0007").to_dict()
+    s = grafik_dasar(data, "musim", "gol_per_laga", "J", None, ARSENAL).to_dict()
     assert set(_skala(s)["range"]) == {GARIS}
 
 
 def test_grafik_dasar_sumbu_berkata_bukan_singkatan(data):
-    s = grafik_dasar(data, "musim", "gol_per_laga", "J", "Arsenal", "#DB0007",
+    s = grafik_dasar(data, "musim", "gol_per_laga", "J", "Arsenal", ARSENAL,
                      label_x="Musim", label_y="Gol per pertandingan").to_dict()
     judul = {v for v in _cari(s, "title") if isinstance(v, str)}
     assert "Gol per pertandingan" in judul and "Musim" in judul
+
+
+# --------------------------------------------- CSS: nilai menurut peran (di-parse)
+
+def _aturan():
+    css = re.sub(r"/\*.*?\*/", "", BACA_CSS(), flags=re.S)
+    css = re.sub(r"@media[^{]*\{.*?\}\s*\}", "", css, flags=re.S)
+    css = re.sub(r"@import url\([^)]*\);", "", css)
+    css = re.sub(r"@keyframes[^{]*\{.*?\}\s*\}", "", css, flags=re.S)
+    hasil = []
+    for pemilih, isi in re.findall(r"([^{}]+)\{([^}]*)\}", css):
+        props = dict((k.strip(), v.strip().replace("!important", "").strip())
+                     for k, v in re.findall(r"([\w-]+)\s*:\s*([^;]+);?", isi))
+        hasil.append(([s.strip() for s in pemilih.split(",")], props))
+    return hasil
+
+
+def _prop(pemilih, nama):
+    nilai = None
+    for daftar, props in _aturan():
+        if pemilih in daftar and nama in props:
+            nilai = props[nama]
+    assert nilai is not None, f"{pemilih} tidak punya {nama}"
+    return nilai
+
+
+def _sempit(pemilih):
+    kel = _prop(pemilih, "font-family")
+    if kel.startswith("var("):
+        kel = _prop(":root", kel[4:-1])
+    return "IBM Plex Sans Condensed" in kel.split(",")[0]
+
+
+def _normal(pemilih):
+    kel = _prop(pemilih, "font-family")
+    if kel.startswith("var("):
+        kel = _prop(":root", kel[4:-1])
+    return kel.split(",")[0].strip('" ') == "IBM Plex Sans"
+
+
+def test_token_root_menurut_peran():
+    harapan = {
+        "--latar": "#F4F6F2", "--teks": "#0E1F18", "--teks-2": "#65736C",
+        "--garis": "#CFD6CC", "--permukaan": "#FFFFFF",
+        "--peringatan": "#E0A800", "--bahaya": "#C8102E",
+    }
+    for token, nilai in harapan.items():
+        assert _prop(":root", token) == nilai
+    assert _prop(".stApp", "background") == "var(--latar)"
+    assert _prop(".stApp", "color") == "var(--teks)"
+
+
+def test_secondary_text_lolos_kontras_aa():
+    assert kontras(_prop(":root", "--teks-2")) >= 4.5
+
+
+def test_skala_tipografi_papan_skor():
+    assert _prop(".papan-lingkaran", "font-size") == "64px"
+    assert _prop(".papan-lingkaran", "font-weight") == "600"
+    assert _sempit(".papan-lingkaran")
+    assert _prop(".papan-nama", "font-size") == "24px"
+    assert _prop(".papan-nama", "font-weight") == "500"
+    assert _sempit(".papan-nama")
+
+
+def test_skala_tipografi_judul_prosa_label_tabel():
+    assert _prop(".stApp h2", "font-size") == "22px"
+    assert _prop(".stApp h2", "font-weight") == "600"
+    assert _normal(".stApp h2")
+    prosa = '.stApp [data-testid="stMarkdownContainer"] p'
+    assert _prop(prosa, "font-size") == "16px"
+    assert _prop(prosa, "line-height") == "1.6"
+    assert _prop(prosa, "font-weight") == "400"
+    assert _prop(prosa, "max-width") == "68ch"
+    for label in [".stApp label p", '.stApp [data-testid="stCaptionContainer"] p']:
+        assert _prop(label, "font-size") == "13px"
+        assert _prop(label, "font-weight") == "400"
+    assert _prop("table.tabel td", "font-size") == "15px"
+    assert _prop("table.tabel td", "font-weight") == "500"
+    assert _sempit("table.tabel td")
+    assert _prop("table.tabel td", "text-align") == "right"
+    assert _prop("table.tabel td.teks", "text-align") == "left"
+
+
+def test_label_tidak_dikalahkan_aturan_prosa():
+    # p di dalam label/keterangan harus lebih spesifik atau setara dan datang kemudian
+    daftar = [d for d, _ in _aturan()]
+    urut = {}
+    for i, d in enumerate(daftar):
+        for s in d:
+            urut[s] = i
+    prosa = '.stApp [data-testid="stMarkdownContainer"] p'
+    for label in [".stApp label p", '.stApp [data-testid="stCaptionContainer"] p']:
+        assert urut[label] > urut[prosa]
+    assert ".stApp p" not in urut
+
+
+def test_jarak_dan_bentuk():
+    assert _prop(".bagian", "margin-top") == "48px"
+    assert _prop(".dalam", "margin-top") == "16px"
+    assert _prop('.stApp [data-testid="stVerticalBlock"]', "gap") == "16px"
+    assert _prop(".stApp h2", "margin").startswith("48px")
+    assert _prop(".panel", "border-radius") == "4px"
+    assert _prop(".panel", "padding") == "16px"
+
+
+def test_tabel_tanpa_garis_tegak_dan_belang():
+    assert _prop("table.tabel", "border-collapse") == "collapse"
+    assert _prop("table.tabel td", "border") == "0"
+    assert _prop("table.tabel th", "border-bottom") == "1px solid var(--garis)"
+    assert _prop("table.tabel td", "background") == "transparent"
+
+
+# ------------------------------------------------------------ gerakan tunggal
+
+def test_papan_skor_berubah_hanya_bila_diminta():
+    biasa = papan_skor("Arsenal", "Tottenham", (2, 1), PELUANG, ARSENAL)
+    assert "berubah" not in biasa
+    h = papan_skor("Arsenal", "Tottenham", (2, 1), PELUANG, ARSENAL, berubah=True)
+    assert h.count("angka-prediksi berubah") == 3
+
+
+# ------------------------------------------------------------- warna klub
+
+def test_arsenal_memakai_merah_aslinya_dan_digelapkan_oleh_aksen():
+    assert warna_klub("Arsenal") == "#EF0107"
+    assert kontras("#EF0107") < 4.5
+    assert warna_aksen("#EF0107") != "#EF0107"
+
+
+def test_aksen_klub_musim_berjalan_unik_dan_bukan_merah_kartu():
+    klub = klub_musim(muat_pertandingan(), "2026/27")
+    aksen = {k: warna_aksen(warna_klub(k)) for k in klub}
+    assert len(set(aksen.values())) == len(klub)
+    assert warna_klub("Bournemouth") != warna_klub("Liverpool")
+    assert warna_klub("Bournemouth").upper() != "#C8102E"
+
+
+# ------------------------------------------------------------------- logo
+
+def test_logo_ada_untuk_semua_20_klub_musim_berjalan():
+    klub = klub_musim(muat_pertandingan(), "2026/27")
+    assert len(klub) == 20
+    for k in klub:
+        jalur = logo_klub(k)
+        assert jalur is not None and jalur.is_file() and jalur.suffix == ".png", k
+
+
+def test_logo_pemetaan_nama_dataset_ke_manifest():
+    assert logo_klub("Hull").name == "hull_city.png"
+    assert logo_klub("Nott'm Forest").name == "nottingham_forest.png"
+    assert logo_klub("Man City").name == "manchester_city.png"
+    assert logo_klub("Bournemouth").name == "afc_bournemouth.png"
+
+
+def test_logo_klub_tanpa_logo_mengembalikan_none():
+    assert logo_klub("Bolton") is None
+    assert logo_klub("Klub Antah Berantah") is None
+
+
+def test_papan_skor_memuat_logo_kecil_atau_singkatan_sebagai_cadangan():
+    h = papan_skor("Arsenal", "Bolton", (1, 0), PELUANG, ARSENAL)
+    assert h.count("<img") == 1 and "data:image/png;base64," in h
+    assert "alt=\"\"" in h
+    assert singkatan("Bolton") in h
+    assert "width=\"24\"" in h  # tidak lebih besar dari nama klub (24 px)

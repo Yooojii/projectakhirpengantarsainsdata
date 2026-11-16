@@ -1,4 +1,6 @@
 """Komponen visual papan taktik. Streamlit hanya dipakai di sini, bukan di inti/."""
+import base64
+from functools import lru_cache
 from html import escape
 from pathlib import Path
 
@@ -6,7 +8,7 @@ import altair as alt
 import pandas as pd
 import streamlit as st
 
-from inti.klub import NETRAL
+from inti.klub import NETRAL, logo_klub, singkatan
 
 LATAR = "#F4F6F2"
 GARIS = "#CFD6CC"
@@ -66,29 +68,48 @@ def _persen(p: float) -> str:
     return f"{round(p * 100)}%"
 
 
-def papan_skor(klub_k: str, klub_t: str, skor: tuple, peluang: dict, aksen: str) -> str:
+@lru_cache(maxsize=None)
+def _uri_logo(jalur: str) -> str:
+    with open(jalur, "rb") as f:
+        return "data:image/png;base64," + base64.b64encode(f.read()).decode("ascii")
+
+
+def _lencana(klub: str) -> str:
+    """Logo kecil (24 px, sama dengan tinggi nama), atau singkatan tiga huruf bila tak ada."""
+    jalur = logo_klub(klub)
+    if jalur is None:
+        return f'<span class="papan-kode">{escape(singkatan(klub))}</span>'
+    return f'<img class="papan-logo" src="{_uri_logo(str(jalur))}" alt="" width="24" height="24">'
+
+
+def papan_skor(klub_k: str, klub_t: str, skor: tuple, peluang: dict, aksen: str,
+               berubah: bool = False) -> str:
     """Kandang di kiri, skor di dalam lingkaran, tamu di kanan; garis tengah terputus di lingkaran.
 
+    `berubah=True` menambahkan kelas yang menjalankan satu-satunya transisi warna pada angka
+    peluang. Halaman hanya boleh memberikannya ketika penggeser benar-benar bergerak; kalau
+    selalu True, angka beranimasi saat halaman dimuat, dan itu dilarang.
     `aksen` diterima demi kontrak antarmuka; papan sendiri tidak berwarna.
     """
     k, t = escape(klub_k), escape(klub_t)
+    kelas = "angka-prediksi berubah" if berubah else "angka-prediksi"
     return (
         '<div class="papan-skor">'
         '<div class="papan-baris">'
-        f'<div class="papan-sisi papan-kandang"><span class="papan-nama">{k}</span></div>'
+        f'<div class="papan-sisi papan-kandang"><span class="papan-nama">{k}{_lencana(klub_k)}</span></div>'
         '<div class="papan-lingkaran">'
         f'<span class="papan-skor-angka">{int(skor[0])}</span>'
         '<span class="papan-skor-angka">:</span>'
         f'<span class="papan-skor-angka">{int(skor[1])}</span>'
         '</div>'
-        f'<div class="papan-sisi papan-tamu"><span class="papan-nama">{t}</span></div>'
+        f'<div class="papan-sisi papan-tamu"><span class="papan-nama">{_lencana(klub_t)}{t}</span></div>'
         '</div>'
         '<div class="papan-peluang">'
-        f'<div class="kandang"><span class="angka-prediksi">{_persen(peluang["menang"])}</span>'
+        f'<div class="kandang"><span class="{kelas}">{_persen(peluang["menang"])}</span>'
         '<span class="keterangan">Kandang menang</span></div>'
-        f'<div class="seri"><span class="angka-prediksi">{_persen(peluang["seri"])}</span>'
+        f'<div class="seri"><span class="{kelas}">{_persen(peluang["seri"])}</span>'
         '<span class="keterangan">Seri</span></div>'
-        f'<div class="tamu"><span class="angka-prediksi">{_persen(peluang["kalah"])}</span>'
+        f'<div class="tamu"><span class="{kelas}">{_persen(peluang["kalah"])}</span>'
         '<span class="keterangan">Tamu menang</span></div>'
         '</div></div>'
     )
@@ -122,27 +143,27 @@ def grafik_dasar(data: pd.DataFrame, x: str, y: str, judul: str, sorot: str | No
     (mis. "Gol per pertandingan"); bila kosong dipakai nama kolom tanpa garis bawah.
     """
     nama = [str(n) for n in data[seri].unique()]
-    sorotan = warna_aksen(aksen)
-    warna = [sorotan if n == sorot else GARIS for n in nama]
-    df = data.assign(_urut=(data[seri] == sorot).astype(int))
+    warna = [warna_aksen(aksen) if n == sorot else GARIS for n in nama]
+    df = data.sort_values(x, kind="stable")  # garis digambar menurut urutan x, bukan urutan baris
     jelas = lambda kol: kol.replace("_", " ").capitalize()
     huruf = "IBM Plex Sans Condensed"
-    lebar = alt.condition(alt.datum[seri] == sorot, alt.value(3), alt.value(1.5)) \
-        if sorot is not None else alt.value(1.5)
-    return (
-        alt.Chart(df)
-        .mark_line(interpolate="monotone")
-        .encode(
+
+    def lapis(bagian: pd.DataFrame, tebal: float) -> alt.Chart:
+        return alt.Chart(bagian).mark_line(interpolate="monotone", strokeWidth=tebal).encode(
             x=alt.X(x, title=label_x or jelas(x), axis=alt.Axis(grid=False)),
             y=alt.Y(y, title=label_y or jelas(y), axis=alt.Axis(grid=True)),
             color=alt.Color(f"{seri}:N", scale=alt.Scale(domain=nama, range=warna), legend=None),
-            strokeWidth=lebar,
-            order=alt.Order("_urut:Q"),
             tooltip=[seri, x, y],
         )
+
+    lapisan = [lapis(df[df[seri] != sorot], 1.5)]
+    if sorot is not None:  # lapisan terpisah supaya deret sorotan digambar paling atas
+        lapisan.append(lapis(df[df[seri] == sorot], 3))
+    return (
+        alt.layer(*lapisan)
         .properties(title=judul)
         .configure_view(stroke=None)
-        .configure_axis(domain=False, ticks=False, labelColor="#6B7A72", titleColor="#6B7A72",
+        .configure_axis(domain=False, ticks=False, labelColor="#65736C", titleColor="#65736C",
                         labelFont=huruf, titleFont="IBM Plex Sans", titleFontWeight=400,
                         labelFontSize=13, titleFontSize=13)
         .configure_axisX(grid=False)

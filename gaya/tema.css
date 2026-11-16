@@ -5,12 +5,12 @@
 :root {
   --latar: #F4F6F2;
   --teks: #0E1F18;
-  --teks-2: #6B7A72;
+  --teks-2: #65736C;
   --garis: #CFD6CC;
   --permukaan: #FFFFFF;
   --peringatan: #E0A800;
   --bahaya: #C8102E;
-  --aksen: #6B7A72;
+  --aksen: #65736C;
   --huruf: "IBM Plex Sans", sans-serif;
   --huruf-sempit: "IBM Plex Sans Condensed", "IBM Plex Sans", sans-serif;
 }
@@ -48,8 +48,19 @@
   text-transform: none;
 }
 .stApp h2, .stApp h3 { font-size: 22px; line-height: 1.3; margin: 48px 0 16px; padding: 0; }
-.stApp p, .stApp li { max-width: 68ch; font-size: 16px; line-height: 1.6; font-weight: 400; }
-.stApp label, .stApp small, .stApp [data-testid="stCaptionContainer"], .keterangan {
+.stApp [data-testid="stMarkdownContainer"] p,
+.stApp [data-testid="stMarkdownContainer"] li {
+  max-width: 68ch; font-size: 16px; line-height: 1.6; font-weight: 400;
+}
+/* Label dan keterangan: p bersarang di dalamnya tidak boleh ikut ukuran prosa */
+.stApp label p,
+.stApp [data-testid="stCaptionContainer"] p,
+.stApp label [data-testid="stMarkdownContainer"] p,
+.stApp [data-testid="stCaptionContainer"] [data-testid="stMarkdownContainer"] p {
+  max-width: none; font-size: 13px; line-height: 1.6; font-weight: 400;
+  color: var(--teks-2); text-transform: none;
+}
+.stApp label, .stApp small, .keterangan {
   font-size: 13px; font-weight: 400; color: var(--teks-2); text-transform: none;
 }
 .bagian { margin-top: 48px; }
@@ -78,11 +89,14 @@
 .papan-nama {
   position: absolute;
   bottom: calc(50% + 8px);
+  display: flex; align-items: center; gap: 8px;
   font-family: var(--huruf-sempit);
   font-size: 24px; font-weight: 500; line-height: 1.2;
   color: var(--teks);
   white-space: nowrap;
 }
+.papan-logo { width: 24px; height: 24px; object-fit: contain; }  /* tidak lebih besar dari nama */
+.papan-kode { font-size: 13px; font-weight: 400; color: var(--teks-2); }
 .papan-kandang .papan-nama { right: 16px; }
 .papan-tamu .papan-nama { left: 16px; }
 .papan-lingkaran {

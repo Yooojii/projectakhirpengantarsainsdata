@@ -1,0 +1,147 @@
+[
+  {
+    "team": "AFC Bournemouth",
+    "fotmob_id": 8678,
+    "file": "afc_bournemouth.png"
+  },
+  {
+    "team": "Arsenal",
+    "fotmob_id": 9825,
+    "file": "arsenal.png"
+  },
+  {
+    "team": "Aston Villa",
+    "fotmob_id": 10252,
+    "file": "aston_villa.png"
+  },
+  {
+    "team": "Brentford",
+    "fotmob_id": 9937,
+    "file": "brentford.png"
+  },
+  {
+    "team": "Brighton & Hove Albion",
+    "fotmob_id": 10204,
+    "file": "brighton_hove_albion.png"
+  },
+  {
+    "team": "Burnley",
+    "fotmob_id": 8191,
+    "file": "burnley.png"
+  },
+  {
+    "team": "Chelsea",
+    "fotmob_id": 8455,
+    "file": "chelsea.png"
+  },
+  {
+    "team": "Coventry City",
+    "fotmob_id": 8669,
+    "file": "coventry_city.png"
+  },
+  {
+    "team": "Crystal Palace",
+    "fotmob_id": 9826,
+    "file": "crystal_palace.png"
+  },
+  {
+    "team": "Everton",
+    "fotmob_id": 8668,
+    "file": "everton.png"
+  },
+  {
+    "team": "Fulham",
+    "fotmob_id": 9879,
+    "file": "fulham.png"
+  },
+  {
+    "team": "Hull City",
+    "fotmob_id": 8667,
+    "file": "hull_city.png"
+  },
+  {
+    "team": "Ipswich Town",
+    "fotmob_id": 9902,
+    "file": "ipswich_town.png"
+  },
+  {
+    "team": "Leeds United",
+    "fotmob_id": 8463,
+    "file": "leeds_united.png"
+  },
+  {
+    "team": "Leicester City",
+    "fotmob_id": 8197,
+    "file": "leicester_city.png"
+  },
+  {
+    "team": "Liverpool",
+    "fotmob_id": 8650,
+    "file": "liverpool.png"
+  },
+  {
+    "team": "Luton Town",
+    "fotmob_id": 8346,
+    "file": "luton_town.png"
+  },
+  {
+    "team": "Manchester City",
+    "fotmob_id": 8456,
+    "file": "manchester_city.png"
+  },
+  {
+    "team": "Manchester United",
+    "fotmob_id": 10260,
+    "file": "manchester_united.png"
+  },
+  {
+    "team": "Newcastle United",
+    "fotmob_id": 10261,
+    "file": "newcastle_united.png"
+  },
+  {
+    "team": "Norwich City",
+    "fotmob_id": 9850,
+    "file": "norwich_city.png"
+  },
+  {
+    "team": "Nottingham Forest",
+    "fotmob_id": 10203,
+    "file": "nottingham_forest.png"
+  },
+  {
+    "team": "Sheffield United",
+    "fotmob_id": 8657,
+    "file": "sheffield_united.png"
+  },
+  {
+    "team": "Southampton",
+    "fotmob_id": 8466,
+    "file": "southampton.png"
+  },
+  {
+    "team": "Sunderland",
+    "fotmob_id": 8472,
+    "file": "sunderland.png"
+  },
+  {
+    "team": "Tottenham Hotspur",
+    "fotmob_id": 8586,
+    "file": "tottenham_hotspur.png"
+  },
+  {
+    "team": "Watford",
+    "fotmob_id": 9817,
+    "file": "watford.png"
+  },
+  {
+    "team": "West Ham United",
+    "fotmob_id": 8654,
+    "file": "west_ham_united.png"
+  },
+  {
+    "team": "Wolverhampton Wanderers",
+    "fotmob_id": 8602,
+    "file": "wolverhampton_wanderers.png"
+  }
+]
