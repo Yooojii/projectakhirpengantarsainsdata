@@ -58,6 +58,7 @@ class _ModelPalsu:
 
     def predict_proba(self, x):
         self.diterima = x
+        assert len(x[0]) == 20, f"model menerima {len(x[0])} nilai, harus 20"
         return [[0.2, 0.3, 0.5]]
 
 
@@ -71,12 +72,38 @@ def test_jalur_model_memetakan_kelas_dan_urutan_fitur():
     assert h["p_menang_kandang"] == pytest.approx(0.5)
     assert h["p_seri"] == pytest.approx(0.3)
     assert h["p_menang_tandang"] == pytest.approx(0.2)
-    assert list(m.diterima[0]) == [_lengkap(1.0)[n] for n in NAMA_FITUR]
+    assert list(m.diterima[0]) == ([_lengkap(1.0)[n] for n in NAMA_FITUR]
+                                   + [_lengkap(2.0)[n] for n in NAMA_FITUR])
 
 
 def test_jalur_model_menolak_fitur_tidak_lengkap():
-    with pytest.raises(ValueError, match="rata_tembakan"):
+    with pytest.raises(ValueError, match="kandang.*rata_tembakan"):
         prediksi({"rata_gol_dicetak": 1.0}, _lengkap(1.0), model=_ModelPalsu())
+    with pytest.raises(ValueError, match="tandang.*rata_tembakan"):
+        prediksi(_lengkap(1.0), {"rata_gol_dicetak": 1.0}, model=_ModelPalsu())
+
+
+def test_vektor_model_sesuai_urutan_kolom_tabel_pelatihan():
+    """Kontrak: urutan kolom fitur tabel_pelatihan, diturunkan dari tabelnya."""
+    from inti.data import muat_pertandingan
+    from inti.fitur import tabel_pelatihan
+    tabel = tabel_pelatihan(muat_pertandingan().head(300))
+    kolom = [c for c in tabel.columns
+             if c.endswith(("_k", "_t")) and c not in ("tim_kandang", "tim_tandang")]
+    assert len(kolom) == 20
+    fk = {n: float(i) for i, n in enumerate(NAMA_FITUR)}
+    ft = {n: 100.0 + i for i, n in enumerate(NAMA_FITUR)}
+    m = _ModelPalsu()
+    prediksi(fk, ft, model=m)
+    nilai = {**{f"{n}_k": v for n, v in fk.items()}, **{f"{n}_t": v for n, v in ft.items()}}
+    assert list(m.diterima[0]) == [nilai[c] for c in kolom]
+
+
+def test_fitur_gol_nan_ditolak_bukan_menjadi_nol_nol():
+    nan = float("nan")
+    with pytest.raises(ValueError, match="NaN"):
+        prediksi({"rata_gol_dicetak": nan, "penanda_kandang": 1.0},
+                 {"rata_gol_kebobolan": 1.0, "penanda_kandang": 0.0})
 
 
 def test_muat_evaluasi_none_bila_tidak_ada(tmp_path):

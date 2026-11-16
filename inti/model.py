@@ -43,6 +43,9 @@ def _gol_harapan(serang: dict, lawan: dict) -> float:
     serangan = serang.get("rata_gol_dicetak", GOL_RATA_TIM)
     kebobolan = lawan.get("rata_gol_kebobolan", GOL_RATA_TIM)
     kandang = serang.get("penanda_kandang", 0.5)
+    if np.isnan([serangan, kebobolan, kandang]).any():
+        raise ValueError("Fitur gol atau penanda_kandang bernilai NaN; gol harapan "
+                         "tidak bisa dihitung (bukan 0-0 yang pasti).")
     faktor = FAKTOR_TANDANG + (FAKTOR_KANDANG - FAKTOR_TANDANG) * kandang
     return max(0.0, (serangan + kebobolan) / 2 * faktor)
 
@@ -81,8 +84,8 @@ def _peluang_dari_skor(dist: dict) -> tuple[float, float, float]:
 def prediksi(fitur_k: dict, fitur_t: dict, model=None) -> dict:
     """Peluang hasil dan gol harapan untuk satu pertandingan.
 
-    Dengan model, KESEPULUH fitur wajib ada (vektor harus lengkap dan
-    berurutan `NAMA_FITUR`). Tanpa model, jalan mundur Poisson cukup dengan
+    Dengan model, KESEPULUH fitur di KEDUA sisi wajib ada (vektor 20 nilai:
+    kandang lalu tandang, masing-masing berurutan `NAMA_FITUR`). Tanpa model, jalan mundur Poisson cukup dengan
     fitur gol dan `penanda_kandang` saja.
     """
     gol_k = _gol_harapan(fitur_k, fitur_t)
@@ -91,10 +94,14 @@ def prediksi(fitur_k: dict, fitur_t: dict, model=None) -> dict:
     if model is None:
         h, d, a = _peluang_dari_skor(distribusi_skor(gol_k, gol_t))
     else:
-        hilang = [n for n in NAMA_FITUR if n not in fitur_k]
-        if hilang:
-            raise ValueError(f"Fitur untuk model tidak lengkap, kurang: {hilang}")
-        x = [[fitur_k[n] for n in NAMA_FITUR]]
+        for sisi, fitur in (("kandang", fitur_k), ("tandang", fitur_t)):
+            hilang = [n for n in NAMA_FITUR if n not in fitur]
+            if hilang:
+                raise ValueError(
+                    f"Fitur sisi {sisi} untuk model tidak lengkap, kurang: {hilang}")
+        # Urutan kolom = tabel_pelatihan: sepuluh fitur kandang (_k), lalu
+        # sepuluh fitur tandang (_t), masing-masing menurut NAMA_FITUR.
+        x = [[fitur_k[n] for n in NAMA_FITUR] + [fitur_t[n] for n in NAMA_FITUR]]
         label = list(model.classes_)
         if set(label) != {"H", "D", "A"} or len(label) != 3:
             raise ValueError(
