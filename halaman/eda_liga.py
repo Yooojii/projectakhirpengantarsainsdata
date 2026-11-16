@@ -134,23 +134,22 @@ def _bar_sofascore(nama_stat: str, val_k: float, val_t: float, format_fmt: str =
     teks_k = format_fmt.format(val_k)
     teks_t = format_fmt.format(val_t)
 
-    # Highlight angka yang lebih unggul
     bold_k = "font-weight: 700;" if val_k >= val_t else "color: var(--teks-2);"
     bold_t = "font-weight: 700;" if val_t >= val_k else "color: var(--teks-2);"
 
-    return f"""
-    <div style="margin-bottom: 14px;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; font-size: 13px;">
-        <span style="font-family: var(--huruf-sempit); {bold_k} font-size: 15px; width: 45px; text-align: left;">{teks_k}</span>
-        <span style="color: var(--teks-2); font-size: 13px; text-align: center; flex: 1;">{escape(nama_stat)}</span>
-        <span style="font-family: var(--huruf-sempit); {bold_t} font-size: 15px; width: 45px; text-align: right;">{teks_t}</span>
-      </div>
-      <div style="display: flex; height: 6px; background: var(--garis); border-radius: 3px; overflow: hidden; gap: 2px;">
-        <div style="width: {pct_k:.1f}%; background: {aksen_k}; border-radius: 3px 0 0 3px;"></div>
-        <div style="width: {pct_t:.1f}%; background: {aksen_t}; border-radius: 0 3px 3px 0;"></div>
-      </div>
-    </div>
-    """
+    return (
+        '<div style="margin-bottom: 14px;">'
+        '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; font-size: 13px;">'
+        f'<span style="font-family: var(--huruf-sempit); {bold_k} font-size: 15px; width: 45px; text-align: left;">{teks_k}</span>'
+        f'<span style="color: var(--teks-2); font-size: 13px; text-align: center; flex: 1;">{escape(nama_stat)}</span>'
+        f'<span style="font-family: var(--huruf-sempit); {bold_t} font-size: 15px; width: 45px; text-align: right;">{teks_t}</span>'
+        '</div>'
+        '<div style="display: flex; height: 6px; background: var(--garis); border-radius: 3px; overflow: hidden; gap: 2px;">'
+        f'<div style="width: {pct_k:.1f}%; background: {aksen_k}; border-radius: 3px 0 0 3px;"></div>'
+        f'<div style="width: {pct_t:.1f}%; background: {aksen_t}; border-radius: 0 3px 3px 0;"></div>'
+        '</div>'
+        '</div>'
+    )
 
 
 def tampil() -> None:
@@ -265,37 +264,34 @@ def tampil() -> None:
                 tgl_laga = laga_row["tanggal"]
 
                 # SofaScore Header Banner
-                st.markdown(
-                    f"""
-                    <div class="panel" style="margin-bottom: 20px; text-align: center; border-radius: 6px; padding: 20px;">
-                      <div style="font-size: 13px; color: var(--teks-2); margin-bottom: 8px;">
-                        {_format_tanggal(tgl_laga)} · Premier League
-                      </div>
-                      <div style="display: grid; grid-template-columns: 1fr 120px 1fr; align-items: center;">
-                        <div style="text-align: right; padding-right: 16px;">
-                          <div style="font-size: 18px; font-weight: 600; color: {aksen_k};">{escape(tim_k)}</div>
-                          <div class="keterangan">{singkatan(tim_k)} (Kandang)</div>
-                        </div>
-                        <div style="background: var(--latar); border: 1px solid var(--garis); border-radius: 4px; padding: 8px 12px;">
-                          <div style="font-family: var(--huruf-sempit); font-size: 32px; font-weight: 700; line-height: 1;">
-                            {int(laga_row['gol_kandang'])} : {int(laga_row['gol_tandang'])}
-                          </div>
-                          <div style="font-size: 11px; font-weight: 600; color: var(--teks-2); margin-top: 4px;">SELESAI (FT)</div>
-                        </div>
-                        <div style="text-align: left; padding-left: 16px;">
-                          <div style="font-size: 18px; font-weight: 600; color: {aksen_t};">{escape(tim_t)}</div>
-                          <div class="keterangan">{singkatan(tim_t)} (Tandang)</div>
-                        </div>
-                      </div>
-                      <div style="margin-top: 12px; font-size: 12px; color: var(--teks-2);">
-                        Babak 1 (HT): {int(laga_row.get('gol_kandang_babak1', 0))} - {int(laga_row.get('gol_tandang_babak1', 0))}
-                        {' · Wasit: ' + escape(str(laga_row['wasit'])) if pd.notna(laga_row.get('wasit')) else ''}
-                        {' · Stadion: ' + escape(str(laga_row['stadion'])) if pd.notna(laga_row.get('stadion')) else ''}
-                      </div>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
+                wasit_str = f" · Wasit: {escape(str(laga_row['wasit']))}" if pd.notna(laga_row.get("wasit")) else ""
+                stadion_str = f" · Stadion: {escape(str(laga_row['stadion']))}" if pd.notna(laga_row.get("stadion")) else ""
+                banner_html = (
+                    '<div class="panel" style="margin-bottom: 20px; text-align: center; border-radius: 6px; padding: 20px;">'
+                    f'<div style="font-size: 13px; color: var(--teks-2); margin-bottom: 8px;">{_format_tanggal(tgl_laga)} · Premier League</div>'
+                    '<div style="display: grid; grid-template-columns: 1fr 120px 1fr; align-items: center;">'
+                    f'<div style="text-align: right; padding-right: 16px;">'
+                    f'<div style="font-size: 18px; font-weight: 600; color: {aksen_k};">{escape(tim_k)}</div>'
+                    f'<div class="keterangan">{singkatan(tim_k)} (Kandang)</div>'
+                    '</div>'
+                    '<div style="background: var(--latar); border: 1px solid var(--garis); border-radius: 4px; padding: 8px 12px;">'
+                    f'<div style="font-family: var(--huruf-sempit); font-size: 32px; font-weight: 700; line-height: 1;">'
+                    f'{int(laga_row["gol_kandang"])} : {int(laga_row["gol_tandang"])}'
+                    '</div>'
+                    '<div style="font-size: 11px; font-weight: 600; color: var(--teks-2); margin-top: 4px;">SELESAI (FT)</div>'
+                    '</div>'
+                    f'<div style="text-align: left; padding-left: 16px;">'
+                    f'<div style="font-size: 18px; font-weight: 600; color: {aksen_t};">{escape(tim_t)}</div>'
+                    f'<div class="keterangan">{singkatan(tim_t)} (Tandang)</div>'
+                    '</div>'
+                    '</div>'
+                    f'<div style="margin-top: 12px; font-size: 12px; color: var(--teks-2);">'
+                    f'Babak 1 (HT): {int(laga_row.get("gol_kandang_babak1", 0))} - {int(laga_row.get("gol_tandang_babak1", 0))}'
+                    f'{wasit_str}{stadion_str}'
+                    '</div>'
+                    '</div>'
                 )
+                st.markdown(banner_html, unsafe_allow_html=True)
 
                 st.markdown('<h3 style="font-size: 16px; margin: 16px 0 12px;">Statistik Pertandingan</h3>', unsafe_allow_html=True)
 
