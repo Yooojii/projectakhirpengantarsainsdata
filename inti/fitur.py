@@ -6,7 +6,12 @@ pemain, jadi definisi jendela hanya boleh ada di sini.
 Aturan jendela (spec 8.2): sepuluh laga terakhir klub, kandang dan tandang
 digabung, diurutkan menurut tanggal, melintasi batas musim, tanpa laga yang
 tanggalnya sama dengan atau sesudah `sebelum`. Kurang dari sepuluh laga memakai
-yang ada (minimum tiga); di bawah tiga memakai rata-rata liga pada musim itu.
+yang ada (minimum tiga); di bawah tiga memakai rata-rata liga dari 380 laga
+terakhir dengan `tanggal < sebelum` (bebas kebocoran). Satu-satunya pengecualian
+adalah cold start: bila belum ada laga sebelum `sebelum` (hanya laga pembuka
+2000/01), dipakai 380 laga paling awal dataset, yang tidak bebas kebocoran dan
+tak terjangkau dari pelatihan maupun dasbor. Jangan "menyelaraskan" kode ke
+aturan musim penuh; itu akan membocorkan laga masa depan.
 """
 import numpy as np
 import pandas as pd
@@ -28,7 +33,7 @@ _STAT = ["tembakan", "tepat", "pojok", "pelanggaran", "kuning", "gol", "kebobola
 _IDENTITAS = ["tanggal", "tim_kandang", "tim_tandang"]
 
 
-def _poin(gol_sendiri: pd.Series, gol_lawan: pd.Series) -> pd.Series:
+def _poin(gol_sendiri: pd.Series, gol_lawan: pd.Series) -> np.ndarray:
     return np.where(gol_sendiri > gol_lawan, 3.0, np.where(gol_sendiri == gol_lawan, 1.0, 0.0))
 
 
@@ -55,15 +60,28 @@ def _panjang(df: pd.DataFrame) -> pd.DataFrame:
     return p.sort_values("tanggal", kind="stable").reset_index(drop=True)
 
 
+_memo: dict = {"df": None, "panjang": None}
+
+
+def _panjang_memo(df: pd.DataFrame) -> pd.DataFrame:
+    """`_panjang(df)` yang diingat untuk frame terakhir (identitas objek dan
+    panjang yang sama). Referensi ke frame ditahan agar id tidak dipakai ulang;
+    frame lain, atau frame yang dipotong, memicu penghitungan ulang."""
+    if _memo["df"] is not df or len(_memo["df"]) != len(_memo["panjang"]) // 2:
+        _memo["df"], _memo["panjang"] = df, _panjang(df)
+    return _memo["panjang"]
+
+
 def _vektor(jendela: np.ndarray, kandang: bool) -> dict[str, float]:
     """Fitur dari matriks jendela (baris = laga urut tanggal, kolom = _STAT)."""
     rata = jendela.mean(axis=0)
+    total_tembakan = jendela[:, 0].sum()
     tembakan, tepat, pojok, pelanggaran, kuning, gol, kebobolan, _ = rata
     return {
         "rata_tembakan": float(tembakan),
         "rata_tembakan_tepat": float(tepat),
         # jumlah gol dibagi jumlah tembakan, bukan rata-rata rasio per laga
-        "rasio_konversi": float(jendela[:, 5].sum() / jendela[:, 0].sum()),
+        "rasio_konversi": float(jendela[:, 5].sum() / total_tembakan) if total_tembakan else 0.0,
         "rata_sepak_pojok": float(pojok),
         "rata_pelanggaran": float(pelanggaran),
         "rata_kartu_kuning": float(kuning),
@@ -103,12 +121,14 @@ def fitur_tim(df: pd.DataFrame, klub: str, sebelum: pd.Timestamp, kandang: bool)
 
     `kandang` hanya mengisi `penanda_kandang` untuk laga yang diprediksi.
     """
-    p = _panjang(df)
+    p = _panjang_memo(df)
     p = p[p["klub"] == klub]
+    if p.empty:
+        raise ValueError(f"Klub tidak ditemukan di data: {klub!r}")
     jendela = _jendela(_matriks(p), p["tanggal"].to_numpy(), sebelum)
     if len(jendela) < MINIMUM_LAGA:
         jendela = _rata_liga(df, sebelum)
-        # rata-rata liga sudah jadi satu baris rata-rata; poin 5 laga = 5x rata-rata
+        # `jendela` kini matriks laga-klub se-liga; poin 5 laga = 5x rata-rata poin per laga
         vektor = _vektor(jendela, kandang)
         vektor["poin_lima_laga"] = float(jendela[:, 7].mean() * LAGA_POIN)
         return vektor
