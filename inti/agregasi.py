@@ -35,6 +35,9 @@ BOBOT_POSISI: dict[str, dict[str, float]] = {
 # Bobot campuran tiga atribut bertahan pada gol kebobolan.
 BOBOT_KEBOBOLAN = {"antisipasi": 0.45, "rebutan_bertahan": 0.25, "refleks": 0.30}
 
+# Atribut pemain yang dibaca tiap kunci bobot bertahan (eksplisit, bukan konvensi awalan).
+ATRIBUT_KEBOBOLAN = {"antisipasi": "antisipasi", "rebutan_bertahan": "rebutan", "refleks": "refleks"}
+
 # Fitur yang punya konstanta sendiri; sisanya turunan atau diteruskan.
 FITUR_LANGSUNG = [
     "rata_tembakan", "rata_sepak_pojok", "rasio_konversi", "rata_pelanggaran",
@@ -58,7 +61,7 @@ def bentuk(skuad: list[Pemain]) -> dict[str, float]:
     dipakai `kalibrasi` dan `agregasi_fitur`."""
     kreativitas = _rata(skuad, "kreativitas", "kreativitas")
     kebobolan = sum(
-        BOBOT_KEBOBOLAN[k] * _rata(skuad, k, k.split("_")[0], balik=True)
+        BOBOT_KEBOBOLAN[k] * _rata(skuad, k, ATRIBUT_KEBOBOLAN[k], balik=True)
         for k in BOBOT_KEBOBOLAN
     )
     penyelesaian = _rata(skuad, "penyelesaian", "penyelesaian")

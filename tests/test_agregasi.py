@@ -91,3 +91,38 @@ def test_cadangan_tidak_berpengaruh(df):
             for a in p.atribut:
                 p.atribut[a] = 99
     assert agregasi_fitur(diubah, k, asli["poin_lima_laga"], True) == awal
+
+
+def geser_tim(skuad, atribut, nilai):
+    s = copy.deepcopy(skuad)
+    for p in s:
+        if p.inti and atribut in p.atribut:
+            p.atribut[atribut] = nilai
+    return s
+
+
+# Uji penerimaan hilir butuh 0.5 gol harapan dari sapuan penuh; uji ini ada supaya
+# respons yang melemah gagal di sini, bukan tiga tugas kemudian.
+@pytest.mark.parametrize("klub", ["Arsenal", "Everton"])
+@pytest.mark.parametrize("atribut,fitur", [
+    ("penyelesaian", "rata_gol_dicetak"),
+    ("kreativitas", "rata_gol_dicetak"),
+    ("antisipasi", "rata_gol_kebobolan"),
+])
+def test_rentang_dinamis_sapuan_tim_penuh(df, klub, atribut, fitur):
+    asli, s, k = siapkan(df, klub)
+    rendah = agregasi_fitur(geser_tim(s, atribut, 1), k, asli["poin_lima_laga"], True)[fitur]
+    tinggi = agregasi_fitur(geser_tim(s, atribut, 99), k, asli["poin_lima_laga"], True)[fitur]
+    assert abs(tinggi - rendah) >= 1.0
+
+
+@pytest.mark.parametrize("atribut,tak_berubah", [
+    ("penyelesaian", ["rata_kartu_kuning", "rata_sepak_pojok", "rata_pelanggaran", "rata_gol_kebobolan"]),
+    ("ketenangan", ["rasio_konversi", "rata_tembakan", "rata_gol_kebobolan"]),
+])
+def test_atribut_tidak_menggerakkan_fitur_yang_bukan_miliknya(df, atribut, tak_berubah):
+    asli, s, k = siapkan(df, "Arsenal")
+    awal = agregasi_fitur(s, k, asli["poin_lima_laga"], True)
+    akhir = agregasi_fitur(geser(s, atribut, 10), k, asli["poin_lima_laga"], True)
+    for f in tak_berubah:
+        assert akhir[f] == awal[f]
