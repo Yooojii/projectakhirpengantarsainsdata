@@ -13,7 +13,7 @@ WARNA = {
     "Blackburn": "#2F6DB5",
     "Blackpool": "#E8731A",
     "Bolton": "#1B2A5C",
-    "Bournemouth": "#8F1A2C",  # merah tua; #C8102E milik Liverpool dan merah kartu bahaya
+    "Bournemouth": "#8F1A2C",  # merah tua; #C8102E milik Liverpool
     "Bradford": "#8C1D40",
     "Brentford": "#E30613",
     "Brighton": "#0057B8",

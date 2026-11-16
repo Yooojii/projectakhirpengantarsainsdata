@@ -308,7 +308,7 @@ def test_token_root_menurut_peran():
     harapan = {
         "--latar": "#F4F6F2", "--teks": "#0E1F18", "--teks-2": "#65736C",
         "--garis": "#CFD6CC", "--permukaan": "#FFFFFF",
-        "--peringatan": "#E0A800", "--bahaya": "#C8102E",
+        "--peringatan": "#8A6400", "--bahaya": "#A4161A",
     }
     for token, nilai in harapan.items():
         assert _prop(":root", token) == nilai
@@ -399,7 +399,7 @@ def test_aksen_klub_musim_berjalan_unik_dan_bukan_merah_kartu():
     aksen = {k: warna_aksen(warna_klub(k)) for k in klub}
     assert len(set(aksen.values())) == len(klub)
     assert warna_klub("Bournemouth") != warna_klub("Liverpool")
-    assert warna_klub("Bournemouth").upper() != "#C8102E"
+    assert warna_klub("Bournemouth").upper() != "#C8102E"  # merah asli Liverpool
 
 
 # ------------------------------------------------------------------- logo
@@ -430,3 +430,18 @@ def test_papan_skor_memuat_logo_kecil_atau_singkatan_sebagai_cadangan():
     assert "alt=\"\"" in h
     assert singkatan("Bolton") in h
     assert "width=\"24\"" in h  # tidak lebih besar dari nama klub (24 px)
+
+
+# ------------------------------------------------- palet: kontras dan pemisahan
+
+def test_setiap_warna_pembawa_makna_lolos_kontras_45():
+    for token in ["--teks", "--teks-2", "--peringatan", "--bahaya"]:
+        warna = _prop(":root", token)
+        assert kontras(warna) >= 4.5, f"{token} {warna} = {kontras(warna):.2f}"
+
+
+def test_aksen_tidak_ada_klub_yang_sama_dengan_peringatan_atau_bahaya():
+    cadangan = {_prop(":root", "--peringatan").upper(), _prop(":root", "--bahaya").upper()}
+    for klub in WARNA:
+        assert warna_klub(klub).upper() not in cadangan, klub
+        assert warna_aksen(warna_klub(klub)).upper() not in cadangan, klub
