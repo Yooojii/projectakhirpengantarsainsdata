@@ -1,0 +1,154 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Sans+Condensed:wght@500;600&display=swap");
+
+/* Papan taktik: satu-satunya hiasan adalah geometri lapangan (garis tengah, lingkaran tengah). */
+
+:root {
+  --latar: #F4F6F2;
+  --teks: #0E1F18;
+  --teks-2: #6B7A72;
+  --garis: #CFD6CC;
+  --permukaan: #FFFFFF;
+  --peringatan: #E0A800;
+  --bahaya: #C8102E;
+  --aksen: #6B7A72;
+  --huruf: "IBM Plex Sans", sans-serif;
+  --huruf-sempit: "IBM Plex Sans Condensed", "IBM Plex Sans", sans-serif;
+}
+
+/* ---- Dasar ---- */
+.stApp {
+  background: var(--latar);
+  color: var(--teks);
+  font-family: var(--huruf);
+  font-size: 16px;
+  line-height: 1.6;
+}
+.stApp [data-testid="stSidebar"] {
+  background: var(--latar);
+  border-right: 1px solid var(--garis);
+}
+.stApp * { box-shadow: none !important; }
+.stApp :focus-visible { outline: 2px solid var(--teks); outline-offset: 2px; }
+
+/* Kerangka bawaan Streamlit yang tidak dipakai */
+#MainMenu, [data-testid="stMainMenu"], footer, [data-testid="stFooter"],
+[data-testid="stToolbar"], [data-testid="stDecoration"] { display: none !important; }
+[data-testid="stHeader"] { background: transparent; }
+
+/* ---- Jarak: kelipatan 8; 48 antarbagian, 16 dalam bagian ---- */
+.stApp .block-container { padding-top: 48px; padding-bottom: 48px; }
+.stApp [data-testid="stVerticalBlock"] { gap: 16px; }
+
+/* ---- Tipografi ---- */
+.stApp h1, .stApp h2, .stApp h3 {
+  font-family: var(--huruf);
+  color: var(--teks);
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.stApp h2, .stApp h3 { font-size: 22px; line-height: 1.3; margin: 48px 0 16px; padding: 0; }
+.stApp p, .stApp li { max-width: 68ch; font-size: 16px; line-height: 1.6; font-weight: 400; }
+.stApp label, .stApp small, .stApp [data-testid="stCaptionContainer"], .keterangan {
+  font-size: 13px; font-weight: 400; color: var(--teks-2); text-transform: none;
+}
+.bagian { margin-top: 48px; }
+.dalam { margin-top: 16px; }
+
+/* ---- Angka: sempit dan rata lebar ---- */
+.angka, .angka-prediksi, table.tabel td, table.tabel th {
+  font-family: var(--huruf-sempit);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Papan skor ---- */
+.papan-skor { margin: 16px 0; }
+.papan-baris {
+  display: grid;
+  grid-template-columns: 1fr 160px 1fr;
+  height: 160px;
+}
+.papan-sisi { position: relative; }
+.papan-sisi::after {              /* garis tengah, terputus di lingkaran */
+  content: "";
+  position: absolute;
+  left: 0; right: 0; top: 50%;
+  border-top: 1px solid var(--garis);
+}
+.papan-nama {
+  position: absolute;
+  bottom: calc(50% + 8px);
+  font-family: var(--huruf-sempit);
+  font-size: 24px; font-weight: 500; line-height: 1.2;
+  color: var(--teks);
+  white-space: nowrap;
+}
+.papan-kandang .papan-nama { right: 16px; }
+.papan-tamu .papan-nama { left: 16px; }
+.papan-lingkaran {
+  box-sizing: border-box;
+  width: 160px; height: 160px;
+  border: 1px solid var(--garis);
+  border-radius: 50%;
+  background: var(--permukaan);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--huruf-sempit);
+  font-variant-numeric: tabular-nums;
+  font-size: 64px; font-weight: 600; line-height: 1;
+  color: var(--teks);
+}
+.papan-skor-angka { display: inline-block; min-width: 40px; text-align: center; }
+.papan-peluang {
+  display: grid;
+  grid-template-columns: 1fr 160px 1fr;
+  margin-top: 16px;
+}
+.papan-peluang > div { display: flex; flex-direction: column; }
+.papan-peluang .kandang { align-items: flex-end; padding-right: 16px; }
+.papan-peluang .seri { align-items: center; }
+.papan-peluang .tamu { align-items: flex-start; padding-left: 16px; }
+.papan-peluang .angka-prediksi { font-size: 24px; font-weight: 500; color: var(--teks); }
+.papan-peluang .keterangan { font-size: 13px; }
+
+/* ---- Bar atribut: lebar tetap, delapan ruas ---- */
+.bar-atribut { display: flex; align-items: center; gap: 8px; }
+.bar-isi { display: flex; gap: 4px; width: 160px; }
+.ruas { flex: 1 1 0; height: 8px; background: var(--garis); border-radius: 0; }
+.bar-atribut .angka {
+  width: 32px; text-align: right;
+  font-size: 15px; font-weight: 500; color: var(--teks);
+}
+
+/* ---- Tabel: tanpa garis tegak, satu garis di bawah judul, tanpa belang ---- */
+table.tabel { border-collapse: collapse; border: 0; background: transparent; }
+table.tabel th, table.tabel td {
+  border: 0; background: transparent; padding: 8px 16px;
+  font-size: 15px; font-weight: 500; text-align: right; color: var(--teks);
+}
+table.tabel th { border-bottom: 1px solid var(--garis); color: var(--teks-2); }
+table.tabel th.teks, table.tabel td.teks {
+  text-align: left; font-family: var(--huruf-sempit); font-weight: 500;
+}
+
+/* ---- Panel: satu-satunya tempat sudut membulat ---- */
+.panel {
+  background: var(--permukaan);
+  border: 1px solid var(--garis);
+  border-radius: 4px;
+  padding: 16px;
+}
+
+/* ---- Risiko: kuning dan merah kartu hanya untuk ini ---- */
+.risiko-peringatan { border-left: 4px solid var(--peringatan); padding-left: 16px; }
+.risiko-bahaya { border-left: 4px solid var(--bahaya); padding-left: 16px; }
+
+/* ---- Gerakan tunggal: angka prediksi yang berubah ---- */
+@keyframes angka-berubah {
+  from { color: var(--aksen); }
+  to { color: var(--teks); }
+}
+.angka-prediksi.berubah { animation: angka-berubah 600ms ease-out; }
+
+@media (prefers-reduced-motion: reduce) {
+  .angka-prediksi.berubah { animation: none; }
+}
