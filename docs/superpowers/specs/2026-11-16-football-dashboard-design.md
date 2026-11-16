@@ -382,6 +382,8 @@ predict(fitur_kandang: dict, fitur_tandang: dict) -> {
 
 Disimpan sebagai berkas model terlatih (`joblib` atau `pickle`) beserta daftar nama fitur dan urutannya.
 
+**Label kelas wajib berupa tiga huruf `"H"`, `"D"`, `"A"`** — bukan angka 0/1/2 dan bukan kata penuh. Alasannya bukan selera: scikit-learn mengurutkan label saat melatih, sehingga kolom keluaran `predict_proba` mengikuti urutan `model.classes_`, bukan urutan yang ditulis saat melatih. Dashboard memetakan kolom lewat `classes_`, jadi urutannya aman — tapi kalau labelnya bukan ketiga huruf itu, pemetaan tidak bisa dilakukan dan dashboard menolak memuat model dengan pesan galat yang menyebutkan label yang ditemukan. Gagal keras di awal jauh lebih baik daripada peluang menang kandang dan tandang tertukar diam-diam di layar pelatih.
+
 ### 8.2 Fitur yang diminta, dan siapa yang menghitungnya
 
 **Dashboard yang menghitung fitur, bukan pipeline pelatihan.** Janji di 7.1 — penggeser di posisi awal menghasilkan prediksi yang sama persis dengan prediksi model dari data nyata — hanya berlaku kalau fitur yang dipakai saat melatih dan fitur yang dibangkitkan saat simulasi dihitung oleh **kode yang sama persis**. Kalau ada dua implementasi, perbedaan sekecil apa pun membuat titik nol simulasi meleset tanpa ada yang menyadarinya, dan tidak ada uji yang bisa menangkapnya.
