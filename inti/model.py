@@ -95,7 +95,14 @@ def prediksi(fitur_k: dict, fitur_t: dict, model=None) -> dict:
         if hilang:
             raise ValueError(f"Fitur untuk model tidak lengkap, kurang: {hilang}")
         x = [[fitur_k[n] for n in NAMA_FITUR]]
-        proba = dict(zip(model.classes_, model.predict_proba(x)[0]))
+        label = list(model.classes_)
+        if set(label) != {"H", "D", "A"} or len(label) != 3:
+            raise ValueError(
+                f"model.classes_ berisi {label}, padahal kontraknya wajib string "
+                '"H", "D", dan "A" (bukan 0/1/2 atau yang lain).')
+        # predict_proba berurutan menurut classes_ (sklearn mengurutkan label
+        # string, jadi A, D, H); selalu dipetakan lewat posisi, bukan urutan tetap.
+        proba = dict(zip(label, model.predict_proba(x)[0]))
         h, d, a = float(proba["H"]), float(proba["D"]), float(proba["A"])
 
     return {"p_menang_kandang": h, "p_seri": d, "p_menang_tandang": a,
@@ -105,6 +112,13 @@ def prediksi(fitur_k: dict, fitur_t: dict, model=None) -> dict:
 def pembanding(prediksi_uji: pd.DataFrame) -> dict[str, float]:
     """Akurasi model, selalu-kandang, dan ikut-odds pada baris yang sama."""
     df = prediksi_uji
+    kolom_odds = ["odds_kandang", "odds_seri", "odds_tandang"]
+    hilang = int(df[kolom_odds].isna().any(axis=1).sum())
+    if hilang:
+        raise ValueError(
+            f"{hilang} baris punya odds kosong; pembanding hanya valid bila ketiga "
+            "akurasi diukur pada baris yang sama, jadi data uji harus berada "
+            "dalam musim 2019/20 atau lebih baru.")
     odds = df[["odds_kandang", "odds_seri", "odds_tandang"]].to_numpy()
     tebak_odds = np.array(["H", "D", "A"])[odds.argmin(axis=1)]
     return {

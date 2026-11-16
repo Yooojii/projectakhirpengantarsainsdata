@@ -93,6 +93,7 @@ def test_pembanding_dihitung_pada_baris_yang_sama():
     uji = pd.DataFrame({
         "hasil": ["H", "A", "D", "H"],
         "prediksi": ["H", "H", "D", "H"],
+        # Baris 4 dipilih agar tebakan bandar (A, salah) berbeda dari akurasi model.
         "odds_kandang": [1.5, 4.0, 2.0, 3.0],
         "odds_seri": [4.0, 3.5, 3.0, 3.6],
         "odds_tandang": [6.0, 1.9, 3.5, 1.8],
@@ -102,3 +103,20 @@ def test_pembanding_dihitung_pada_baris_yang_sama():
     assert p["selalu_kandang"] == pytest.approx(0.5)
     # odds terendah: H, A, H, A -> benar, benar, salah, salah
     assert p["ikut_odds"] == pytest.approx(0.5)
+
+
+def test_jalur_model_menolak_label_bukan_hnd():
+    class Angka(_ModelPalsu):
+        classes_ = [0, 1, 2]
+    with pytest.raises(ValueError, match=r"\[0, 1, 2\].*\"H\""):
+        prediksi(_lengkap(1.0), _lengkap(2.0), model=Angka())
+
+
+def test_pembanding_menolak_odds_kosong():
+    uji = pd.DataFrame({
+        "hasil": ["H", "A"], "prediksi": ["H", "A"],
+        "odds_kandang": [1.5, None], "odds_seri": [4.0, 3.0],
+        "odds_tandang": [6.0, 2.0],
+    })
+    with pytest.raises(ValueError, match=r"1 baris.*2019/20"):
+        pembanding(uji)
