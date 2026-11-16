@@ -49,7 +49,7 @@ KELOMPOK_KOLOM: dict[str, list[str]] = {
 @_cache
 def muat_pertandingan(path: str = "data/liga_inggris_gabungan.csv") -> pd.DataFrame:
     df = pd.read_csv(path, parse_dates=["tanggal"])
-    df = df.sort_values("tanggal").reset_index(drop=True)
+    df = df.sort_values("tanggal", kind="stable").reset_index(drop=True)
     # Pra-pemrosesan: tiga baris sumber mencatat tembakan tepat sasaran lebih
     # banyak daripada total tembakan (Coventry 2000-10-14, Bradford 2001-04-13,
     # West Ham tandang 2021-08-15). Itu mustahil, jadi tembakan tepat dibatasi

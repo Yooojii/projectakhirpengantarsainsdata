@@ -1,4 +1,5 @@
 import pandas as pd
+from pathlib import Path
 from inti.data import muat_pertandingan, cakupan_kolom, KELOMPOK_KOLOM, klub_musim
 
 def test_muat_pertandingan_bentuk_dan_tipe():
@@ -31,3 +32,29 @@ def test_tembakan_tepat_tidak_melebihi_total_tembakan():
     df = muat_pertandingan()
     assert (df["tembakan_tepat_kandang"] <= df["tembakan_kandang"]).all()
     assert (df["tembakan_tepat_tandang"] <= df["tembakan_tandang"]).all()
+
+def test_klem_tembakan_tepat_hanya_mengubah_lima_sel_yang_diputuskan():
+    mentah = pd.read_csv(
+        Path(__file__).resolve().parent.parent / "data" / "liga_inggris_gabungan.csv",
+        parse_dates=["tanggal"],
+    )
+    df = muat_pertandingan()
+    kunci = ["tanggal", "tim_kandang", "tim_tandang"]
+    kolom = ["tembakan_tepat_kandang", "tembakan_tepat_tandang"]
+    gabung = mentah[kunci + kolom].merge(
+        df[kunci + kolom], on=kunci, suffixes=("_mentah", "_bersih"), validate="one_to_one"
+    )
+    assert len(gabung) == 9880
+    beda = {}
+    for k in kolom:
+        b = gabung[gabung[f"{k}_mentah"] != gabung[f"{k}_bersih"]]
+        for _, r in b.iterrows():
+            beda[(r["tanggal"].strftime("%Y-%m-%d"), r["tim_kandang"], k)] = (
+                r[f"{k}_mentah"], r[f"{k}_bersih"])
+    assert beda == {
+        ("2000-10-14", "Coventry", "tembakan_tepat_kandang"): (5.0, 0.0),
+        ("2000-10-14", "Coventry", "tembakan_tepat_tandang"): (5.0, 4.0),
+        ("2001-04-13", "Bradford", "tembakan_tepat_kandang"): (8.0, 4.0),
+        ("2001-04-13", "Bradford", "tembakan_tepat_tandang"): (8.0, 3.0),
+        ("2021-08-15", "Newcastle", "tembakan_tepat_tandang"): (9.0, 8.0),
+    }
