@@ -118,9 +118,11 @@ def test_klub_tidak_dikenal_memunculkan_valueerror(df):
     with pytest.raises(ValueError, match="Arsenall"):
         fitur_tim(df, "Arsenall", pd.Timestamp("2026-11-03"), kandang=True)
 
-def test_frame_berbeda_tidak_memakai_memo_lama(df):
+def test_memo_tidak_menyajikan_hasil_frame_lama_untuk_frame_baru(df):
+    # Tes ini yang menjaga tes kebocoran tetap jujur: memo yang mengabaikan kuncinya
+    # akan membuat tes pemotongan frame lulus tanpa membuktikan apa pun.
     sebelum = pd.Timestamp("2023-08-12")
-    penuh = fitur_tim(df, "Luton", sebelum, kandang=True)
-    kecil = df[df.tanggal < pd.Timestamp("2010-01-01")].copy()
-    assert fitur_tim(kecil, "Arsenal", pd.Timestamp("2009-12-01"), True) != penuh
-    assert fitur_tim(df, "Luton", sebelum, kandang=True) == penuh
+    fitur_tim(df, "Luton", pd.Timestamp("2026-11-03"), kandang=True)  # isi slot memo dengan frame penuh
+    terpotong = df[df.tanggal < sebelum].copy()  # tak memuat Luton sama sekali
+    with pytest.raises(ValueError, match="Luton"):
+        fitur_tim(terpotong, "Luton", sebelum, kandang=True)
