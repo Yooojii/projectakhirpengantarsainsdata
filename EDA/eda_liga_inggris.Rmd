@@ -1,0 +1,1029 @@
+---
+title: "EDA Liga Inggris: Apa yang Berulang di 27 Musim"
+subtitle: "Halaman EDA Liga, Dashboard Ruang Kerja Pelatih. Klub: `r params$klub_saya`"
+author: "Kelompok 8 - Paralel 1"
+date: "`r format(Sys.Date(), '%d-%m-%Y')`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 2
+    df_print: paged
+    code_folding: hide
+params:
+  path_csv: "liga_inggris_gabungan.csv"
+  klub_saya:
+    label: "Klub saya"
+    value: "Arsenal"
+    input: select
+    choices: ["Arsenal", "Aston Villa", "Bournemouth", "Brentford", "Brighton", "Chelsea", "Coventry", "Crystal Palace", "Everton", "Fulham", "Hull", "Ipswich", "Leeds", "Liverpool", "Man City", "Man United", "Newcastle", "Nott'm Forest", "Sunderland", "Tottenham"]
+  lawan_contoh:
+    label: "Lawan contoh (lampiran History)"
+    value: "(otomatis)"
+    input: select
+    choices: ["(otomatis)", "Arsenal", "Aston Villa", "Bournemouth", "Brentford", "Brighton", "Chelsea", "Coventry", "Crystal Palace", "Everton", "Fulham", "Hull", "Ipswich", "Leeds", "Liverpool", "Man City", "Man United", "Newcastle", "Nott'm Forest", "Sunderland", "Tottenham"]
+  musim_awal:
+    label: "Musim awal"
+    value: "2000/01"
+    input: select
+    choices: ["2000/01", "2001/02", "2002/03", "2003/04", "2004/05", "2005/06", "2006/07", "2007/08", "2008/09", "2009/10", "2010/11", "2011/12", "2012/13", "2013/14", "2014/15", "2015/16", "2016/17", "2017/18", "2018/19", "2019/20", "2020/21", "2021/22", "2022/23", "2023/24", "2024/25", "2025/26", "2026/27"]
+  musim_akhir:
+    label: "Musim akhir"
+    value: "2026/27"
+    input: select
+    choices: ["2000/01", "2001/02", "2002/03", "2003/04", "2004/05", "2005/06", "2006/07", "2007/08", "2008/09", "2009/10", "2010/11", "2011/12", "2012/13", "2013/14", "2014/15", "2015/16", "2016/17", "2017/18", "2018/19", "2019/20", "2020/21", "2021/22", "2022/23", "2023/24", "2024/25", "2025/26", "2026/27"]
+  min_musim_bertahan:
+    label: "Klub pembanding di bagian 6: minimal berapa musim"
+    value: 15
+    input: slider
+    min: 3
+    max: 27
+    step: 1
+---
+
+```{css, echo=FALSE}
+/* Palet dari dokumen desain 9.2 */
+body { background: #F4F6F2; color: #0E1F18; font-family: "IBM Plex Sans", sans-serif;
+       line-height: 1.6; }
+h1, h2, h3 { color: #0E1F18; font-weight: 600; }
+.main-container { max-width: 980px; }
+table { font-variant-numeric: tabular-nums; }
+.temuan { border-left: 4px solid #CFD6CC; padding: 4px 0 4px 14px; margin: 12px 0 28px 0;
+          color: #0E1F18; font-weight: 600; }
+.catatan { color: #65736C; font-size: 13px; }
+.temuan-klub { border-left: 4px solid var(--aksen, #1B6B4A); padding: 4px 0 4px 14px;
+               margin: -16px 0 28px 0; color: #0E1F18; }
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE,
+                      fig.width = 9, fig.height = 5.5, dpi = 150, out.width = "100%")
+
+suppressPackageStartupMessages({
+  library(dplyr)
+  library(tidyr)
+  library(ggplot2)
+  library(scales)
+  library(knitr)
+})
+```
+
+Dokumen ini menjalankan seluruh EDA untuk halaman **EDA Liga** pada desain dashboard (bagian 6.4), ditambah pemeriksaan data untuk blok preprocessing (bagian 4, 7.7, dan 8.4). Tiap bagian menjawab satu pertanyaan pelatih dengan satu grafik dan satu kalimat temuan. Kalimat temuan dihitung langsung dari data, bukan ditulis tangan.
+
+Aturan desain yang dipegang:
+
+- Semua tren per musim memakai ukuran **per laga** atau rasio, supaya musim yang laganya tidak utuh tidak membentuk cekungan palsu.
+- Klub terpilih disorot dengan warna aksen, sisanya abu-abu.
+- Kolom `pekan` dan statistik lanjutan tidak dipakai, dan tidak ada imputasi.
+- Bagian penguasaan bola dan xG tidur sampai cakupan kolomnya mencapai 60%.
+
+# Konfigurasi
+
+Tiga parameter di bagian atas berkas (`klub_saya`, `musim_awal`, `musim_akhir`) setara dengan dropdown klub dan penggeser musim di dashboard. Ubah di YAML, atau lewat `rmarkdown::render("eda_liga_inggris.Rmd", params = list(klub_saya = "Liverpool"))`.
+
+```{r konfigurasi}
+PATH_CSV           <- params$path_csv
+KLUB_SAYA          <- params$klub_saya
+MUSIM_AWAL         <- params$musim_awal
+MUSIM_AKHIR        <- params$musim_akhir
+MIN_MUSIM_BERTAHAN <- params$min_musim_bertahan
+AMBANG_CAKUPAN     <- 0.60      # bagian tidur muncul jika cakupan >= 60%
+LAGA_PENUH         <- 380
+# Satu folder keluaran per klub, supaya render klub lain tidak menimpa
+SLUG    <- tolower(gsub("^_|_$", "", gsub("[^A-Za-z0-9]+", "_", KLUB_SAYA)))
+DIR_OUT <- file.path("output", "eda", SLUG)
+dir.create(DIR_OUT, recursive = TRUE, showWarnings = FALSE)
+
+# Palet (9.2)
+PAL <- list(latar = "#F4F6F2", teks = "#0E1F18", sekunder = "#65736C",
+            garis = "#CFD6CC", panel = "#FFFFFF",
+            peringatan = "#8A6400", bahaya = "#A4161A")
+
+# Warna utama 20 klub musim berjalan. Ukur rasio kontras terhadap #F4F6F2
+# sebelum dipakai (pelajaran 9.2). Klub lain memakai hijau netral.
+warna_klub <- c(
+  "Arsenal" = "#EF0107", "Aston Villa" = "#670E36", "Bournemouth" = "#DA291C",
+  "Brentford" = "#E30613", "Brighton" = "#0057B8", "Chelsea" = "#034694",
+  "Coventry" = "#2A8BC0", "Crystal Palace" = "#1B458F", "Everton" = "#003399",
+  "Fulham" = "#1A1A1A", "Hull" = "#C77700", "Ipswich" = "#3A64A3",
+  "Leeds" = "#1D428A", "Liverpool" = "#C8102E", "Man City" = "#4C93C6",
+  "Man United" = "#DA291C", "Newcastle" = "#241F20", "Nott'm Forest" = "#DD0000",
+  "Sunderland" = "#EB172B", "Tottenham" = "#132257"
+)
+AKSEN <- if (KLUB_SAYA %in% names(warna_klub)) warna_klub[[KLUB_SAYA]] else "#1B6B4A"
+
+# Tipografi (9.3): IBM Plex Sans jika terpasang
+FONT <- "sans"
+if (requireNamespace("systemfonts", quietly = TRUE) &&
+    "IBM Plex Sans" %in% systemfonts::system_fonts()$family) FONT <- "IBM Plex Sans"
+```
+
+```{r gaya-aksen, echo=FALSE, results='asis'}
+cat(sprintf("<style>:root { --aksen: %s; }</style>", AKSEN))
+```
+
+```{r fungsi-bantu}
+# Aman untuk NA/NaN: klub yang belum punya kasus tertentu menghasilkan "-"
+fmt_id  <- function(x, d = 1) ifelse(is.finite(x), formatC(x, format = "f", digits = d, decimal.mark = ","), "-")
+pct_id  <- function(x, d = 0) ifelse(is.finite(x), paste0(fmt_id(100 * x, d), "%"), "-")
+atas_bawah <- function(x) ifelse(x >= 0, "di atas", "di bawah")
+bungkus <- function(x, w = 62) paste(strwrap(x, width = w), collapse = "\n")
+
+tema_papan <- function() {
+  theme_minimal(base_family = FONT, base_size = 13) +
+    theme(
+      plot.background    = element_rect(fill = PAL$latar, colour = NA),
+      panel.background   = element_rect(fill = PAL$latar, colour = NA),
+      panel.grid.major.x = element_blank(),
+      panel.grid.minor   = element_blank(),
+      panel.grid.major.y = element_line(colour = PAL$garis, linewidth = 0.3),
+      axis.text          = element_text(colour = PAL$sekunder),
+      axis.title         = element_text(colour = PAL$sekunder, size = 11),
+      plot.title         = element_text(colour = PAL$teks, face = "bold", size = 17,
+                                        hjust = 0, margin = margin(b = 6)),
+      plot.subtitle      = element_text(colour = PAL$sekunder, size = 12,
+                                        margin = margin(b = 10)),
+      plot.caption       = element_text(colour = PAL$sekunder, size = 10, hjust = 0,
+                                        margin = margin(t = 10)),
+      plot.title.position   = "plot",
+      plot.caption.position = "plot",
+      strip.text         = element_text(colour = PAL$teks, face = "bold", hjust = 0),
+      legend.position    = "none",
+      plot.margin        = margin(16, 16, 12, 16)
+    )
+}
+
+# Mencatat kalimat temuan dan menyimpan PNG; grafik ditampilkan oleh chunk
+TEMUAN <- character(0)
+catat <- function(p, nama, judul, w = 9, h = 5.5) {
+  TEMUAN <<- c(TEMUAN, paste0(nama, ": ", judul))
+  ggsave(file.path(DIR_OUT, paste0(nama, ".png")), p,
+         width = w, height = h, dpi = 150, bg = PAL$latar)
+  invisible(p)
+}
+# Kalimat temuan khusus klub terpilih, ikut masuk ke kalimat_temuan.txt
+catat_klub <- function(nama, kalimat) {
+  TEMUAN <<- c(TEMUAN, paste0(nama, ": ", kalimat))
+  invisible(kalimat)
+}
+```
+
+# Data
+
+## Memuat data
+
+```{r muat-data}
+# Mencari CSV: parameter path_csv dulu, lalu lokasi umum
+cari_csv <- function(p) {
+  kandidat <- unique(c(p, "liga_inggris_gabungan.csv", "data/liga_inggris_gabungan.csv",
+                       "../data/liga_inggris_gabungan.csv",
+                       "C:/Users/User/Downloads/liga_inggris_gabungan.csv"))
+  ada <- kandidat[file.exists(kandidat)]
+  if (length(ada) == 0) stop("CSV tidak ditemukan. Isi parameter path_csv dengan lokasi liga_inggris_gabungan.csv.")
+  ada[1]
+}
+liga <- read.csv(cari_csv(PATH_CSV), stringsAsFactors = FALSE)
+liga$tanggal <- as.Date(liga$tanggal)
+liga$id_laga <- seq_len(nrow(liga))
+urut_musim   <- sort(unique(liga$musim))
+liga$musim   <- factor(liga$musim, levels = urut_musim)
+
+n_klub <- length(unique(c(liga$tim_kandang, liga$tim_tandang)))
+```
+
+Data berisi **`r format(nrow(liga), big.mark = ".", decimal.mark = ",")` laga**, **`r nlevels(liga$musim)` musim**, **`r n_klub` klub**, dan **`r ncol(liga) - 1` kolom** asli, dari `r format(min(liga$tanggal), "%d-%m-%Y")` sampai `r format(max(liga$tanggal), "%d-%m-%Y")`.
+
+## Kelengkapan per kelompok kolom
+
+Tabel ini isi poin rubrik 2 (Data Overview) dan menyebut keterbatasan data dengan angka.
+
+```{r kelengkapan}
+kelompok_kolom <- list(
+  "Identitas laga"  = c("tanggal", "tim_kandang", "tim_tandang", "musim", "wasit"),
+  "Hasil"           = c("gol_kandang", "gol_tandang", "hasil",
+                        "gol_kandang_babak1", "gol_tandang_babak1"),
+  "Statistik dasar" = c("tembakan_kandang", "tembakan_tandang",
+                        "tembakan_tepat_kandang", "tembakan_tepat_tandang",
+                        "pelanggaran_kandang", "pelanggaran_tandang",
+                        "sepak_pojok_kandang", "sepak_pojok_tandang",
+                        "kartu_kuning_kandang", "kartu_kuning_tandang",
+                        "kartu_merah_kandang", "kartu_merah_tandang"),
+  "Odds"            = c("odds_kandang", "odds_seri", "odds_tandang"),
+  "Statistik lanjutan (API)" = c(
+    "penguasaan_bola_kandang", "penguasaan_bola_tandang",
+    "umpan_kandang", "umpan_tandang", "umpan_akurat_kandang", "umpan_akurat_tandang",
+    "akurasi_umpan_kandang", "akurasi_umpan_tandang",
+    "penyelamatan_kiper_kandang", "penyelamatan_kiper_tandang",
+    "offside_kandang", "offside_tandang",
+    "xg_api_kandang", "xg_api_tandang", "gol_dicegah_kandang", "gol_dicegah_tandang"),
+  "xG musim berjalan" = c("xg_kandang", "xg_tandang")
+)
+cakupan_kolom <- function(kolom) mean(!is.na(liga[[kolom]]))
+
+tabel_kelengkapan <- data.frame(
+  `Kelompok kolom` = names(kelompok_kolom),
+  `Jumlah kolom`   = sapply(kelompok_kolom, length),
+  `Cakupan`        = sapply(kelompok_kolom, function(k) pct_id(mean(!is.na(liga[k])), 1)),
+  check.names = FALSE, row.names = NULL
+)
+kable(tabel_kelengkapan, align = c("l", "r", "r"))
+```
+
+Statistik lanjutan dan xG musim berjalan hanya terisi sekitar satu persen, sehingga tidak dipakai untuk melatih model.
+
+## Pemeriksaan kualitas
+
+Anomali **ditandai, tidak dihapus dan tidak ditambal** (aturan 7.7).
+
+```{r kualitas}
+hasil_dari_skor <- ifelse(liga$gol_kandang > liga$gol_tandang, "H",
+                   ifelse(liga$gol_kandang < liga$gol_tandang, "A", "D"))
+kolom_inti <- unlist(kelompok_kolom[c("Identitas laga", "Hasil", "Statistik dasar")])
+
+liga <- liga %>%
+  mutate(
+    total_gol = gol_kandang + gol_tandang,
+    anom_tepat_lebih_banyak_dari_total =
+      tembakan_tepat_kandang > tembakan_kandang | tembakan_tepat_tandang > tembakan_tandang,
+    anom_gol_lebih_banyak_dari_tepat =
+      gol_kandang > tembakan_tepat_kandang | gol_tandang > tembakan_tepat_tandang,
+    anom_nol_tembakan = tembakan_kandang == 0 | tembakan_tandang == 0
+  )
+
+cek <- data.frame(
+  Pemeriksaan = c(
+    "Nilai kosong di kolom inti",
+    "Baris duplikat (tanggal + kedua klub)",
+    "Kolom `hasil` tidak cocok dengan skor",
+    "Gol babak 1 melebihi skor akhir",
+    "Tembakan tepat sasaran lebih banyak dari total tembakan",
+    "Gol lebih banyak dari tembakan tepat sasaran",
+    "Laga dengan 0 tembakan (rasio akurasi tak terdefinisi)"),
+  `Jumlah` = c(
+    sum(is.na(liga[kolom_inti])),
+    sum(duplicated(liga[, c("tanggal", "tim_kandang", "tim_tandang")])),
+    sum(hasil_dari_skor != liga$hasil),
+    sum(liga$gol_kandang_babak1 > liga$gol_kandang | liga$gol_tandang_babak1 > liga$gol_tandang),
+    sum(liga$anom_tepat_lebih_banyak_dari_total),
+    sum(liga$anom_gol_lebih_banyak_dari_tepat),
+    sum(liga$anom_nol_tembakan)),
+  `Penanganan` = c("-", "-", "-", "-", "Ditandai", "Ditandai (gol bunuh diri atau salah catat)", "Ditandai"),
+  check.names = FALSE
+)
+kable(cek, align = c("l", "r", "l"))
+```
+
+## Patahan definisi tembakan tepat sasaran
+
+```{r patahan-tembakan-tepat, results='asis'}
+akur_musim <- liga %>% group_by(musim) %>%
+  summarise(akurasi = (sum(tembakan_tepat_kandang) + sum(tembakan_tepat_tandang)) /
+                      (sum(tembakan_kandang) + sum(tembakan_tandang)), .groups = "drop") %>%
+  mutate(sebelum = lag(akurasi), turun = akurasi - sebelum)
+patah <- akur_musim %>% slice_min(turun, n = 1, with_ties = FALSE)
+if (nrow(patah) == 1 && isTRUE(patah$turun < -0.1)) {
+  cat(sprintf("\n\n<p class=\"catatan\" style=\"color:%s\">Tembakan tepat sasaran turun tajam di musim %s (%s dari seluruh tembakan di musim sebelumnya, %s sesudahnya), padahal jumlah tembakan tidak berubah. Kemungkinan definisi di sumber data berubah. Karena itu bagian 3 membandingkan tiap klub dengan rata-rata liga di <b>musim yang sama</b>.</p>\n\n",
+              PAL$peringatan, as.character(patah$musim), pct_id(patah$sebelum), pct_id(patah$akurasi)))
+}
+```
+
+## Musim dengan laga tidak utuh
+
+```{r musim-parsial}
+laga_musim <- liga %>% count(musim, name = "laga") %>% mutate(parsial = laga < LAGA_PENUH)
+kable(laga_musim %>% filter(parsial) %>%
+        transmute(Musim = musim, `Jumlah laga` = laga, `Kekurangan` = LAGA_PENUH - laga),
+      align = c("l", "r", "r"))
+
+klub_musim_berjalan <- sort(unique(liga$tim_kandang[liga$musim == tail(urut_musim, 1)]))
+semua_klub <- sort(unique(c(liga$tim_kandang, liga$tim_tandang)))
+if (!KLUB_SAYA %in% semua_klub)
+  stop("Klub '", KLUB_SAYA, "' tidak ada di data. Pilihan: ", paste(klub_musim_berjalan, collapse = ", "))
+if (!KLUB_SAYA %in% klub_musim_berjalan)
+  warning("KLUB_SAYA tidak ada di musim berjalan: ", KLUB_SAYA)
+```
+
+Musim 2003/04 dan 2004/05 kehilangan 45 laga yang tersebar, dan musim berjalan baru terisi sebagian. Karena itu semua grafik tren memakai ukuran per laga, dan ketiga musim itu ditandai lingkaran kosong.
+
+## Menerapkan rentang musim dan bentuk panjang
+
+Bentuk panjang memuat satu baris per klub per laga, dipakai di bagian 3 sampai 6.
+
+```{r bentuk-panjang}
+ujung <- match(c(MUSIM_AWAL, MUSIM_AKHIR), urut_musim)
+stopifnot(!anyNA(ujung), ujung[1] <= ujung[2])
+musim_dipakai <- urut_musim[ujung[1]:ujung[2]]
+
+d <- liga %>% filter(musim %in% musim_dipakai) %>% mutate(musim = droplevels(musim))
+
+buat_long <- function(x) {
+  kandang <- x %>% transmute(
+    id_laga, tanggal, musim, tim = tim_kandang, lawan = tim_tandang, kandang = TRUE,
+    gol = gol_kandang, gol_lawan = gol_tandang,
+    gol_babak1 = gol_kandang_babak1, gol_babak1_lawan = gol_tandang_babak1,
+    tembakan = tembakan_kandang, tembakan_tepat = tembakan_tepat_kandang,
+    pelanggaran = pelanggaran_kandang, sepak_pojok = sepak_pojok_kandang,
+    kartu_kuning = kartu_kuning_kandang, kartu_merah = kartu_merah_kandang)
+  tandang <- x %>% transmute(
+    id_laga, tanggal, musim, tim = tim_tandang, lawan = tim_kandang, kandang = FALSE,
+    gol = gol_tandang, gol_lawan = gol_kandang,
+    gol_babak1 = gol_tandang_babak1, gol_babak1_lawan = gol_kandang_babak1,
+    tembakan = tembakan_tandang, tembakan_tepat = tembakan_tepat_tandang,
+    pelanggaran = pelanggaran_tandang, sepak_pojok = sepak_pojok_tandang,
+    kartu_kuning = kartu_kuning_tandang, kartu_merah = kartu_merah_tandang)
+  bind_rows(kandang, tandang) %>%
+    mutate(
+      hasil_tim = case_when(gol > gol_lawan ~ "Menang", gol == gol_lawan ~ "Seri", TRUE ~ "Kalah"),
+      poin = case_when(hasil_tim == "Menang" ~ 3, hasil_tim == "Seri" ~ 1, TRUE ~ 0),
+      status_jeda = case_when(gol_babak1 > gol_babak1_lawan ~ "Unggul",
+                              gol_babak1 == gol_babak1_lawan ~ "Seri", TRUE ~ "Tertinggal"),
+      hasil_tim   = factor(hasil_tim, levels = c("Menang", "Seri", "Kalah")),
+      status_jeda = factor(status_jeda, levels = c("Unggul", "Seri", "Tertinggal"))
+    )
+}
+dl <- buat_long(d)
+dk <- dl %>% filter(tim == KLUB_SAYA)          # seluruh laga klub terpilih
+if (nrow(dk) == 0) stop(KLUB_SAYA, " tidak bermain pada rentang ", MUSIM_AWAL, " sampai ", MUSIM_AKHIR,
+                        ". Lebarkan rentang musimnya.")
+
+parsial_dipakai <- laga_musim %>% filter(parsial, musim %in% musim_dipakai)
+catatan_parsial <- if (nrow(parsial_dipakai) > 0) {
+  paste0("Lingkaran kosong: musim dengan laga tidak utuh (",
+         paste0(parsial_dipakai$musim, " = ", parsial_dipakai$laga, " laga", collapse = "; "),
+         "). Semua angka dihitung per laga.")
+} else NULL
+```
+
+Rentang yang dipakai: **`r MUSIM_AWAL` sampai `r MUSIM_AKHIR`** (`r format(nrow(d), big.mark = ".", decimal.mark = ",")` laga). Klub yang disorot: **`r KLUB_SAYA`**.
+
+## Profil klub terpilih
+
+Semua bagian di bawah dihitung ulang untuk klub yang dipilih di parameter `klub_saya`. Baris abu-abu adalah rata-rata seluruh liga pada rentang musim yang sama.
+
+```{r profil-klub}
+ringkas_klub <- function(x, nama, n_laga) {
+  data.frame(
+    Kelompok = nama, Laga = n_laga,
+    Menang = pct_id(mean(x$hasil_tim == "Menang")), Seri = pct_id(mean(x$hasil_tim == "Seri")),
+    Kalah = pct_id(mean(x$hasil_tim == "Kalah")),
+    `Poin per laga` = fmt_id(mean(x$poin), 2),
+    `Gol per laga` = fmt_id(mean(x$gol), 2), `Kebobolan per laga` = fmt_id(mean(x$gol_lawan), 2),
+    `Tembakan per laga` = fmt_id(mean(x$tembakan), 1),
+    `Pelanggaran per laga` = fmt_id(mean(x$pelanggaran), 1),
+    `Kartu kuning per laga` = fmt_id(mean(x$kartu_kuning), 2),
+    check.names = FALSE)
+}
+kable(rbind(ringkas_klub(dk, KLUB_SAYA, nrow(dk)),
+            ringkas_klub(dl, "Seluruh liga", nrow(d))),
+      align = c("l", rep("r", 10)))
+```
+
+# 1. Berapa gol yang wajar?
+
+Distribusi gol per tim per laga, tuan rumah dan tamu. Titik berwarna menunjukkan distribusi gol klub terpilih.
+
+```{r bagian-1}
+gol_long <- d %>%
+  transmute(Kandang = pmin(gol_kandang, 6), Tandang = pmin(gol_tandang, 6)) %>%
+  pivot_longer(everything(), names_to = "sisi", values_to = "gol") %>%
+  count(sisi, gol) %>%
+  group_by(sisi) %>% mutate(p = n / sum(n)) %>% ungroup()
+tingkat_gol <- c(as.character(0:5), "6+")
+gol_long$gol_lab <- factor(ifelse(gol_long$gol >= 6, "6+", as.character(gol_long$gol)),
+                           levels = tingkat_gol)
+
+dist_klub <- dl %>% filter(tim == KLUB_SAYA) %>%
+  mutate(gol = pmin(gol, 6)) %>% count(gol) %>% mutate(p = n / sum(n)) %>%
+  mutate(gol_lab = factor(ifelse(gol >= 6, "6+", as.character(gol)), levels = tingkat_gol))
+
+judul1 <- sprintf("Tuan rumah rata-rata mencetak %s gol, tamu %s gol per pertandingan",
+                  fmt_id(mean(d$gol_kandang), 2), fmt_id(mean(d$gol_tandang), 2))
+sub1 <- sprintf("%s pertandingan berakhir dengan dua gol atau kurang secara total. Titik berwarna: gol %s.",
+                pct_id(mean(d$total_gol <= 2)), KLUB_SAYA)
+
+p1 <- ggplot(gol_long, aes(gol_lab, p, fill = sisi)) +
+  geom_col(position = position_dodge(width = 0.75), width = 0.7) +
+  geom_line(data = dist_klub, aes(gol_lab, p, group = 1), inherit.aes = FALSE,
+            colour = AKSEN, linewidth = 0.6) +
+  geom_point(data = dist_klub, aes(gol_lab, p), inherit.aes = FALSE,
+             colour = AKSEN, size = 3) +
+  scale_fill_manual(values = c(Kandang = PAL$sekunder, Tandang = PAL$garis), name = NULL) +
+  scale_y_continuous(labels = label_percent(accuracy = 1), expand = expansion(mult = c(0, 0.08))) +
+  labs(title = bungkus(judul1), subtitle = sub1,
+       x = "Gol yang dicetak satu tim dalam satu pertandingan",
+       y = "Persentase pertandingan",
+       caption = "Abu tua: tuan rumah. Abu muda: tamu.") +
+  tema_papan()
+klub1 <- sprintf("%s mencetak %s gol dan kebobolan %s gol per pertandingan (rata-rata liga: %s gol per tim). %s pertandingannya berakhir dengan tiga gol atau lebih secara total.",
+                 KLUB_SAYA, fmt_id(mean(dk$gol), 2), fmt_id(mean(dk$gol_lawan), 2),
+                 fmt_id(mean(dl$gol), 2), pct_id(mean(dk$gol + dk$gol_lawan >= 3)))
+catat_klub("01_klub", klub1)
+catat(p1, "01_gol_per_laga", judul1)
+p1
+```
+
+<div class="temuan">`r judul1`</div>
+<div class="temuan-klub">`r klub1`</div>
+
+# 2. Seberapa nyata keuntungan main di kandang?
+
+Tingkat kemenangan kandang per musim. Karena berupa rasio, grafik ini aman dari musim yang laganya tidak utuh.
+
+```{r bagian-2}
+kandang_musim <- d %>%
+  group_by(musim) %>%
+  summarise(laga = n(), rasio = mean(hasil == "H"), .groups = "drop") %>%
+  left_join(laga_musim %>% select(musim, parsial), by = "musim")
+
+klub_kandang <- d %>% filter(tim_kandang == KLUB_SAYA) %>%
+  group_by(musim) %>%
+  summarise(laga = n(), rasio = mean(hasil == "H"), .groups = "drop") %>%
+  left_join(laga_musim %>% select(musim, parsial), by = "musim")
+
+# Arah tren: regresi berbobot jumlah laga; "stabil" bila tidak signifikan
+judul2 <- sprintf("Tuan rumah menang %s pertandingan di seluruh rentang musim",
+                  pct_id(mean(d$hasil == "H"), 1))
+laju <- NA; pval <- NA
+if (nrow(kandang_musim) >= 5) {
+  kandang_musim$idx <- seq_len(nrow(kandang_musim))
+  fit  <- lm(rasio ~ idx, data = kandang_musim, weights = laga)
+  kf   <- summary(fit)$coefficients
+  laju <- kf["idx", "Estimate"] * 10 * 100        # poin persen per dekade
+  pval <- kf["idx", "Pr(>|t|)"]
+  arah <- if (pval < 0.05) {
+    sprintf("%s sekitar %s poin persen per dekade",
+            ifelse(laju < 0, "menurun", "naik"), fmt_id(abs(laju), 1))
+  } else "relatif stabil, tanpa arah naik atau turun yang jelas"
+  judul2 <- sprintf("Keunggulan kandang %s (rata-rata %s)", arah, pct_id(mean(d$hasil == "H"), 1))
+}
+rentang2 <- kandang_musim %>% filter(laga >= 100)
+sub2 <- sprintf("Terendah %s (%s), tertinggi %s (%s). Garis berwarna: tingkat menang kandang %s.",
+                pct_id(min(rentang2$rasio), 1), rentang2$musim[which.min(rentang2$rasio)],
+                pct_id(max(rentang2$rasio), 1), rentang2$musim[which.max(rentang2$rasio)],
+                KLUB_SAYA)
+
+dkand <- d %>% filter(tim_kandang == KLUB_SAYA)
+dtand <- d %>% filter(tim_tandang == KLUB_SAYA)
+klub2 <- sprintf("%s menang %s laga kandang (liga: %s) dan %s laga tandang (liga: %s), selisih kandang-tandang %s poin persen.",
+                 KLUB_SAYA, pct_id(mean(dkand$hasil == "H")), pct_id(mean(d$hasil == "H")),
+                 pct_id(mean(dtand$hasil == "A")), pct_id(mean(d$hasil == "A")),
+                 fmt_id(100 * (mean(dkand$hasil == "H") - mean(dtand$hasil == "A")), 1))
+catat_klub("02_klub", klub2)
+# Batas sumbu mengikuti data, supaya klub dengan tingkat menang tinggi tidak terpotong
+lim2 <- c(max(0, floor(min(c(kandang_musim$rasio, klub_kandang$rasio), na.rm = TRUE) * 10) / 10),
+          min(1, ceiling(max(c(kandang_musim$rasio, klub_kandang$rasio), na.rm = TRUE) * 10) / 10))
+
+lv <- levels(kandang_musim$musim)
+p2 <- ggplot(kandang_musim, aes(musim, rasio, group = 1)) +
+  geom_line(colour = PAL$sekunder, linewidth = 0.8) +
+  geom_point(aes(shape = parsial), colour = PAL$sekunder, fill = PAL$latar,
+             size = 2.8, stroke = 1) +
+  geom_line(data = klub_kandang, aes(musim, rasio, group = 1),
+            colour = AKSEN, linewidth = 0.7) +
+  geom_point(data = klub_kandang, aes(musim, rasio, shape = parsial), colour = AKSEN,
+             fill = PAL$latar, size = 2.2, stroke = 1) +
+  scale_shape_manual(values = c("FALSE" = 16, "TRUE" = 21)) +
+  scale_x_discrete(breaks = lv[seq(1, length(lv), by = 3)]) +
+  scale_y_continuous(labels = label_percent(accuracy = 1), limits = lim2) +
+  labs(title = bungkus(judul2), subtitle = bungkus(sub2, 90),
+       x = "Musim", y = "Persentase laga menang kandang",
+       caption = bungkus(catatan_parsial, 105)) +
+  tema_papan()
+catat(p2, "02_keunggulan_kandang", judul2)
+p2
+```
+
+<div class="temuan">`r judul2`</div>
+<div class="temuan-klub">`r klub2`</div>
+
+<p class="catatan">Uji tren: kemiringan `r ifelse(is.na(laju), "tidak dihitung", paste0(fmt_id(laju, 2), " poin persen per dekade"))`, nilai p `r ifelse(is.na(pval), "-", fmt_id(pval, 3))`. Garis berwarna memakai sekitar 19 laga kandang per musim, jadi naik turunnya wajar dan tidak boleh dibaca sebagai tren klub.</p>
+
+# 3. Apakah menembak banyak berarti menang?
+
+Satu titik adalah satu klub dalam satu musim (minimal 10 laga, atau semua laga bila musimnya belum sampai 10), dengan ukuran per laga. Dua hal dibandingkan: jumlah tembakan dan akurasi tembakan (persen tepat sasaran). Semua angka dibandingkan dengan **rata-rata liga di musim yang sama**, karena definisi tembakan tepat sasaran berubah di tengah data (lihat bagian Data).
+
+```{r bagian-3, fig.width=10}
+# Catatan: nama kolom hasil ringkasan sengaja berbeda dari kolom sumber. Di summarise(),
+# ekspresi yang di bawah melihat variabel yang baru dibuat di atasnya, jadi
+# `tembakan = mean(tembakan)` akan membuat `sum(tembakan)` berikutnya salah.
+# Ambang 10 laga, tapi turun otomatis bila rentang hanya berisi musim yang baru berjalan
+laga_min3 <- min(10, max(dl %>% count(tim, musim) %>% pull(n)))
+
+rata_musim <- dl %>% group_by(musim) %>%
+  summarise(tb_liga = mean(tembakan), ak_liga = 100 * sum(tembakan_tepat) / sum(tembakan),
+            gol_liga = mean(gol), .groups = "drop")
+
+kms <- dl %>%
+  group_by(tim, musim) %>%
+  summarise(laga = n(), tb_rata = mean(tembakan), gol_rata = mean(gol),
+            ak_rata = 100 * sum(tembakan_tepat) / sum(tembakan), .groups = "drop") %>%
+  filter(laga >= laga_min3) %>%
+  left_join(rata_musim, by = "musim") %>%
+  mutate(tembakan = tb_rata - tb_liga, gol = gol_rata - gol_liga, akurasi = ak_rata - ak_liga)
+
+r_tembakan <- cor(kms$tembakan, kms$gol)
+r_akurasi  <- cor(kms$akurasi,  kms$gol)
+lab_t <- sprintf("Tembakan per pertandingan dibanding liga (r = %s)", fmt_id(r_tembakan, 2))
+lab_a <- sprintf("Akurasi tembakan dibanding liga, poin persen (r = %s)", fmt_id(r_akurasi, 2))
+
+panel3 <- bind_rows(
+  kms %>% transmute(tim, musim, gol, ukuran = lab_t, x = tembakan),
+  kms %>% transmute(tim, musim, gol, ukuran = lab_a, x = akurasi)
+) %>% mutate(ukuran = factor(ukuran, levels = c(lab_t, lab_a)),
+             klub_saya = tim == KLUB_SAYA)
+
+judul3 <- if (isTRUE(abs(r_akurasi) > abs(r_tembakan))) {
+  "Ketepatan tembakan lebih berkaitan dengan gol daripada jumlah tembakan"
+} else {
+  "Jumlah tembakan lebih berkaitan dengan gol daripada ketepatannya"
+}
+sub3 <- sprintf("Tiap titik adalah satu klub dalam satu musim (%s titik). Titik berwarna: %s.",
+                nrow(kms), KLUB_SAYA)
+
+p3 <- ggplot(panel3, aes(x, gol)) +
+  geom_point(data = filter(panel3, !klub_saya), colour = PAL$garis, size = 2, alpha = 0.9) +
+  geom_smooth(method = "lm", formula = y ~ x, se = FALSE,
+              colour = PAL$sekunder, linewidth = 0.7) +
+  geom_point(data = filter(panel3, klub_saya), colour = AKSEN, size = 2.8) +
+  facet_wrap(~ukuran, scales = "free_x") +
+  labs(title = bungkus(judul3), subtitle = sub3,
+       x = NULL, y = "Gol per pertandingan dibanding liga",
+       caption = "0 = rata-rata liga di musim itu. r = koefisien korelasi; makin dekat 1, makin kuat hubungannya. Hubungan bukan sebab-akibat.") +
+  tema_papan()
+k3 <- kms %>% filter(tim == KLUB_SAYA)
+klub3 <- if (nrow(k3) > 0) {
+  sprintf("Rata-rata per musim, %s menembak %s tembakan per laga %s rata-rata liga, dengan akurasi %s poin persen %s rata-rata liga. Selisih golnya %s gol per laga %s rata-rata liga.",
+          KLUB_SAYA, fmt_id(abs(mean(k3$tembakan)), 1), atas_bawah(mean(k3$tembakan)),
+          fmt_id(abs(mean(k3$akurasi)), 1), atas_bawah(mean(k3$akurasi)),
+          fmt_id(abs(mean(k3$gol)), 2), atas_bawah(mean(k3$gol)))
+} else sprintf("%s belum punya musim dengan sedikitnya %d laga pada rentang ini.", KLUB_SAYA, laga_min3)
+catat_klub("03_klub", klub3)
+catat(p3, "03_tembakan_dan_gol", judul3, w = 10)
+p3
+```
+
+<div class="temuan">`r judul3`</div>
+<div class="temuan-klub">`r klub3`</div>
+
+Pembanding di tingkat pertandingan (kandang dan tandang digabung, dipusatkan per musim), tidak digambar:
+
+```{r korelasi-laga}
+# Dipusatkan per musim, supaya patahan definisi tembakan tepat tidak ikut terhitung
+dc <- dl %>%
+  mutate(akurasi_laga = ifelse(tembakan > 0, tembakan_tepat / tembakan, NA)) %>%
+  group_by(musim) %>%
+  mutate(across(c(tembakan, tembakan_tepat, akurasi_laga, gol), ~ .x - mean(.x, na.rm = TRUE))) %>%
+  ungroup()
+korelasi_laga <- data.frame(
+  Ukuran = c("Tembakan", "Tembakan tepat sasaran", "Akurasi tembakan"),
+  `Korelasi dengan gol (r)` = round(c(
+    cor(dc$tembakan, dc$gol),
+    cor(dc$tembakan_tepat, dc$gol),
+    cor(dc$akurasi_laga, dc$gol, use = "complete.obs")), 3),
+  check.names = FALSE
+)
+kable(korelasi_laga, align = c("l", "r"))
+```
+
+# 4. Kapan gol terjadi?
+
+Skor saat jeda dibandingkan hasil akhir. Batang abu-abu adalah seluruh liga, titik berwarna adalah klub terpilih.
+
+```{r bagian-4, fig.width=10}
+transisi <- function(x) {
+  x %>% count(status_jeda, hasil_tim) %>%
+    complete(status_jeda, hasil_tim, fill = list(n = 0L)) %>%
+    group_by(status_jeda) %>% mutate(p = n / sum(n)) %>% ungroup()
+}
+t_liga <- transisi(dl)
+t_klub <- transisi(dl %>% filter(tim == KLUB_SAYA))
+
+p_unggul_menang     <- t_liga$p[t_liga$status_jeda == "Unggul" & t_liga$hasil_tim == "Menang"]
+p_tertinggal_menang <- t_liga$p[t_liga$status_jeda == "Tertinggal" & t_liga$hasil_tim == "Menang"]
+porsi_babak2        <- sum(dl$gol - dl$gol_babak1) / sum(dl$gol)
+
+judul4 <- sprintf("Tim yang unggul saat jeda akhirnya menang %s pertandingan",
+                  pct_id(p_unggul_menang))
+sub4 <- sprintf("Babak kedua menghasilkan %s gol. Tim yang tertinggal saat jeda hanya membalik jadi menang di %s laga. Titik berwarna: %s.",
+                pct_id(porsi_babak2), pct_id(p_tertinggal_menang, 1), KLUB_SAYA)
+lab_akhir <- c(Menang = "Akhirnya menang", Seri = "Akhirnya seri", Kalah = "Akhirnya kalah")
+
+p4 <- ggplot(t_liga, aes(status_jeda, p)) +
+  geom_col(fill = PAL$garis, width = 0.62) +
+  geom_text(aes(label = percent(p, accuracy = 1)), vjust = -0.6,
+            colour = PAL$sekunder, size = 3.8, family = FONT) +
+  geom_point(data = t_klub, colour = AKSEN, size = 3.4) +
+  facet_wrap(~hasil_tim, labeller = as_labeller(lab_akhir)) +
+  scale_y_continuous(labels = label_percent(accuracy = 1), limits = c(0, 1),
+                     expand = expansion(mult = c(0, 0.04))) +
+  labs(title = bungkus(judul4), subtitle = bungkus(sub4, 95),
+       x = "Posisi tim saat jeda babak pertama",
+       y = "Persentase pertandingan",
+       caption = "Tiap pertandingan dihitung dari sudut pandang kedua tim.") +
+  tema_papan()
+pk4 <- function(j, h) { v <- t_klub$p[t_klub$status_jeda == j & t_klub$hasil_tim == h]; if (length(v)) v else NA_real_ }
+klub4 <- sprintf("Saat unggul di jeda, %s menang %s laga (liga: %s). Saat tertinggal, ia berbalik menang di %s laga (liga: %s). Porsi golnya di babak kedua %s (liga: %s).",
+                 KLUB_SAYA, pct_id(pk4("Unggul", "Menang")), pct_id(p_unggul_menang),
+                 pct_id(pk4("Tertinggal", "Menang"), 1), pct_id(p_tertinggal_menang, 1),
+                 pct_id(sum(dk$gol - dk$gol_babak1) / sum(dk$gol)), pct_id(porsi_babak2))
+catat_klub("04_klub", klub4)
+catat(p4, "04_babak_pertama_dan_hasil_akhir", judul4, w = 10)
+p4
+```
+
+<div class="temuan">`r judul4`</div>
+<div class="temuan-klub">`r klub4`</div>
+
+# 5. Apakah disiplin berpengaruh?
+
+Kartu kuning, pelanggaran, dan kartu merah menurut hasil akhir tim. Kartu merah terlalu jarang untuk dirata-rata, jadi dihitung sebagai persentase pertandingan yang memuatnya.
+
+```{r bagian-5, fig.width=11}
+ringkas_disiplin <- function(x) {
+  x %>% mutate(ada_merah = kartu_merah > 0) %>%
+    group_by(hasil_tim) %>%
+    summarise(`Kartu kuning per pertandingan` = mean(kartu_kuning),
+              `Pelanggaran per pertandingan`   = mean(pelanggaran),
+              `Pertandingan dengan kartu merah (%)` = 100 * mean(ada_merah),
+              .groups = "drop") %>%
+    pivot_longer(-hasil_tim, names_to = "ukuran", values_to = "nilai") %>%
+    mutate(ukuran = factor(ukuran, levels = c("Kartu kuning per pertandingan",
+                                              "Pelanggaran per pertandingan",
+                                              "Pertandingan dengan kartu merah (%)")))
+}
+dis_liga <- ringkas_disiplin(dl)
+dis_klub <- ringkas_disiplin(dl %>% filter(tim == KLUB_SAYA))
+
+ambil <- function(u, h) dis_liga$nilai[dis_liga$ukuran == u & dis_liga$hasil_tim == h]
+kuning_kalah  <- ambil("Kartu kuning per pertandingan", "Kalah")
+kuning_menang <- ambil("Kartu kuning per pertandingan", "Menang")
+merah_kalah   <- ambil("Pertandingan dengan kartu merah (%)", "Kalah")
+merah_menang  <- ambil("Pertandingan dengan kartu merah (%)", "Menang")
+
+judul5 <- sprintf("Tim yang kalah menerima %s kartu kuning per pertandingan, tim yang menang %s",
+                  fmt_id(kuning_kalah, 2), fmt_id(kuning_menang, 2))
+sub5 <- sprintf("Kartu merah muncul di %s%% pertandingan yang berujung kalah dan %s%% yang berujung menang. Titik berwarna: %s.",
+                fmt_id(merah_kalah, 1), fmt_id(merah_menang, 1), KLUB_SAYA)
+
+p5 <- ggplot(dis_liga, aes(hasil_tim, nilai)) +
+  geom_col(fill = PAL$garis, width = 0.62) +
+  geom_point(data = dis_klub, colour = AKSEN, size = 3.4) +
+  facet_wrap(~ukuran, scales = "free_y") +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
+  labs(title = bungkus(judul5), subtitle = bungkus(sub5, 95),
+       x = "Hasil akhir tim", y = NULL,
+       caption = "Hubungan, bukan sebab-akibat: tim yang tertinggal cenderung lebih sering melanggar.") +
+  tema_papan()
+klub5 <- sprintf("%s menerima %s kartu kuning dan melakukan %s pelanggaran per pertandingan (liga: %s dan %s). Kartu merah muncul di %s pertandingannya (liga: %s).",
+                 KLUB_SAYA, fmt_id(mean(dk$kartu_kuning), 2), fmt_id(mean(dk$pelanggaran), 1),
+                 fmt_id(mean(dl$kartu_kuning), 2), fmt_id(mean(dl$pelanggaran), 1),
+                 pct_id(mean(dk$kartu_merah > 0), 1), pct_id(mean(dl$kartu_merah > 0), 1))
+catat_klub("05_klub", klub5)
+catat(p5, "05_disiplin_dan_hasil", judul5, w = 11)
+p5
+```
+
+<div class="temuan">`r judul5`</div>
+<div class="temuan-klub">`r klub5`</div>
+
+# 6. Siapa yang konsisten?
+
+Rata-rata poin per laga tiap musim untuk klub yang bertahan lama di liga. Garis putus berarti klub itu tidak berada di liga pada musim tersebut.
+
+```{r bagian-6, fig.height=6}
+ppg <- dl %>%
+  group_by(tim, musim) %>%
+  summarise(laga = n(), ppg = mean(poin), .groups = "drop") %>%
+  left_join(laga_musim %>% select(musim, parsial), by = "musim")
+
+ambang_musim <- min(MIN_MUSIM_BERTAHAN, floor(length(musim_dipakai) * 0.6))
+klub_lama <- ppg %>% count(tim, name = "n_musim") %>%
+  filter(n_musim >= ambang_musim) %>% pull(tim)
+tampil <- unique(c(klub_lama, KLUB_SAYA))        # klub terpilih selalu ikut
+
+# Statistik hanya memakai musim yang sedikitnya separuh jalan (19 laga),
+# supaya musim berjalan yang baru 9 laga tidak mengacaukan peringkat
+ringkasan_klub <- ppg %>% filter(tim %in% tampil, laga >= 19) %>%
+  group_by(tim) %>%
+  summarise(musim = n(), rata_ppg = mean(ppg), simpangan = sd(ppg), .groups = "drop") %>%
+  arrange(desc(rata_ppg)) %>%
+  mutate(peringkat_poin = row_number(),
+         peringkat_stabil = rank(simpangan, ties.method = "min", na.last = "keep"))
+rk <- ringkasan_klub %>% filter(tim == KLUB_SAYA)
+
+ppg_plot <- ppg %>% filter(tim %in% tampil) %>%
+  complete(tim, musim) %>%                       # sela musim jadi NA agar garis putus
+  left_join(laga_musim %>% select(musim, parsial_m = parsial), by = "musim")
+ppg_klub <- ppg_plot %>% filter(tim == KLUB_SAYA)
+
+judul6 <- if (nrow(rk) == 1) {
+  sprintf("%s rata-rata %s poin per laga, peringkat %d dari %d klub%s",
+          KLUB_SAYA, fmt_id(rk$rata_ppg, 2), rk$peringkat_poin, nrow(ringkasan_klub),
+          if (!is.na(rk$peringkat_stabil))
+            sprintf("; naik-turunnya antarmusim peringkat %d dari %d (1 = paling stabil)",
+                    rk$peringkat_stabil, sum(!is.na(ringkasan_klub$simpangan))) else "")
+} else {
+  sprintf("%s belum punya musim yang cukup panjang di rentang ini untuk dinilai konsistensinya", KLUB_SAYA)
+}
+sub6 <- if (nrow(ringkasan_klub) > 0) {
+  sprintf("%d klub yang bermain sedikitnya %d musim dalam rentang ini. Teratas: %s (%s poin per laga). Paling stabil: %s. Garis berwarna: %s.",
+          length(klub_lama), ambang_musim,
+          ringkasan_klub$tim[1], fmt_id(ringkasan_klub$rata_ppg[1], 2),
+          ifelse(any(!is.na(ringkasan_klub$simpangan)),
+                 ringkasan_klub$tim[which.min(ringkasan_klub$simpangan)], "-"), KLUB_SAYA)
+} else {
+  sprintf("Belum ada klub dengan musim yang cukup panjang (sedikitnya 19 laga) pada rentang ini. Garis berwarna: %s.", KLUB_SAYA)
+}
+lv6 <- levels(droplevels(ppg_plot$musim))
+
+p6 <- ggplot(ppg_plot, aes(musim, ppg, group = tim)) +
+  geom_line(data = filter(ppg_plot, tim != KLUB_SAYA), colour = PAL$garis,
+            linewidth = 0.5, na.rm = TRUE) +
+  geom_line(data = ppg_klub, colour = AKSEN, linewidth = 0.9, na.rm = TRUE) +
+  geom_point(data = ppg_klub, aes(shape = parsial_m), colour = AKSEN, fill = PAL$latar,
+             size = 2.6, stroke = 1, na.rm = TRUE) +
+  scale_shape_manual(values = c("FALSE" = 16, "TRUE" = 21)) +
+  scale_x_discrete(breaks = lv6[seq(1, length(lv6), by = 3)]) +
+  scale_y_continuous(limits = c(0, 3), breaks = 0:3) +
+  labs(title = bungkus(judul6, 70), subtitle = bungkus(sub6, 90),
+       x = "Musim", y = "Poin per pertandingan",
+       caption = bungkus(catatan_parsial, 105)) +
+  tema_papan()
+catat(p6, "06_konsistensi_poin", judul6, h = 6)
+p6
+```
+
+<div class="temuan">`r judul6`</div>
+
+Ringkasan klub yang bertahan lama (sedikitnya `r ambang_musim` musim) ditambah klub terpilih, hanya dari musim yang sedikitnya 19 laga. Klub terpilih dicetak tebal:
+
+```{r tabel-klub-lama}
+kable(ringkasan_klub %>%
+        transmute(`#` = peringkat_poin,
+                  Klub = ifelse(tim == KLUB_SAYA, paste0("**", tim, "**"), tim),
+                  `Jumlah musim` = musim,
+                  `Rata-rata poin per laga` = round(rata_ppg, 2),
+                  `Simpangan baku` = round(simpangan, 2),
+                  `Peringkat stabil` = peringkat_stabil),
+      align = c("r", "l", "r", "r", "r", "r"))
+```
+
+# Tambahan: Seberapa tipis riwayat pertemuan antarklub?
+
+Bagian ini bukan satu dari enam pertanyaan EDA di desain (6.4). Ia menjadi **bukti data** untuk keputusan tiga keadaan di halaman History (6.5): 0 pertemuan, 1 sampai 3 pertemuan, dan 4 pertemuan atau lebih. Pertemuan dihitung **sepanjang data** (sejak 2000/01, kandang dan tandang digabung) untuk 190 pasangan dari 20 klub musim berjalan, jadi tidak mengikuti penggeser rentang musim.
+
+```{r tambahan-pertemuan}
+# Kunci pasangan tidak peduli siapa kandang dan siapa tandang
+kunci_pasangan <- function(a, b) {
+  mapply(function(x, y) paste(sort(c(x, y)), collapse = " | "), a, b, USE.NAMES = FALSE)
+}
+
+pertemuan_semua <- liga %>%
+  mutate(pasangan = kunci_pasangan(tim_kandang, tim_tandang)) %>%
+  count(pasangan, name = "pertemuan")
+
+kombinasi <- as.data.frame(t(combn(klub_musim_berjalan, 2)), stringsAsFactors = FALSE)
+names(kombinasi) <- c("klub_a", "klub_b")
+
+pasangan_ini <- kombinasi %>%
+  mutate(pasangan = kunci_pasangan(klub_a, klub_b)) %>%
+  left_join(pertemuan_semua, by = "pasangan") %>%
+  mutate(pertemuan = coalesce(pertemuan, 0L))
+
+n_pasangan <- nrow(pasangan_ini)
+n_belum    <- sum(pasangan_ini$pertemuan == 0)
+n_tipis    <- sum(pasangan_ini$pertemuan < 4)
+
+judul7 <- sprintf("%d dari %d pasangan klub musim ini punya riwayat kurang dari empat pertemuan",
+                  n_tipis, n_pasangan)
+sub7 <- sprintf("%d pasangan belum pernah bertemu sama sekali. Garis tanda di bawah sumbu: pasangan yang melibatkan %s.",
+                n_belum, KLUB_SAYA)
+
+p7 <- ggplot(pasangan_ini, aes(pertemuan)) +
+  geom_histogram(aes(fill = pertemuan < 4), binwidth = 2, boundary = 0, closed = "left") +
+  geom_rug(data = filter(pasangan_ini, klub_a == KLUB_SAYA | klub_b == KLUB_SAYA),
+           colour = AKSEN, sides = "b", linewidth = 0.8) +
+  scale_fill_manual(values = c("FALSE" = PAL$garis, "TRUE" = PAL$peringatan)) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.08))) +
+  labs(title = bungkus(judul7), subtitle = bungkus(sub7, 90),
+       x = "Jumlah pertemuan di Liga Inggris sejak 2000/01",
+       y = "Jumlah pasangan klub",
+       caption = "Batang kuning tua: kurang dari empat pertemuan, terlalu sedikit untuk jadi pola.") +
+  tema_papan()
+pas_klub <- pasangan_ini %>% filter(klub_a == KLUB_SAYA | klub_b == KLUB_SAYA) %>%
+  mutate(lawan = ifelse(klub_a == KLUB_SAYA, klub_b, klub_a))
+klub7 <- if (nrow(pas_klub) > 0) {
+  tipis <- pas_klub$lawan[pas_klub$pertemuan < 4]
+  sprintf("%s punya %d lawan dengan riwayat kurang dari empat pertemuan%s.", KLUB_SAYA, length(tipis),
+          ifelse(length(tipis) > 0,
+                 paste0(" (", paste(tipis, collapse = ", "), ")",
+                        ifelse(sum(pas_klub$pertemuan == 0) > 0,
+                               paste0(", ", sum(pas_klub$pertemuan == 0), " di antaranya belum pernah bertemu"), "")),
+                 ""))
+} else sprintf("%s tidak termasuk 20 klub musim berjalan, jadi tidak ada pasangannya di bagian ini.", KLUB_SAYA)
+catat_klub("09_klub", klub7)
+catat(p7, "09_riwayat_pertemuan", judul7)
+p7
+```
+
+<div class="temuan">`r judul7`</div>
+<div class="temuan-klub">`r klub7`</div>
+
+Tiga keadaan yang menentukan tampilan halaman History:
+
+```{r tiga-keadaan}
+kable(pasangan_ini %>%
+        mutate(Keadaan = case_when(
+          pertemuan == 0 ~ "0 pertemuan: belum pernah bertemu",
+          pertemuan <= 3 ~ "1 sampai 3 pertemuan: riwayat tipis, beri peringatan",
+          TRUE           ~ "4 pertemuan atau lebih: tampilan penuh")) %>%
+        count(Keadaan, name = "Jumlah pasangan"),
+      align = c("l", "r"))
+```
+
+Pasangan yang belum pernah bertemu:
+
+```{r belum-bertemu}
+kable(pasangan_ini %>% filter(pertemuan == 0) %>%
+        transmute(`Klub pertama` = klub_a, `Klub kedua` = klub_b),
+      align = c("l", "l"))
+```
+
+Klub yang paling sering terlibat dalam riwayat tipis (kurang dari empat pertemuan):
+
+```{r klub-tipis}
+klub_tipis <- pasangan_ini %>%
+  filter(pertemuan < 4) %>%
+  pivot_longer(c(klub_a, klub_b), values_to = "klub") %>%
+  count(klub, name = "n_tipis") %>%
+  arrange(desc(n_tipis))
+kable(klub_tipis %>% transmute(Klub = klub, `Jumlah pasangan tipis` = n_tipis),
+      align = c("l", "r"))
+```
+
+# Tambahan: Klasemen musim berjalan
+
+Klasemen dihitung dari hasil nyata sampai tanggal terakhir yang tersedia, urut menurut poin, lalu selisih gol, lalu gol dicetak. Klub terpilih dicetak tebal. Waktu disebut dengan tanggal, bukan nomor pekan (6.5).
+
+```{r klasemen}
+musim_ini    <- tail(urut_musim, 1)
+tgl_terakhir <- max(liga$tanggal)
+
+klasemen <- buat_long(liga %>% filter(musim == musim_ini)) %>%
+  group_by(tim) %>%
+  summarise(Main = n(),
+            Menang = sum(hasil_tim == "Menang"),
+            Seri   = sum(hasil_tim == "Seri"),
+            Kalah  = sum(hasil_tim == "Kalah"),
+            `Gol masuk`   = sum(gol),
+            `Gol kemasukan` = sum(gol_lawan),
+            Poin = sum(poin), .groups = "drop") %>%
+  mutate(`Selisih gol` = `Gol masuk` - `Gol kemasukan`) %>%
+  arrange(desc(Poin), desc(`Selisih gol`), desc(`Gol masuk`)) %>%
+  mutate(`#` = row_number(),
+         Klub = ifelse(tim == KLUB_SAYA, paste0("**", tim, "**"), tim)) %>%
+  select(`#`, Klub, Main, Menang, Seri, Kalah, `Gol masuk`, `Gol kemasukan`, `Selisih gol`, Poin)
+```
+
+Klasemen musim `r musim_ini` sampai `r format(tgl_terakhir, "%d-%m-%Y")`:
+
+```{r klasemen-tabel}
+kable(klasemen, align = c("r", "l", rep("r", 8)))
+```
+
+# Lampiran: Contoh halaman History
+
+Contoh satu pasangan, klub terpilih melawan satu lawan, untuk memperlihatkan logika tiga keadaan di 6.5. Secara bawaan lawan dipilih otomatis (lawan yang paling sering bertemu klub terpilih); ubah lewat parameter `lawan_contoh`. Titik di tepi kiri daftar pertemuan menandai hasil klub saya: warna aksen untuk menang, abu tua untuk seri, abu muda untuk kalah. Seluruh angka sepanjang data, tidak mengikuti penggeser musim.
+
+```{r lampiran-history, results='asis'}
+lawan <- params$lawan_contoh
+if (identical(lawan, "(otomatis)")) {
+  kandidat <- pasangan_ini %>% filter(klub_a == KLUB_SAYA | klub_b == KLUB_SAYA) %>%
+    mutate(lawan = ifelse(klub_a == KLUB_SAYA, klub_b, klub_a)) %>% arrange(desc(pertemuan), lawan)
+  lawan <- if (nrow(kandidat) > 0) kandidat$lawan[1] else NA_character_
+}
+dl_semua <- buat_long(liga)
+
+if (is.na(lawan) || lawan == KLUB_SAYA || !lawan %in% klub_musim_berjalan) {
+  cat(sprintf("\n\n**Lawan contoh tidak valid.** `%s` harus berbeda dari klub saya dan termasuk 20 klub musim berjalan.\n\n", lawan))
+} else {
+  cat(sprintf("\n\n**%s melawan %s**\n\n", KLUB_SAYA, lawan))
+  h2h <- liga %>%
+    filter((tim_kandang == KLUB_SAYA & tim_tandang == lawan) |
+           (tim_kandang == lawan & tim_tandang == KLUB_SAYA)) %>%
+    mutate(hasil_saya = case_when(
+      tim_kandang == KLUB_SAYA & hasil == "H" ~ "Menang",
+      tim_tandang == KLUB_SAYA & hasil == "A" ~ "Menang",
+      hasil == "D"                            ~ "Seri",
+      TRUE                                    ~ "Kalah")) %>%
+    arrange(desc(tanggal))
+  n_ketemu <- nrow(h2h)
+
+  if (n_ketemu == 0) {
+    # Keadaan 1: tidak ada riwayat. Rekor diganti satu kalimat; daftar disembunyikan.
+    cat("\n\n**Belum pernah bertemu di Liga Inggris.**\n\n")
+  } else {
+    rekor <- table(factor(h2h$hasil_saya, levels = c("Menang", "Seri", "Kalah")))
+    cat(sprintf("\n\n**Rekor pertemuan:** Menang %d &nbsp;|&nbsp; Seri %d &nbsp;|&nbsp; Kalah %d\n\n",
+                rekor[["Menang"]], rekor[["Seri"]], rekor[["Kalah"]]))
+
+    # Keadaan 2: 1 sampai 3 pertemuan. Tampilkan, disertai peringatan kuning kartu.
+    if (n_ketemu <= 3) {
+      cat(sprintf("\n\n<p style=\"color:%s; font-weight:600;\">Baru %d kali bertemu. Terlalu sedikit untuk jadi pola.</p>\n\n",
+                  PAL$peringatan, n_ketemu))
+    }
+
+    # Keadaan 3: 4 ke atas. Tampilan penuh. Daftar sepuluh pertemuan terakhir:
+    titik <- c(
+      Menang = sprintf("<span style=\"color:%s\">&#9679;</span>", AKSEN),
+      Seri   = sprintf("<span style=\"color:%s\">&#9679;</span>", PAL$sekunder),
+      Kalah  = sprintf("<span style=\"color:%s\">&#9679;</span>", PAL$garis))
+    daftar <- h2h %>% head(10) %>%
+      transmute(` ` = unname(titik[hasil_saya]),
+                Tanggal = format(tanggal, "%d-%m-%Y"),
+                Kandang = tim_kandang,
+                Skor = paste0(gol_kandang, " - ", gol_tandang),
+                Tandang = tim_tandang)
+    print(kable(daftar, align = c("c", "l", "r", "c", "l"), escape = FALSE))
+  }
+
+  # Bentuk permainan: hasil sepuluh laga terakhir kedua klub, lama ke baru
+  bentuk <- function(klub) {
+    x <- dl_semua %>% filter(tim == klub) %>% arrange(desc(tanggal)) %>% head(10) %>% arrange(tanggal)
+    paste(substr(as.character(x$hasil_tim), 1, 1), collapse = " ")
+  }
+  cat("\n\n**Bentuk permainan** (sepuluh laga terakhir, dari yang lama ke yang baru; M = menang, S = seri, K = kalah):\n\n")
+  print(kable(data.frame(Klub = c(KLUB_SAYA, lawan),
+                         `Hasil` = c(bentuk(KLUB_SAYA), bentuk(lawan)),
+                         check.names = FALSE), align = c("l", "l")))
+  cat(sprintf("\n\n<p class=\"catatan\">Sampai %s.</p>\n\n", format(tgl_terakhir, "%d-%m-%Y")))
+}
+```
+
+# Bagian tidur
+
+Dua bagian ini sudah ditulis tetapi hanya muncul jika cakupan kolomnya sedikitnya `r pct_id(AMBANG_CAKUPAN)` (aturan 7.7). Pemeriksaan dilakukan setiap dokumen ini dirender, sehingga bagian ini terbuka sendiri begitu CSV diganti dengan hasil scraping final.
+
+```{r bagian-tidur, results='asis'}
+bagian_tidur <- function(kolom, nama_bagian, buat) {
+  cov <- cakupan_kolom(kolom)
+  if (cov >= AMBANG_CAKUPAN) {
+    cat(sprintf("\n\n## %s\n\n", nama_bagian))
+    buat()
+  } else {
+    cat(sprintf("\n\n**%s** tidak ditampilkan: cakupan kolom %s, di bawah ambang %s.\n\n",
+                nama_bagian, pct_id(cov, 1), pct_id(AMBANG_CAKUPAN)))
+  }
+}
+
+# 7. Apakah menguasai bola berarti menang?
+bagian_tidur("penguasaan_bola_kandang", "7. Apakah menguasai bola berarti menang?", function() {
+  dp <- d %>% filter(!is.na(penguasaan_bola_kandang)) %>%
+    mutate(hasil_lab = factor(hasil, levels = c("H", "D", "A"),
+                              labels = c("Kandang menang", "Seri", "Tamu menang")))
+  med <- dp %>% group_by(hasil_lab) %>%
+    summarise(m = median(penguasaan_bola_kandang), .groups = "drop")
+  judul <- sprintf("Tuan rumah yang menang rata-rata menguasai bola %s, yang kalah %s",
+                   fmt_id(med$m[1], 0), fmt_id(med$m[3], 0))
+  p <- ggplot(dp, aes(hasil_lab, penguasaan_bola_kandang)) +
+    geom_boxplot(fill = PAL$garis, colour = PAL$sekunder, outlier.alpha = 0.3) +
+    labs(title = bungkus(judul), x = "Hasil pertandingan",
+         y = "Penguasaan bola tuan rumah") + tema_papan()
+  catat(p, "07_penguasaan_bola_dan_hasil", judul)
+  print(p)
+  cat(sprintf("\n\n<div class=\"temuan\">%s</div>\n\n", judul))
+})
+
+# 8. Seberapa dekat gol dengan peluang yang diciptakan?
+bagian_tidur("xg_api_kandang", "8. Seberapa dekat gol dengan peluang yang diciptakan?", function() {
+  dx <- d %>% filter(!is.na(xg_api_kandang)) %>%
+    transmute(xg = xg_api_kandang, gol = gol_kandang)
+  r <- cor(dx$xg, dx$gol)
+  judul <- sprintf("Gol yang diharapkan menjelaskan gol sebenarnya dengan korelasi %s", fmt_id(r, 2))
+  p <- ggplot(dx, aes(xg, gol)) +
+    geom_abline(slope = 1, intercept = 0, colour = PAL$sekunder, linetype = "dashed") +
+    geom_jitter(colour = PAL$sekunder, width = 0, height = 0.12, alpha = 0.6) +
+    labs(title = bungkus(judul), x = "Gol yang diharapkan", y = "Gol sebenarnya",
+         caption = "Garis putus-putus: gol sebenarnya sama dengan gol yang diharapkan.") +
+    tema_papan()
+  catat(p, "08_xg_dan_gol", judul)
+  print(p)
+  cat(sprintf("\n\n<div class=\"temuan\">%s</div>\n\n", judul))
+})
+```
+
+# Kalimat temuan
+
+Kumpulan kalimat temuan di atas, siap dipakai sebagai judul grafik di dashboard dan bahan bagian Key insights.
+
+```{r ringkasan-temuan}
+kable(data.frame(Berkas = sub(":.*", "", TEMUAN),
+                 `Kalimat temuan` = sub("^[^:]*: ", "", TEMUAN),
+                 check.names = FALSE),
+      align = c("l", "l"))
+
+writeLines(TEMUAN, file.path(DIR_OUT, "kalimat_temuan.txt"))
+write.csv(tabel_kelengkapan, file.path(DIR_OUT, "tabel_kelengkapan.csv"), row.names = FALSE)
+```
+
+<p class="catatan">Grafik PNG, `kalimat_temuan.txt`, dan `tabel_kelengkapan.csv` juga tersimpan di folder `output/eda/`.</p>
