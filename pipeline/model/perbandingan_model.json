@@ -1,0 +1,42 @@
+{
+  "Regresi Poisson": {
+    "akurasi_hasil": 0.4854,
+    "log_loss": 1.0211,
+    "mae_gol": 0.8966,
+    "mae_statistik": 2.1505,
+    "waktu_latih_detik": 2.3,
+    "laga_uji": 480
+  },
+  "Random Forest": {
+    "akurasi_hasil": 0.475,
+    "log_loss": 1.0254,
+    "mae_gol": 0.8949,
+    "mae_statistik": 2.1832,
+    "waktu_latih_detik": 9.5,
+    "laga_uji": 480
+  },
+  "LightGBM": {
+    "akurasi_hasil": 0.4708,
+    "log_loss": 1.0371,
+    "mae_gol": 0.896,
+    "mae_statistik": 2.1585,
+    "waktu_latih_detik": 9.5,
+    "laga_uji": 480
+  },
+  "Regresi logistik": {
+    "akurasi_hasil": 0.4875,
+    "log_loss": 1.0286,
+    "mae_gol": 0.9334,
+    "mae_statistik": 2.3697,
+    "waktu_latih_detik": 0.4,
+    "laga_uji": 480
+  },
+  "Peluang bandar (pembanding)": {
+    "akurasi_hasil": 0.4917,
+    "log_loss": 1.0146,
+    "mae_gol": null,
+    "mae_statistik": null,
+    "waktu_latih_detik": null,
+    "laga_uji": 480
+  }
+}

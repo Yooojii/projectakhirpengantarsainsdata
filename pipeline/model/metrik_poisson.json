@@ -1,0 +1,298 @@
+{
+  "model": "Regresi Poisson dengan koreksi Dixon-Coles",
+  "alpha": 0.1,
+  "rho": -0.035,
+  "jumlah_fitur": 35,
+  "musim_uji": [
+    "2025/26",
+    "2026/27"
+  ],
+  "uji": {
+    "laga": 480,
+    "akurasi_hasil": 0.4833,
+    "log_loss": 1.0232,
+    "mae_gol": 0.8966,
+    "mae_statistik": 2.1504,
+    "skor_tepat": 0.1292,
+    "akurasi_bandar": 0.4917,
+    "log_loss_bandar": 1.0146
+  },
+  "per_musim": {
+    "2003/04": {
+      "laga": 335,
+      "akurasi_hasil": 0.4866,
+      "log_loss": 1.017,
+      "mae_gol": 0.9405,
+      "mae_statistik": 2.2882,
+      "skor_tepat": 0.1104
+    },
+    "2004/05": {
+      "laga": 335,
+      "akurasi_hasil": 0.4985,
+      "log_loss": 1.0036,
+      "mae_gol": 0.891,
+      "mae_statistik": 2.2886,
+      "skor_tepat": 0.1045
+    },
+    "2005/06": {
+      "laga": 380,
+      "akurasi_hasil": 0.5579,
+      "log_loss": 0.9433,
+      "mae_gol": 0.8701,
+      "mae_statistik": 2.254,
+      "skor_tepat": 0.1132
+    },
+    "2006/07": {
+      "laga": 380,
+      "akurasi_hasil": 0.5105,
+      "log_loss": 0.9798,
+      "mae_gol": 0.8431,
+      "mae_statistik": 2.3045,
+      "skor_tepat": 0.1263
+    },
+    "2007/08": {
+      "laga": 380,
+      "akurasi_hasil": 0.5711,
+      "log_loss": 0.9326,
+      "mae_gol": 0.8784,
+      "mae_statistik": 2.2838,
+      "skor_tepat": 0.1605
+    },
+    "2008/09": {
+      "laga": 380,
+      "akurasi_hasil": 0.55,
+      "log_loss": 0.9566,
+      "mae_gol": 0.8924,
+      "mae_statistik": 2.3253,
+      "skor_tepat": 0.1342
+    },
+    "2009/10": {
+      "laga": 380,
+      "akurasi_hasil": 0.5526,
+      "log_loss": 0.9454,
+      "mae_gol": 0.9012,
+      "mae_statistik": 2.2601,
+      "skor_tepat": 0.1237
+    },
+    "2010/11": {
+      "laga": 380,
+      "akurasi_hasil": 0.5026,
+      "log_loss": 1.0126,
+      "mae_gol": 0.8939,
+      "mae_statistik": 2.3025,
+      "skor_tepat": 0.1263
+    },
+    "2011/12": {
+      "laga": 380,
+      "akurasi_hasil": 0.5263,
+      "log_loss": 0.9941,
+      "mae_gol": 0.9276,
+      "mae_statistik": 2.371,
+      "skor_tepat": 0.1
+    },
+    "2012/13": {
+      "laga": 380,
+      "akurasi_hasil": 0.5237,
+      "log_loss": 0.9751,
+      "mae_gol": 0.9146,
+      "mae_statistik": 2.2906,
+      "skor_tepat": 0.1158
+    },
+    "2013/14": {
+      "laga": 380,
+      "akurasi_hasil": 0.5895,
+      "log_loss": 0.9346,
+      "mae_gol": 0.9615,
+      "mae_statistik": 2.3139,
+      "skor_tepat": 0.1158
+    },
+    "2014/15": {
+      "laga": 380,
+      "akurasi_hasil": 0.5105,
+      "log_loss": 0.9805,
+      "mae_gol": 0.8722,
+      "mae_statistik": 2.2409,
+      "skor_tepat": 0.1447
+    },
+    "2015/16": {
+      "laga": 380,
+      "akurasi_hasil": 0.4737,
+      "log_loss": 1.0318,
+      "mae_gol": 0.9252,
+      "mae_statistik": 2.2361,
+      "skor_tepat": 0.1237
+    },
+    "2016/17": {
+      "laga": 380,
+      "akurasi_hasil": 0.6,
+      "log_loss": 0.928,
+      "mae_gol": 0.9222,
+      "mae_statistik": 2.1913,
+      "skor_tepat": 0.1421
+    },
+    "2017/18": {
+      "laga": 380,
+      "akurasi_hasil": 0.5474,
+      "log_loss": 0.9553,
+      "mae_gol": 0.9072,
+      "mae_statistik": 2.1294,
+      "skor_tepat": 0.1474
+    },
+    "2018/19": {
+      "laga": 380,
+      "akurasi_hasil": 0.6026,
+      "log_loss": 0.9036,
+      "mae_gol": 0.8814,
+      "mae_statistik": 2.159,
+      "skor_tepat": 0.0974
+    },
+    "2019/20": {
+      "laga": 380,
+      "akurasi_hasil": 0.5395,
+      "log_loss": 0.9732,
+      "mae_gol": 0.8707,
+      "mae_statistik": 2.2238,
+      "skor_tepat": 0.1526,
+      "akurasi_bandar": 0.5316,
+      "log_loss_bandar": 0.9726
+    },
+    "2020/21": {
+      "laga": 380,
+      "akurasi_hasil": 0.4947,
+      "log_loss": 1.0261,
+      "mae_gol": 0.9457,
+      "mae_statistik": 2.1789,
+      "skor_tepat": 0.1289,
+      "akurasi_bandar": 0.5158,
+      "log_loss_bandar": 1.0042
+    },
+    "2021/22": {
+      "laga": 380,
+      "akurasi_hasil": 0.5711,
+      "log_loss": 0.9583,
+      "mae_gol": 0.9268,
+      "mae_statistik": 2.2421,
+      "skor_tepat": 0.1237,
+      "akurasi_bandar": 0.5789,
+      "log_loss_bandar": 0.936
+    },
+    "2022/23": {
+      "laga": 380,
+      "akurasi_hasil": 0.5395,
+      "log_loss": 0.9706,
+      "mae_gol": 0.945,
+      "mae_statistik": 2.192,
+      "skor_tepat": 0.0895,
+      "akurasi_bandar": 0.5605,
+      "log_loss_bandar": 0.9658
+    },
+    "2023/24": {
+      "laga": 380,
+      "akurasi_hasil": 0.5789,
+      "log_loss": 0.9286,
+      "mae_gol": 0.9607,
+      "mae_statistik": 2.3285,
+      "skor_tepat": 0.1158,
+      "akurasi_bandar": 0.5895,
+      "log_loss_bandar": 0.9093
+    },
+    "2024/25": {
+      "laga": 380,
+      "akurasi_hasil": 0.5263,
+      "log_loss": 0.9846,
+      "mae_gol": 0.9211,
+      "mae_statistik": 2.3084,
+      "skor_tepat": 0.1158,
+      "akurasi_bandar": 0.5421,
+      "log_loss_bandar": 0.9706
+    },
+    "2025/26": {
+      "laga": 380,
+      "akurasi_hasil": 0.4895,
+      "log_loss": 1.0224,
+      "mae_gol": 0.8847,
+      "mae_statistik": 2.13,
+      "skor_tepat": 0.1316,
+      "akurasi_bandar": 0.4947,
+      "log_loss_bandar": 1.0153
+    },
+    "2026/27": {
+      "laga": 100,
+      "akurasi_hasil": 0.46,
+      "log_loss": 1.0262,
+      "mae_gol": 0.9419,
+      "mae_statistik": 2.2279,
+      "skor_tepat": 0.12,
+      "akurasi_bandar": 0.48,
+      "log_loss_bandar": 1.0121
+    }
+  },
+  "statistik_tambahan": [
+    "penguasaan_bola_kandang",
+    "umpan_kandang",
+    "umpan_tandang",
+    "akurasi_umpan_kandang",
+    "akurasi_umpan_tandang",
+    "penyelamatan_kiper_kandang",
+    "penyelamatan_kiper_tandang"
+  ],
+  "evaluasi_tambahan": {
+    "penguasaan_bola_kandang": {
+      "laga": 100,
+      "mae": 7.804,
+      "mae_tebakan_rata_rata": 10.611,
+      "perbaikan": 0.2646,
+      "rata_rata_asli": 50.66
+    },
+    "umpan_kandang": {
+      "laga": 100,
+      "mae": 75.728,
+      "mae_tebakan_rata_rata": 107.428,
+      "perbaikan": 0.2951,
+      "rata_rata_asli": 451.14
+    },
+    "umpan_tandang": {
+      "laga": 100,
+      "mae": 76.954,
+      "mae_tebakan_rata_rata": 100.498,
+      "perbaikan": 0.2343,
+      "rata_rata_asli": 438.34
+    },
+    "akurasi_umpan_kandang": {
+      "laga": 100,
+      "mae": 3.834,
+      "mae_tebakan_rata_rata": 5.125,
+      "perbaikan": 0.2519,
+      "rata_rata_asli": 81.36
+    },
+    "akurasi_umpan_tandang": {
+      "laga": 100,
+      "mae": 4.467,
+      "mae_tebakan_rata_rata": 5.406,
+      "perbaikan": 0.1737,
+      "rata_rata_asli": 80.45
+    },
+    "penyelamatan_kiper_kandang": {
+      "laga": 100,
+      "mae": 1.292,
+      "mae_tebakan_rata_rata": 1.277,
+      "perbaikan": -0.0119,
+      "rata_rata_asli": 2.56
+    },
+    "penyelamatan_kiper_tandang": {
+      "laga": 100,
+      "mae": 1.507,
+      "mae_tebakan_rata_rata": 1.592,
+      "perbaikan": 0.0535,
+      "rata_rata_asli": 3.15
+    },
+    "penguasaan_bola_tandang": {
+      "laga": 100,
+      "mae": 7.804,
+      "mae_tebakan_rata_rata": 10.611,
+      "perbaikan": 0.2646,
+      "rata_rata_asli": 49.34
+    }
+  },
+  "simulasi": 20000
+}

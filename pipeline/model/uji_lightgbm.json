@@ -1,0 +1,129 @@
+{
+ "setelan": {
+  "n_estimators": 400,
+  "learning_rate": 0.03,
+  "num_leaves": 4,
+  "min_child_samples": 100
+ },
+ "laga": {
+  "poisson": {
+   "laga": 480,
+   "akurasi": 0.4854,
+   "log_loss": 1.0211
+  },
+  "lightgbm": {
+   "laga": 480,
+   "akurasi": 0.4833,
+   "log_loss": 1.0266
+  },
+  "ensemble": {
+   "laga": 480,
+   "akurasi": 0.4833,
+   "log_loss": 1.0232
+  }
+ },
+ "statistik": {
+  "gol_kandang": {
+   "poisson": 0.956,
+   "lightgbm": 0.956,
+   "ensemble": 0.956
+  },
+  "gol_tandang": {
+   "poisson": 0.837,
+   "lightgbm": 0.839,
+   "ensemble": 0.838
+  },
+  "tembakan_kandang": {
+   "poisson": 3.48,
+   "lightgbm": 3.471,
+   "ensemble": 3.468
+  },
+  "tembakan_tandang": {
+   "poisson": 3.33,
+   "lightgbm": 3.348,
+   "ensemble": 3.332
+  },
+  "tembakan_tepat_kandang": {
+   "poisson": 1.753,
+   "lightgbm": 1.755,
+   "ensemble": 1.75
+  },
+  "tembakan_tepat_tandang": {
+   "poisson": 1.578,
+   "lightgbm": 1.602,
+   "ensemble": 1.588
+  },
+  "sepak_pojok_kandang": {
+   "poisson": 2.086,
+   "lightgbm": 2.105,
+   "ensemble": 2.093
+  },
+  "sepak_pojok_tandang": {
+   "poisson": 1.982,
+   "lightgbm": 1.987,
+   "ensemble": 1.983
+  },
+  "pelanggaran_kandang": {
+   "poisson": 2.58,
+   "lightgbm": 2.596,
+   "ensemble": 2.583
+  },
+  "pelanggaran_tandang": {
+   "poisson": 2.686,
+   "lightgbm": 2.697,
+   "ensemble": 2.687
+  },
+  "kartu_kuning_kandang": {
+   "poisson": 0.992,
+   "lightgbm": 0.982,
+   "ensemble": 0.986
+  },
+  "kartu_kuning_tandang": {
+   "poisson": 1.037,
+   "lightgbm": 1.039,
+   "ensemble": 1.035
+  },
+  "penguasaan_bola_kandang": {
+   "poisson": 6.557,
+   "rata_rata": 9.114,
+   "lightgbm": 6.688,
+   "ensemble": 6.524
+  },
+  "umpan_kandang": {
+   "poisson": 65.956,
+   "rata_rata": 91.051,
+   "lightgbm": 68.423,
+   "ensemble": 65.478
+  },
+  "umpan_tandang": {
+   "poisson": 65.393,
+   "rata_rata": 89.652,
+   "lightgbm": 63.954,
+   "ensemble": 63.481
+  },
+  "akurasi_umpan_kandang": {
+   "poisson": 3.25,
+   "rata_rata": 4.36,
+   "lightgbm": 3.23,
+   "ensemble": 3.153
+  },
+  "akurasi_umpan_tandang": {
+   "poisson": 3.971,
+   "rata_rata": 4.795,
+   "lightgbm": 4.025,
+   "ensemble": 3.95
+  },
+  "penyelamatan_kiper_kandang": {
+   "poisson": 1.371,
+   "rata_rata": 1.352,
+   "lightgbm": 1.314,
+   "ensemble": 1.336
+  },
+  "penyelamatan_kiper_tandang": {
+   "poisson": 1.421,
+   "rata_rata": 1.517,
+   "lightgbm": 1.453,
+   "ensemble": 1.429
+  }
+ }
+}

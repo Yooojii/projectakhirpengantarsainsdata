@@ -5,3 +5,6 @@ __pycache__/
 model/*.joblib
 .superpowers/
 *.zip
+
+# kunci API-Football, jangan pernah di-commit
+apikeyfootball.txt
