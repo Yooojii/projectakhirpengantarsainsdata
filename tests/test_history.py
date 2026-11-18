@@ -31,7 +31,7 @@ def test_klasemen_dua_puluh_klub_terurut_poin(df):
     k = klasemen(df, "2026/27")
     assert len(k) == 20
     assert k.poin.is_monotonic_decreasing
-    assert k.main.unique().tolist() == [9]
+    assert k.main.unique().tolist() == [10]
 
 
 def test_bentuk_permainan_sepuluh_hasil(df):

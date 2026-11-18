@@ -1,10 +1,14 @@
 """Model, prediksi, dan distribusi skor.
 
-Berkas model (`model/model.joblib`) dibuat rekan kelompok dan bisa saja belum
-ada; tanpa model, `prediksi` memakai jalan mundur Poisson.
+Prediksi utama berasal dari model ensemble (Poisson + LightGBM) di folder
+`pipeline/`, yang hasilnya tersimpan di `pipeline/data/prediksi_laga.csv`.
+`prediksi` berbasis fitur di bawah dipakai sebagai cadangan dan untuk
+mengukur perubahan relatif saat susunan pemain disunting.
 """
 import json
 import os
+from functools import lru_cache
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -16,6 +20,40 @@ from inti.fitur import NAMA_FITUR
 GOL_RATA_TIM = 1.355
 FAKTOR_KANDANG = 1.13   # 1,53 / 1,355
 FAKTOR_TANDANG = 0.87   # 1,18 / 1,355
+RHO_DIXON_COLES = -0.035  # disetel di pipeline/model_prediksi.py
+JALUR_ENSEMBLE = Path(__file__).resolve().parent.parent / "pipeline" / "data" / "prediksi_laga.csv"
+STAT_ENSEMBLE = ["tembakan", "tembakan_tepat", "sepak_pojok", "pelanggaran", "kartu_kuning",
+                 "penguasaan_bola", "umpan", "akurasi_umpan", "penyelamatan_kiper"]
+
+
+@lru_cache(maxsize=1)
+def _tabel_ensemble(path: str) -> pd.DataFrame | None:
+    if not os.path.exists(path):
+        return None
+    return pd.read_csv(path, low_memory=False).set_index(["musim", "tim_kandang", "tim_tandang"]).sort_index()
+
+
+def prediksi_ensemble(tim_k: str, tim_t: str, musim: str = "2026/27",
+                      path: str = str(JALUR_ENSEMBLE)) -> dict | None:
+    """Prediksi ensemble untuk satu laga, atau None kalau laganya tidak ada."""
+    tabel = _tabel_ensemble(path)
+    if tabel is None or (musim, tim_k, tim_t) not in tabel.index:
+        return None
+    r = tabel.loc[(musim, tim_k, tim_t)]
+    r = r.iloc[0] if isinstance(r, pd.DataFrame) else r
+    if pd.isna(r["duga_gol_kandang"]):
+        return None
+    statistik = {}
+    for nama in STAT_ENSEMBLE:
+        k, t = r.get(f"duga_{nama}_kandang"), r.get(f"duga_{nama}_tandang")
+        if pd.notna(k) and pd.notna(t):
+            statistik[nama] = (float(k), float(t))
+    return {"p_menang_kandang": float(r["peluang_menang_kandang"]),
+            "p_seri": float(r["peluang_seri"]),
+            "p_menang_tandang": float(r["peluang_menang_tandang"]),
+            "gol_harapan_kandang": float(r["duga_gol_kandang"]),
+            "gol_harapan_tandang": float(r["duga_gol_tandang"]),
+            "statistik": statistik, "sumber": "ensemble"}
 
 
 def muat_model(path: str = "model/model.joblib"):
@@ -50,17 +88,24 @@ def _gol_harapan(serang: dict, lawan: dict) -> float:
     return max(0.0, (serangan + kebobolan) / 2 * faktor)
 
 
-def distribusi_skor(gol_k: float, gol_t: float, maks: int = 6) -> dict[tuple[int, int], float]:
-    """Sebaran bersama skor (kandang, tandang), dua Poisson independen, dinormalkan.
+def distribusi_skor(gol_k: float, gol_t: float, maks: int = 6,
+                    rho: float = 0.0) -> dict[tuple[int, int], float]:
+    """Sebaran bersama skor (kandang, tandang), dua Poisson dinormalkan.
 
+    `rho` mengaktifkan koreksi Dixon-Coles untuk skor 0-0, 1-0, 0-1, dan 1-1.
     Gol harapan 0 sah: poisson.pmf(0, 0) == 1.
     """
     gol_k, gol_t = max(0.0, gol_k), max(0.0, gol_t)
     ks = np.arange(maks + 1)
-    pk, pt = poisson.pmf(ks, gol_k), poisson.pmf(ks, gol_t)
-    total = pk.sum() * pt.sum()  # massa di dalam kotak 0..maks
-    return {(int(i), int(j)): float(pk[i] * pt[j] / total)
-            for i in ks for j in ks}
+    m = np.outer(poisson.pmf(ks, gol_k), poisson.pmf(ks, gol_t))
+    if rho:
+        m[0, 0] *= 1 - gol_k * gol_t * rho
+        m[1, 0] *= 1 + gol_t * rho
+        m[0, 1] *= 1 + gol_k * rho
+        m[1, 1] *= 1 - rho
+    m = np.clip(m, 0, None)
+    m /= m.sum()
+    return {(int(i), int(j)): float(m[i, j]) for i in ks for j in ks}
 
 
 def _hasil(k: int, t: int) -> str:

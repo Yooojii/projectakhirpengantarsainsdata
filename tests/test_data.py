@@ -4,7 +4,7 @@ from inti.data import muat_pertandingan, cakupan_kolom, KELOMPOK_KOLOM, klub_mus
 
 def test_muat_pertandingan_bentuk_dan_tipe():
     df = muat_pertandingan()
-    assert df.shape == (9880, 56)
+    assert df.shape == (9890, 85)
     assert pd.api.types.is_datetime64_any_dtype(df["tanggal"])
     assert df["tanggal"].is_monotonic_increasing
 
@@ -17,8 +17,8 @@ def test_kelompok_kolom_mencakup_semua_kolom_tanpa_tumpang_tindih():
 def test_cakupan_xg_musim_berjalan_terpisah_dari_statistik_api():
     df = muat_pertandingan()
     cak = cakupan_kolom(df).set_index("kolom")
-    assert cak.loc["xg_kandang", "terisi"] == 90
-    assert cak.loc["xg_api_kandang", "terisi"] == 102
+    assert cak.loc["xg_kandang", "terisi"] == 100
+    assert cak.loc["xg_api_kandang", "terisi"] == 300
     assert cak.loc["xg_kandang", "kelompok"] == "statistik_lanjutan"
     assert cak.loc["tembakan_kandang", "persen"] == 100.0
 
@@ -44,7 +44,7 @@ def test_klem_tembakan_tepat_hanya_mengubah_lima_sel_yang_diputuskan():
     gabung = mentah[kunci + kolom].merge(
         df[kunci + kolom], on=kunci, suffixes=("_mentah", "_bersih"), validate="one_to_one"
     )
-    assert len(gabung) == 9880
+    assert len(gabung) == 9890
     beda = {}
     for k in kolom:
         b = gabung[gabung[f"{k}_mentah"] != gabung[f"{k}_bersih"]]

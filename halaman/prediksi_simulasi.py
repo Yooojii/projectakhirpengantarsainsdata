@@ -12,7 +12,8 @@ from inti.data import klub_musim, muat_pertandingan
 from inti.fitur import fitur_tim
 from inti.jadwal import jadwal_sisa
 from inti.klub import warna_klub
-from inti.model import distribusi_skor, pembanding, prediksi, skor_utama
+from inti.model import (RHO_DIXON_COLES, _peluang_dari_skor, distribusi_skor, pembanding, prediksi,
+                        prediksi_ensemble, skor_utama)
 from inti.pemain import bangkitkan_skuad
 from inti.sesi import BULAN, JALUR_DATA, JALUR_METRIK, JALUR_MODEL
 
@@ -65,6 +66,17 @@ def hitung_prediksi(sesi: dict) -> dict:
 
     p = prediksi(fk, ft, model=sesi.get("model"))
     dist = distribusi_skor(p["gol_harapan_kandang"], p["gol_harapan_tandang"])
+
+    # Dengan prediksi ensemble, susunan pemain hanya menggeser gol harapan secara
+    # relatif terhadap susunan awal; tanpa suntingan hasilnya sama dengan ensemble.
+    ens, acuan = sesi.get("ensemble"), sesi.get("acuan_gol")
+    if ens and acuan:
+        gk = ens["gol_harapan_kandang"] * p["gol_harapan_kandang"] / max(acuan[0], 1e-6)
+        gt = ens["gol_harapan_tandang"] * p["gol_harapan_tandang"] / max(acuan[1], 1e-6)
+        dist = distribusi_skor(gk, gt, maks=10, rho=RHO_DIXON_COLES)
+        h, d, a = _peluang_dari_skor(dist)
+        p = {**p, "p_menang_kandang": h, "p_seri": d, "p_menang_tandang": a,
+             "gol_harapan_kandang": gk, "gol_harapan_tandang": gt, "sumber": "ensemble"}
 
     # Hasil terkuat ditentukan dari argmax 3 probabilitas model
     p_map = {"H": p["p_menang_kandang"], "D": p["p_seri"], "A": p["p_menang_tandang"]}
@@ -154,6 +166,12 @@ def tampil() -> None:
         "poin_tandang": sesi["poin_tandang"],
         "model": sesi.get("model"),
     }
+    ens = prediksi_ensemble(tim_k, tim_t)
+    if ens:
+        dasar = hitung_prediksi(sesi_awal)
+        acuan = (dasar["gol_harapan_kandang"], dasar["gol_harapan_tandang"])
+        for s_ in (sesi, sesi_awal):
+            s_["ensemble"], s_["acuan_gol"] = ens, acuan
     pred_awal = hitung_prediksi(sesi_awal)
     pred_sekarang = hitung_prediksi(sesi)
     perubahan = selisih(pred_awal, pred_sekarang)

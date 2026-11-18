@@ -7,7 +7,7 @@ from inti.data import KELOMPOK_KOLOM, muat_pertandingan
 from inti.fitur import fitur_tim
 from inti.jadwal import jadwal_sisa
 from inti.klub import warna_klub
-from inti.model import distribusi_skor, prediksi, skor_utama
+from inti.model import RHO_DIXON_COLES, distribusi_skor, prediksi, prediksi_ensemble, skor_utama
 from inti.sesi import BULAN, JALUR_DATA
 
 
@@ -77,8 +77,9 @@ def tampil() -> None:
         tk, tt = laga["tim_kandang"], laga["tim_tandang"]
         fk = fitur_tim(df, tk, tgl, kandang=True)
         ft = fitur_tim(df, tt, tgl, kandang=False)
-        pred = prediksi(fk, ft, model=st.session_state.get("model"))
-        dist = distribusi_skor(pred["gol_harapan_kandang"], pred["gol_harapan_tandang"])
+        pred = prediksi_ensemble(tk, tt) or prediksi(fk, ft, model=st.session_state.get("model"))
+        rho = RHO_DIXON_COLES if pred.get("sumber") == "ensemble" else 0.0
+        dist = distribusi_skor(pred["gol_harapan_kandang"], pred["gol_harapan_tandang"], rho=rho)
         p_map = {"H": pred["p_menang_kandang"], "D": pred["p_seri"], "A": pred["p_menang_tandang"]}
         hasil_terkuat = max(p_map, key=p_map.get)
         skor = skor_utama(dist, hasil_terkuat)

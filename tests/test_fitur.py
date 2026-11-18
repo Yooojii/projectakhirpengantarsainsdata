@@ -61,7 +61,7 @@ def test_klub_tanpa_riwayat_memakai_rata_rata_liga(df):
 def test_tabel_pelatihan_tidak_mengandung_odds_atau_statistik_lanjutan(tabel):
     terlarang = ["odds", "xg", "penguasaan", "umpan", "offside", "penyelamatan"]
     assert not [c for c in tabel.columns if any(x in c for x in terlarang)]
-    assert len(tabel) == 9772
+    assert len(tabel) == 9782
 
 def test_tabel_pelatihan_memuat_identitas_di_depan_lalu_fitur_dan_hasil(tabel):
     identitas = ["tanggal", "tim_kandang", "tim_tandang"]

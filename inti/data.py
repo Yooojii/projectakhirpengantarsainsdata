@@ -12,6 +12,7 @@ KELOMPOK_KOLOM: dict[str, list[str]] = {
     "identitas": [
         "tanggal", "musim", "pekan", "waktu", "tim_kandang", "tim_tandang",
         "wasit", "stadion", "id_apifootball", "statistik_lengkap",
+        "sumber_statistik_lengkap", "url_bbc", "kartu_kuning_dikoreksi",
     ],
     "hasil": [
         "gol_kandang", "gol_tandang", "hasil",
@@ -42,13 +43,27 @@ KELOMPOK_KOLOM: dict[str, list[str]] = {
         "umpan_akurat_kandang", "umpan_akurat_tandang",
         "akurasi_umpan_kandang", "akurasi_umpan_tandang",
         "gol_dicegah_kandang", "gol_dicegah_tandang",
+        # statistik tambahan dari BBC Sport (2023/24 sampai musim berjalan)
+        "xg_bbc_kandang", "xg_bbc_tandang",
+        "sentuhan_kotak_lawan_kandang", "sentuhan_kotak_lawan_tandang",
+        "duel_udara_menang_kandang", "duel_udara_menang_tandang",
+        "kena_tiang_kandang", "kena_tiang_tandang",
+        "umpan_ke_belakang_kandang", "umpan_ke_belakang_tandang",
+        "umpan_ke_depan_kandang", "umpan_ke_depan_tandang",
+        "bola_panjang_kandang", "bola_panjang_tandang",
+        "umpan_sepertiga_akhir_kandang", "umpan_sepertiga_akhir_tandang",
+        "umpan_silang_kandang", "umpan_silang_tandang",
+        "tekel_kandang", "tekel_tandang",
+        "persen_tekel_sukses_kandang", "persen_tekel_sukses_tandang",
+        "sapuan_kandang", "sapuan_tandang",
+        "sapuan_garis_gawang_kandang", "sapuan_garis_gawang_tandang",
     ],
 }
 
 
 @_cache
 def muat_pertandingan(path: str = "data/liga_inggris_gabungan.csv") -> pd.DataFrame:
-    df = pd.read_csv(path, parse_dates=["tanggal"])
+    df = pd.read_csv(path, parse_dates=["tanggal"], low_memory=False)
     df = df.sort_values("tanggal", kind="stable").reset_index(drop=True)
     # Pra-pemrosesan: tiga baris sumber mencatat tembakan tepat sasaran lebih
     # banyak daripada total tembakan (Coventry 2000-10-14, Bradford 2001-04-13,
