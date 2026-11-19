@@ -33,7 +33,11 @@
 /* Kerangka bawaan Streamlit yang tidak dipakai */
 #MainMenu, [data-testid="stMainMenu"], footer, [data-testid="stFooter"],
 [data-testid="stToolbar"], [data-testid="stDecoration"] { display: none !important; }
-[data-testid="stHeader"] { background: transparent; }
+[data-testid="stHeader"] {
+  background: transparent !important;
+  height: 0 !important; min-height: 0 !important;
+  padding: 0 !important; overflow: hidden !important;
+}
 
 /* ---- Jarak: kelipatan 8; 48 antarbagian, 16 dalam bagian ---- */
 .stApp .block-container { padding-top: 48px; padding-bottom: 48px; }
@@ -167,6 +171,229 @@ table.tabel th.teks, table.tabel td.teks {
   .angka-prediksi.berubah { animation: none; }
 }
 
+/* ================================================================
+   Dasbor Overview: kisi yang muat satu layar, tanpa gulir.
+   Tinggi diturunkan dari tinggi jendela, bukan dari isi, supaya
+   panel memendek bersama-sama ketika jendelanya pendek.
+   ================================================================ */
+:root {
+  --navy: #0E3A52;
+  --teal: #157D7B;
+  --kabut: #8FA6B0;
+  --lajur: #EDF1F0;
+}
+
+/* Hanya halaman yang memuat dasbor yang kehilangan jarak 48px; halaman lain tetap. */
+.stApp .block-container:has(.dasbor) {
+  padding-top: 16px; padding-bottom: 8px; max-width: none;
+}
+.stApp .block-container:has(.st-key-dasbor-overview) {
+  padding-top: 16px; padding-bottom: 16px; max-width: none;
+}
+/* Semua halaman yang memiliki sidebar navigasi: zero padding kiri agar sidebar menyentuh tepi. */
+.stApp .block-container:has(.st-key-navigasi-kiri) {
+  padding-left: 0 !important; padding-right: 0 !important;
+  background: linear-gradient(to right, var(--navy) 15vw, var(--latar) 15vw) !important;
+}
+.st-key-dasbor-overview > [data-testid="stVerticalBlock"] {
+  display: flex !important; flex-direction: column !important; gap: 16px !important;
+  row-gap: 16px !important; margin-top: 0 !important;
+}
+.st-key-dasbor-overview > [data-testid="stVerticalBlock"] > [data-testid="stElementContainer"] {
+  margin: 0 !important;
+}
+/* Hanya baris pertama yang butuh margin-top: flex gap tidak berlaku di antara
+   stElementContainer (KPI) dan st.container pertama. Baris ke-2 dan ke-3 sudah
+   dapat 16px dari flex gap. */
+.st-key-baris-radar-tren,
+.st-key-baris-juara-gol { margin-top: 16px !important; }
+.st-key-baris-radar-tren [data-testid="stHorizontalBlock"],
+.st-key-baris-xg-hasil [data-testid="stHorizontalBlock"],
+.st-key-baris-juara-gol [data-testid="stHorizontalBlock"] {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px !important;
+}
+.st-key-baris-radar-tren [data-testid="stColumn"],
+.st-key-baris-xg-hasil [data-testid="stColumn"],
+.st-key-baris-juara-gol [data-testid="stColumn"] { width: auto !important; min-width: 0 !important; }
+
+/* minmax(0, ...) wajib: 1fr saja punya lantai min-content, dan baris grafik akan
+   kolaps ke tinggi judulnya karena SVG height:100% tidak punya tinggi intrinsik. */
+/* Baris pertama diberi jatah lebih besar: radar dan garis tren paling menderita
+   kalau pendek, sedangkan donat dan batang tetap terbaca di baris yang lebih tipis. */
+.dasbor {
+  display: grid;
+  grid-template-rows: auto;
+  gap: 8px;
+  height: auto;
+  min-height: 0;
+}
+.duo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; min-height: 220px; }
+.dasbor > .duo:nth-child(2) { min-height: 270px; }
+.dasbor > .duo:nth-child(3) { min-height: 210px; }
+.dasbor > .duo:nth-child(4) { min-height: 220px; }
+
+/* ---- Kepala halaman: judul di kiri, dua filter di kanan ---- */
+.dasbor-kepala h2 { font-size: 20px; font-weight: 600; margin: 0; padding: 0; line-height: 1.3; }
+.dasbor-kepala .ruang { font-size: 13px; color: var(--teks-2); display: block; }
+
+/* ---- Enam angka kepala ---- */
+.kpi { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px; }
+.kpi-sel {
+  background: var(--permukaan); border: 1px solid var(--garis); border-radius: 4px;
+  padding: 8px; min-width: 0;
+}
+.kpi-sel .label {
+  font-size: 13px; color: var(--teks-2); white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
+}
+.kpi-sel .nilai {
+  font-family: var(--huruf-sempit); font-variant-numeric: tabular-nums;
+  font-size: 21px; font-weight: 600; line-height: 1.2; color: var(--teks);
+}
+.kpi-sel .nilai small { font-size: 13px; font-weight: 500; color: var(--teks-2); margin-left: 4px; }
+
+/* ---- Panel ---- */
+.kartu {
+  background: var(--permukaan); border: 1px solid var(--garis); border-radius: 4px;
+  padding: 8px 16px 16px;
+  display: flex; flex-direction: column; min-height: 0; min-width: 0;
+}
+.kartu .judul { font-size: 15px; font-weight: 600; line-height: 1.3; }
+.kartu .ket { font-size: 13px; color: var(--teks-2); line-height: 1.3; }
+/* stretch, bukan center: anak yang bertinggi 100% harus ikut merenggang,
+   kalau dipusatkan ia mengecil ke tinggi kontennya dan grafiknya ikut kempis. */
+.kartu .isi {
+  flex: 1; min-height: 0; margin-top: 8px;
+  display: flex; align-items: stretch; justify-content: center;
+}
+.kartu .isi > svg { display: block; width: 100%; height: 100%; min-width: 0; max-height: 100%; }
+.kartu .isi > .tren, .kartu .isi > .radar-isi,
+.kartu .isi > .donat-isi, .kartu .isi > .deret { width: 100%; }
+.kartu:has(.radar-isi) { min-height: 0; }
+.kartu:has(.radar-isi) .judul { font-weight: 600; }
+.kartu:has(.radar-isi) .isi { flex: 1; min-height: 0; }
+
+/* ---- Lencana besar di samping radar ---- */
+/* Grid dua kolom: kolom kiri stretch penuh, logo mengisi tinggi kolom. */
+.radar-isi {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: 16px;
+  align-items: stretch;
+  width: 100%; min-height: 0;
+}
+/* Kolom logo stretch ke tinggi radar; img mengisi penuh dengan object-fit: contain. */
+.lencana-besar {
+  display: flex; align-items: center; justify-content: center; padding-left: 12px;
+}
+/* Logo PL mengisi kolom penuh; logo klub dibatasi supaya tidak memenuhi panel. */
+.lencana-besar img.logo-kompetisi { width: 100%; height: 100%; object-fit: contain; }
+.lencana-besar img:not(.logo-kompetisi) {
+  width: auto; height: auto;
+  max-width: 90%; max-height: 96px;
+  object-fit: contain;
+}
+.lencana-besar .kode {
+  font-family: var(--huruf-sempit); font-size: 20px; font-weight: 600; color: var(--teks-2);
+  width: 88px; height: 88px; border: 1px solid var(--garis); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+/* margin-top negatif mendekatkan pentagon ke posisi logo secara visual. */
+.radar-grafik { min-width: 0; overflow: visible; margin-top: -6px; }
+.radar-grafik > svg { display: block; width: 100%; height: auto; max-height: 320px; }
+.radar-kaki { display: flex; gap: 16px; font-size: 13px; color: var(--teks-2); margin-top: 4px; }
+.radar-kaki i { width: 8px; height: 8px; border-radius: 0; display: inline-block; margin-right: 8px; }
+
+/* Kartu tren interaktif: pemilih metrik sejajar dengan judul, grafik memakai lebar penuh. */
+.st-key-panel-tren {
+  box-sizing: border-box; overflow: hidden; flex-shrink: 0 !important; padding: 12px 16px;
+  background: var(--permukaan); border: 1px solid var(--garis); border-radius: 4px;
+}
+.st-key-panel-tren > [data-testid="stVerticalBlock"] { gap: 6px !important; }
+.st-key-panel-tren .judul-tren {
+  font-size: 15px; font-weight: 600; line-height: 1.3;
+  display: flex; flex-direction: column; gap: 1px;
+}
+.st-key-panel-tren .sub-tren { font-size: 12px; font-weight: 400; color: var(--teks-2); }
+.st-key-panel-tren [data-testid="stSelectbox"] {
+  padding: 0;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.13) !important;
+  border-radius: 6px;
+}
+.st-key-panel-tren [data-testid="stSelectSlider"] { padding: 0 4px; }
+.st-key-panel-tren [data-testid="stVegaLiteChart"] { width: 100%; }
+.st-key-panel-tren [data-testid="stVegaLiteChart"] > div { background: transparent !important; }
+.st-key-baris-radar-tren .kartu { height: 290px; }
+.st-key-baris-xg-hasil .kartu,
+.st-key-baris-juara-gol .kartu { height: 250px; }
+
+/* ---- Deret batang mendatar ---- */
+.deret { display: flex; flex-direction: column; justify-content: center; gap: 7px; width: 100%; height: 100%; }
+.deret-baris { display: flex; align-items: center; gap: 10px; min-height: 22px; flex: 0 0 auto; font-size: 14px; line-height: 1.25; }
+.deret-nama {
+  flex: 0 0 112px; font-family: var(--huruf-sempit); font-weight: 500;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.deret-lajur { flex: 1; height: 13px; background: var(--lajur); border-radius: 2px; overflow: hidden; }
+.deret-isi { display: block; height: 100%; border-radius: 2px; }
+.deret-angka {
+  flex: 0 0 28px; text-align: right; font-family: var(--huruf-sempit);
+  font-variant-numeric: tabular-nums; font-weight: 600;
+}
+.deret-baris.sorot .deret-nama, .deret-baris.sorot .deret-angka { color: var(--aksen); }
+.deret-baris.tambahan { border-top: 1px dashed var(--garis); padding-top: 8px; margin-top: 4px; }
+/* Baris keenam muncul ketika klub terfilter di luar lima besar; tanpa ini ia meluber. */
+.deret:has(.tambahan) { gap: 4px; }
+
+/* ---- Legenda donat ---- */
+.donat-isi { display: flex; align-items: center; gap: 16px; width: 100%; height: 100%; }
+.donat-grafik { flex: 0 0 46%; height: 100%; display: flex; align-items: center; justify-content: center; }
+.legenda { flex: 1; display: flex; flex-direction: column; gap: 8px; font-size: 13px; min-width: 0; }
+.legenda div { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.legenda i { width: 8px; height: 8px; border-radius: 0; display: inline-block; margin-right: 8px; }
+.legenda b {
+  font-family: var(--huruf-sempit); font-variant-numeric: tabular-nums; font-weight: 600;
+}
+
+/* ---- Pemilih metrik tren: murni CSS, tanpa jalan ulang skrip ---- */
+.tren { display: flex; flex-direction: column; height: 100%; min-height: 0; }
+.tren input { position: absolute; opacity: 0; pointer-events: none; }
+.tren-badan { display: flex; gap: 16px; flex: 1; min-height: 0; }
+.tren-grafik { flex: 1; min-width: 0; min-height: 0; position: relative; }
+.tren-panel {
+  display: none; position: absolute; inset: 0;
+  flex-direction: column; justify-content: center;
+}
+/* SVG sebagai flex item akan menyusut ke tinggi nol tanpa dua baris ini. */
+.tren-panel > svg { flex: 1; min-height: 0; width: 100%; }
+.tren-pil {
+  flex: 0 0 112px; display: flex; flex-direction: column;
+  gap: 4px; justify-content: center;
+}
+.tren-pil label {
+  font-size: 13px; color: var(--teks-2); border: 1px solid var(--garis);
+  border-radius: 4px; padding: 0 8px; cursor: pointer; line-height: 1.4;
+  text-align: center;
+}
+.tren-kaki {
+  display: flex; justify-content: space-between; font-size: 13px;
+  color: var(--teks-2); margin-top: 4px;
+}
+#tren-0:checked ~ .tren-badan .tren-panel:nth-child(1),
+#tren-1:checked ~ .tren-badan .tren-panel:nth-child(2),
+#tren-2:checked ~ .tren-badan .tren-panel:nth-child(3),
+#tren-3:checked ~ .tren-badan .tren-panel:nth-child(4),
+#tren-4:checked ~ .tren-badan .tren-panel:nth-child(5) { display: flex; }
+#tren-0:checked ~ .tren-badan label[for="tren-0"],
+#tren-1:checked ~ .tren-badan label[for="tren-1"],
+#tren-2:checked ~ .tren-badan label[for="tren-2"],
+#tren-3:checked ~ .tren-badan label[for="tren-3"],
+#tren-4:checked ~ .tren-badan label[for="tren-4"] {
+  background: var(--navy); border-color: var(--navy); color: #FFFFFF;
+}
+
 /* ---- Navigasi sidebar: empat kata biasa, tanpa lingkaran radio ---- */
 .stApp [data-testid="stSidebar"] [data-testid="stRadio"] label > div:first-child { display: none; }
 .stApp [data-testid="stSidebar"] [data-testid="stRadio"] label {
@@ -177,4 +404,101 @@ table.tabel th.teks, table.tabel td.teks {
 }
 .stApp [data-testid="stSidebar"] [data-testid="stRadio"] label:has(input:checked) p {
   font-weight: 600; color: var(--aksen);
+}
+
+/* ---- Kolom navigasi: sidebar tab-only, penuh dari atas ke bawah ---- */
+/* block-container diberi gradient agar warna navy mengisi sisi kiri
+   sepanjang seluruh tinggi konten, bukan cuma 100vh sticky column.
+   15vw ≈ lebar kolom [1.5] dari rasio [1.5, 8.5] */
+[data-testid="stColumn"]:has(.st-key-navigasi-kiri) {
+  align-self: flex-start !important;
+  position: sticky !important;
+  top: 0 !important;
+  height: 100vh !important;
+  overflow-y: auto;
+  padding: 0 !important;
+  /* Seluruh kolom berwarna navy agar sidebar solid penuh */
+  background: var(--navy) !important;
+  /* Separator tipis di kanan */
+  border-right: 1px solid rgba(255,255,255,0.08);
+}
+/* Gap nyata = block-container padding-top + flex gap (16px) antara pasang_tema dan stLayoutWrapper.
+   Sasaran: stHorizontalBlock (flex child dari stLayoutWrapper) digeser hingga y=0.
+   Overview:    16px padding + 16px gap = 32px total → margin-top: -32px
+   Halaman lain: 48px padding + 16px gap = 64px total → margin-top: -64px */
+.stApp .block-container:has(.st-key-dasbor-overview) [data-testid="stHorizontalBlock"]:has(.st-key-navigasi-kiri) {
+  margin-top: -32px !important;
+}
+.stApp .block-container:not(:has(.st-key-dasbor-overview)) [data-testid="stHorizontalBlock"]:has(.st-key-navigasi-kiri) {
+  margin-top: -64px !important;
+}
+/* Kolom konten: padding-top per halaman + padding kiri-kanan setelah block-container di-zero */
+.stApp .block-container:has(.st-key-dasbor-overview) [data-testid="stHorizontalBlock"]:has(.st-key-navigasi-kiri) > [data-testid="stColumn"]:not(:has(.st-key-navigasi-kiri)) {
+  padding-top: 16px !important; padding-left: 24px !important; padding-right: 20px !important;
+}
+.stApp .block-container:not(:has(.st-key-dasbor-overview)) [data-testid="stHorizontalBlock"]:has(.st-key-navigasi-kiri) > [data-testid="stColumn"]:not(:has(.st-key-navigasi-kiri)) {
+  padding-top: 48px !important; padding-left: 24px !important; padding-right: 20px !important;
+}
+[data-testid="stColumn"]:has(.st-key-navigasi-kiri) > [data-testid="stVerticalBlock"] {
+  height: 100% !important;
+  gap: 0 !important;
+}
+[data-testid="stColumn"]:has(.st-key-navigasi-kiri) > [data-testid="stVerticalBlock"] > [data-testid="stElementContainer"] {
+  height: 100% !important;
+  margin: 0 !important;
+}
+
+/* Navigasi utama: latar transparan (warna dari stColumn), radius 0, penuh */
+.st-key-navigasi-kiri {
+  height: 100% !important;
+  min-height: 100vh;
+  padding: 20px 14px 24px;
+  background: transparent; border: 0; border-radius: 0; color: #FFFFFF;
+  display: flex; flex-direction: column;
+  box-sizing: border-box;
+}
+.st-key-navigasi-kiri > [data-testid="stVerticalBlock"] {
+  height: 100% !important;
+  gap: 10px !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+.st-key-navigasi-kiri h3 {
+  margin: 0 0 2px; padding: 0 6px; color: #FFFFFF; font-size: 17px; line-height: 1.3;
+}
+.st-key-navigasi-kiri [data-testid="stCaptionContainer"] p {
+  padding: 0 6px; color: #B8CCD4; font-size: 12px; margin-bottom: 4px;
+}
+
+/* Radio navigasi halaman */
+.st-key-navigasi-kiri [data-testid="stRadio"] > label { display: none; }
+.st-key-navigasi-kiri [data-testid="stRadio"] [role="radiogroup"] {
+  display: flex; flex-direction: column; gap: 2px;
+}
+.st-key-navigasi-kiri [data-testid="stRadio"] [role="radiogroup"] > label {
+  display: flex; align-items: center; padding: 10px 9px; margin: 0;
+  border-radius: 6px; cursor: pointer; background: transparent;
+}
+.st-key-navigasi-kiri [data-testid="stRadio"] [role="radiogroup"] > label > div:first-child {
+  display: none;
+}
+.st-key-navigasi-kiri [data-testid="stRadio"] [role="radiogroup"] > label p {
+  margin: 0; color: #D6E2E7; font-size: 14px; line-height: 1.3;
+}
+.st-key-navigasi-kiri [data-testid="stRadio"] [role="radiogroup"] > label:has(input:checked) {
+  background: rgba(114, 181, 255, 0.12);
+}
+.st-key-navigasi-kiri [data-testid="stRadio"] [role="radiogroup"] > label:has(input:checked) p {
+  color: #72B5FF; font-weight: 600;
+}
+
+@media (max-width: 1100px) {
+  .duo { grid-template-columns: minmax(0, 1fr); }
+  .st-key-baris-radar-tren [data-testid="stHorizontalBlock"],
+  .st-key-baris-xg-hasil [data-testid="stHorizontalBlock"],
+  .st-key-baris-juara-gol [data-testid="stHorizontalBlock"] { grid-template-columns: minmax(0, 1fr); }
+  .dasbor > .duo { min-height: 220px; }
+  .radar-grafik > svg { width: min(100%, 380px); height: 240px; }
+  .deret-nama { flex-basis: 96px; }
+  .st-key-baris-radar-tren .kartu, .st-key-panel-tren { min-height: 340px; height: 340px; }
 }
