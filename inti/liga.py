@@ -58,25 +58,47 @@ def ringkas_kpi(df: pd.DataFrame, musim: str | None, klub: str | None = None) ->
     }
 
 
+KOLOM_TREN = ["musim", "laga", "gol", "kandang", "tembakan", "kartu", "konversi"]
+
+
 @_cache
-def tren_musim(df: pd.DataFrame) -> pd.DataFrame:
-    """Lima ukuran per musim, semuanya per laga supaya musim tak utuh tidak membuat cekungan palsu."""
+def tren_musim(df: pd.DataFrame, klub: str | None = None) -> pd.DataFrame:
+    """Lima ukuran per musim, semuanya per laga supaya musim tak utuh tidak membuat cekungan palsu.
+
+    Tanpa klub: angka liga (gol kedua tim per laga, persen laga dimenangi tuan rumah,
+    tembakan dan kartu rata-rata per tim). Dengan klub: angka sisi klub itu saja
+    (gol yang ia cetak, persen menang di kandangnya sendiri, tembakan dan kartunya),
+    bukan campuran klub dan lawannya.
+    """
     baris = []
     for musim, g in df.groupby("musim", sort=True):
-        n = len(g)
-        tembakan = int(g["tembakan_kandang"].sum() + g["tembakan_tandang"].sum())
-        gol = int(g["gol_kandang"].sum() + g["gol_tandang"].sum())
+        if klub is None:
+            n = len(g)
+            tembakan = int(g["tembakan_kandang"].sum() + g["tembakan_tandang"].sum())
+            gol = int(g["gol_kandang"].sum() + g["gol_tandang"].sum())
+            kartu = float(g["kartu_kuning_kandang"].sum() + g["kartu_kuning_tandang"].sum())
+            kandang = 100 * float((g["hasil"] == "H").mean())
+            pembagi = 2 * n  # tembakan dan kartu dirata-rata per tim
+        else:
+            k, t = _sisi(g, klub)
+            n = len(k) + len(t)
+            if n == 0:
+                continue
+            tembakan = int(k["tembakan_kandang"].sum() + t["tembakan_tandang"].sum())
+            gol = int(k["gol_kandang"].sum() + t["gol_tandang"].sum())
+            kartu = float(k["kartu_kuning_kandang"].sum() + t["kartu_kuning_tandang"].sum())
+            kandang = 100 * float((k["hasil"] == "H").mean()) if len(k) else float("nan")
+            pembagi = n
         baris.append({
             "musim": musim,
             "laga": n,
             "gol": round(gol / n, 3),
-            "kandang": round(100 * float((g["hasil"] == "H").mean()), 2),
-            "tembakan": round(tembakan / (2 * n), 2),
-            "kartu": round(float(g["kartu_kuning_kandang"].sum()
-                                 + g["kartu_kuning_tandang"].sum()) / (2 * n), 3),
+            "kandang": round(kandang, 2),
+            "tembakan": round(tembakan / pembagi, 2),
+            "kartu": round(kartu / pembagi, 3),
             "konversi": round(100 * gol / tembakan, 2) if tembakan else 0.0,
         })
-    return pd.DataFrame(baris)
+    return pd.DataFrame(baris, columns=KOLOM_TREN)
 
 
 @_cache
@@ -96,8 +118,16 @@ def juara(df: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame({"klub": hitung.index, "gelar": hitung.to_numpy()})
 
 
+KOLOM_KLASEMEN = ["klub", "main", "menang", "seri", "kalah",
+                  "dicetak", "kebobolan", "selisih", "poin"]
+
+
 def klasemen(df: pd.DataFrame) -> pd.DataFrame:
-    """Klasemen dari potongan laga mana pun, urut poin lalu selisih gol lalu gol."""
+    """Klasemen dari potongan laga mana pun, urut poin lalu selisih gol lalu gol.
+
+    Potongan kosong (misalnya klub yang tidak bermain di rentang musim terpilih)
+    menghasilkan tabel kosong berkolom lengkap, bukan KeyError saat diurutkan.
+    """
     baris = []
     for klub in sorted(set(df["tim_kandang"]) | set(df["tim_tandang"])):
         k, t = _sisi(df, klub)
@@ -112,7 +142,7 @@ def klasemen(df: pd.DataFrame) -> pd.DataFrame:
             "dicetak": dicetak, "kebobolan": kebobolan,
             "selisih": dicetak - kebobolan, "poin": menang * 3 + seri,
         })
-    papan = pd.DataFrame(baris)
+    papan = pd.DataFrame(baris, columns=KOLOM_KLASEMEN)
     return papan.sort_values(["poin", "selisih", "dicetak"], ascending=False).reset_index(drop=True)
 
 
@@ -201,15 +231,18 @@ def radar(df: pd.DataFrame, musim: str | None, klub: str | None = None) -> list[
         return round((nilai - lo) / (hi - lo), 3) if hi > lo else 0.5
 
     rata = {s: sum(p[s] for p in profil.values()) / len(profil) for s in SUMBU_RADAR}
-    if klub is not None and klub in profil:
+    if klub is not None:
+        if klub not in profil:  # klub tidak bermain di rentang ini
+            return []
         return [
             {"nama": klub, "sorot": True,
              "nilai": [skala(s, profil[klub][s]) for s in SUMBU_RADAR]},
             {"nama": "Rata-rata liga", "sorot": False,
              "nilai": [skala(s, rata[s]) for s in SUMBU_RADAR]},
         ]
-    return [{"nama": "Rata-rata liga", "sorot": True,
-             "nilai": [skala(s, rata[s]) for s in SUMBU_RADAR]}]
+    teratas = klasemen(sub)["klub"].head(4).tolist()
+    return [{"nama": k, "sorot": False,
+             "nilai": [skala(s, profil[k][s]) for s in SUMBU_RADAR]} for k in teratas]
 
 
 @_cache
