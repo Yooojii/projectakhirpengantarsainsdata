@@ -276,17 +276,16 @@ table.tabel th.teks, table.tabel td.teks {
 .kartu:has(.radar-isi) .isi { flex: 1; min-height: 0; }
 
 /* ---- Lencana besar di samping radar ---- */
-/* Grid dua kolom: kolom kiri stretch penuh, logo mengisi tinggi kolom. */
+/* Logo dan radar satu kelompok di tengah kartu: lebar radar mengikuti tingginya
+   (rasio viewBox 380:260), jadi tidak ada ruang kosong lebar di antara keduanya. */
 .radar-isi {
-  display: grid;
-  grid-template-columns: 130px 1fr;
-  gap: 16px;
-  align-items: stretch;
+  display: flex; justify-content: center; align-items: center;
+  gap: 24px;
   width: 100%; min-height: 0;
 }
-/* Kolom logo stretch ke tinggi radar; img mengisi penuh dengan object-fit: contain. */
 .lencana-besar {
-  display: flex; align-items: center; justify-content: center; padding-left: 12px;
+  flex: 0 0 120px; height: 100%;
+  display: flex; align-items: center; justify-content: center;
 }
 /* Logo PL mengisi kolom penuh; logo klub dibatasi supaya tidak memenuhi panel. */
 .lencana-besar img.logo-kompetisi { width: 100%; height: 100%; object-fit: contain; }
@@ -301,8 +300,25 @@ table.tabel th.teks, table.tabel td.teks {
   display: flex; align-items: center; justify-content: center;
 }
 /* margin-top negatif mendekatkan pentagon ke posisi logo secara visual. */
-.radar-grafik { min-width: 0; overflow: visible; margin-top: -6px; }
-.radar-grafik > svg { display: block; width: 100%; height: auto; max-height: 320px; }
+/* Tinggi svg mengikuti ruang kartu (viewBox menjaga rasio), bukan lebar kolom;
+   dengan height:auto label Disiplin dan Pertahanan terpotong di layar lebar. */
+.radar-grafik {
+  flex: 0 1 auto; min-width: 0; min-height: 0; height: 100%; max-height: 320px;
+  aspect-ratio: 380 / 260; max-width: calc(100% - 144px);
+  overflow: visible; margin-top: -6px;
+}
+.radar-grafik > svg { display: block; width: 100%; height: 100%; }
+
+/* Pemberitahuan saat klub terpilih tidak main di rentang musim terpilih */
+.pemberitahuan {
+  margin-bottom: 16px; padding: 8px 16px;
+  background: var(--permukaan); border: 1px solid var(--garis); border-left: 4px solid var(--teks-2);
+  border-radius: 4px; font-size: 14px; color: var(--teks-2);
+}
+.pemberitahuan b { color: var(--teks); font-weight: 600; }
+/* Panel tren kosong setinggi panel Performa di sebelahnya */
+.st-key-panel-tren { min-height: 290px; }
+.st-key-panel-tren .kartu-kosong { height: 216px; margin-top: 8px; }
 .radar-kaki { display: flex; gap: 16px; font-size: 13px; color: var(--teks-2); margin-top: 4px; }
 .radar-kaki i { width: 8px; height: 8px; border-radius: 0; display: inline-block; margin-right: 8px; }
 
@@ -346,6 +362,27 @@ table.tabel th.teks, table.tabel td.teks {
 .deret-baris.tambahan { border-top: 1px dashed var(--garis); padding-top: 8px; margin-top: 4px; }
 /* Baris keenam muncul ketika klub terfilter di luar lima besar; tanpa ini ia meluber. */
 .deret:has(.tambahan) { gap: 4px; }
+
+/* ---- Keadaan kosong panel (klub tidak bermain di rentang musim terpilih) ---- */
+.kartu-kosong {
+  width: 100%; display: flex; align-items: center; justify-content: center; text-align: center;
+  font-size: 14px; color: var(--teks-2); border: 1px dashed var(--garis); border-radius: 4px; padding: 16px;
+}
+
+/* ---- Batang tegak distribusi gol (HTML, supaya label tidak gepeng) ---- */
+.kartu .isi > .tegak { width: 100%; }
+.tegak { display: flex; align-items: stretch; gap: 8px; height: 100%; min-height: 0; }
+.tegak-kol { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; }
+.tegak-lajur {
+  flex: 1; min-height: 0; width: 100%;
+  display: flex; flex-direction: column; justify-content: flex-end; align-items: center;
+}
+.tegak-nilai {
+  font-family: var(--huruf-sempit); font-size: 12px; color: var(--teks-2);
+  font-variant-numeric: tabular-nums; line-height: 1.2; margin-bottom: 4px;
+}
+.tegak-isi { display: block; width: 72%; min-height: 2px; border-radius: 0; }
+.tegak-label { font-family: var(--huruf-sempit); font-size: 12px; color: #8FA6B0; margin-top: 4px; }
 
 /* ---- Legenda donat ---- */
 .donat-isi { display: flex; align-items: center; gap: 16px; width: 100%; height: 100%; }
@@ -475,20 +512,24 @@ table.tabel th.teks, table.tabel td.teks {
 .st-key-navigasi-kiri [data-testid="stRadio"] [role="radiogroup"] {
   display: flex; flex-direction: column; gap: 2px;
 }
-.st-key-navigasi-kiri [data-testid="stRadio"] [role="radiogroup"] > label {
-  display: flex; align-items: center; padding: 10px 9px; margin: 0;
-  border-radius: 6px; cursor: pointer; background: transparent;
+/* Streamlit baru membungkus tiap label dalam div, jadi pilihan disasar lewat
+   data-testid="stRadioOption", bukan "radiogroup > label". */
+.st-key-navigasi-kiri [data-testid="stRadioOption"] {
+  display: flex; align-items: center; padding: 8px; margin: 0; width: 100%;
+  border-radius: 4px; cursor: pointer; background: transparent;
 }
-.st-key-navigasi-kiri [data-testid="stRadio"] [role="radiogroup"] > label > div:first-child {
+/* lingkaran radio disembunyikan; teks tetap tampil */
+.st-key-navigasi-kiri [data-testid="stRadioOption"] > div > div:not([data-testid="stMarkdownContainer"]) {
   display: none;
 }
-.st-key-navigasi-kiri [data-testid="stRadio"] [role="radiogroup"] > label p {
+/* .stApp di depan supaya menang atas aturan umum ".stApp label p" yang mewarnai abu */
+.stApp .st-key-navigasi-kiri [data-testid="stRadioOption"] p {
   margin: 0; color: #D6E2E7; font-size: 14px; line-height: 1.3;
 }
-.st-key-navigasi-kiri [data-testid="stRadio"] [role="radiogroup"] > label:has(input:checked) {
+.st-key-navigasi-kiri [data-testid="stRadioOption"]:has(input:checked) {
   background: rgba(114, 181, 255, 0.12);
 }
-.st-key-navigasi-kiri [data-testid="stRadio"] [role="radiogroup"] > label:has(input:checked) p {
+.stApp .st-key-navigasi-kiri [data-testid="stRadioOption"]:has(input:checked) p {
   color: #72B5FF; font-weight: 600;
 }
 
@@ -498,7 +539,13 @@ table.tabel th.teks, table.tabel td.teks {
   .st-key-baris-xg-hasil [data-testid="stHorizontalBlock"],
   .st-key-baris-juara-gol [data-testid="stHorizontalBlock"] { grid-template-columns: minmax(0, 1fr); }
   .dasbor > .duo { min-height: 220px; }
-  .radar-grafik > svg { width: min(100%, 380px); height: 240px; }
   .deret-nama { flex-basis: 96px; }
   .st-key-baris-radar-tren .kartu, .st-key-panel-tren { min-height: 340px; height: 340px; }
+}
+
+/* Layar HP: logo dikecilkan supaya radar tidak tergencet */
+@media (max-width: 640px) {
+  .radar-isi { gap: 16px; }
+  .lencana-besar { flex-basis: 64px; }
+  .radar-grafik { max-width: calc(100% - 80px); }
 }

@@ -84,13 +84,23 @@ def sebar_xg(titik: list[dict], sorot: str | None, aksen: str) -> str:
         f'<line x1="{px(lo):.1f}" y1="{py(lo):.1f}" x2="{px(hi):.1f}" y2="{py(hi):.1f}" '
         f'stroke="{KABUT}" stroke-width="1" stroke-dasharray="4 3"/>'
     ]
-    for t in titik:
+    bentuk.append(
+        f'<text x="{w - pad}" y="{h - 3}" text-anchor="end" font-family="{_HURUF}" '
+        f'font-size="7.5" fill="{KABUT}">xG per laga &#8594;</text>'
+        f'<text x="{pad}" y="{pad - 3}" text-anchor="start" font-family="{_HURUF}" '
+        f'font-size="7.5" fill="{KABUT}">&#8593; gol per laga</text>'
+    )
+    # klub tersorot digambar paling akhir supaya tidak tertutup titik lain
+    for t in sorted(titik, key=lambda t: sorot is not None and t["klub"] == sorot):
         aktif = sorot is not None and t["klub"] == sorot
         warna = aksen if aktif else (NAVY if t["selisih"] > 0 else KABUT)
         r = 4.6 if aktif else 3.2
+        info = (f'{t["klub"]}: {t["gol"]:.2f} gol, {t["xg"]:.2f} xG per laga '
+                f'({t["laga"]} laga)').replace(".", ",")
         bentuk.append(
             f'<circle cx="{px(t["xg"]):.1f}" cy="{py(t["gol"]):.1f}" r="{r}" fill="{warna}"'
-            + (' stroke="#FFFFFF" stroke-width="1.4"' if aktif else "") + "/>"
+            + (' stroke="#FFFFFF" stroke-width="1.4"' if aktif else "")
+            + f"><title>{escape(info)}</title></circle>"
         )
     return _bingkai_pas("".join(bentuk), w, h, label)
 
@@ -98,12 +108,16 @@ def sebar_xg(titik: list[dict], sorot: str | None, aksen: str) -> str:
 # ------------------------------------------------------------------ donat
 
 def donat(irisan: list[dict], aksen: str) -> str:
-    """Tiga irisan, lubang di tengah berisi angka terbesar."""
+    """Tiga irisan; lubang di tengah selalu berisi irisan pertama (menang / kandang menang).
+
+    Dulu yang ditulis angka terbesar, sehingga klub yang lebih sering kalah tampil
+    dengan angka besar yang terbaca seperti persen menang.
+    """
     w = 120
     r = 42
     keliling = 2 * math.pi * r
     warna = [aksen, "#5A8FA3", PUDAR]
-    bentuk = []
+    bentuk = [f'<circle cx="{w / 2}" cy="{w / 2}" r="{r}" fill="none" stroke="#EEF2F0" stroke-width="17"/>']
     mulai = 0.0
     for i, bagian in enumerate(irisan):
         panjang = keliling * bagian["nilai"] / 100
@@ -113,10 +127,12 @@ def donat(irisan: list[dict], aksen: str) -> str:
             f'stroke-dashoffset="{-mulai:.2f}" transform="rotate(-90 {w / 2} {w / 2})"/>'
         )
         mulai += panjang
-    utama = max(irisan, key=lambda b: b["nilai"])
+    utama = irisan[0]
     bentuk.append(
-        f'<text x="{w / 2}" y="{w / 2 + 2}" text-anchor="middle" font-family="{_HURUF}" '
+        f'<text x="{w / 2}" y="{w / 2 + 3}" text-anchor="middle" font-family="{_HURUF}" '
         f'font-size="22" font-weight="600" fill="{NAVY}">{utama["nilai"]:.0f}%</text>'
+        f'<text x="{w / 2}" y="{w / 2 + 16}" text-anchor="middle" font-family="{_HURUF}" '
+        f'font-size="7.5" fill="{KABUT}">{escape(utama["label"].lower())}</text>'
     )
     label = "Proporsi hasil pertandingan"
     return _bingkai_pas("".join(bentuk), w, w, label)
@@ -125,25 +141,27 @@ def donat(irisan: list[dict], aksen: str) -> str:
 # --------------------------------------------------------------- batang tegak
 
 def batang_tegak(items: list[dict], aksen: str, sorot: str | None = None) -> str:
-    """Distribusi gol per laga; batang tertinggi memakai navy, sisanya memudar."""
-    w, h = 200, 100
-    dasar, atas = 86, 6
+    """Distribusi gol per laga; batang tertinggi memakai navy, sisanya memudar.
+
+    Dibuat dengan HTML, bukan SVG ber-preserveAspectRatio="none", karena SVG itu
+    meregangkan teks label sumbu jadi gepeng mengikuti lebar kartu.
+    """
     puncak = max(b["persen"] for b in items) or 1
-    lebar = w / len(items)
-    bentuk = []
-    for i, b in enumerate(items):
-        tinggi = (b["persen"] / puncak) * (dasar - atas)
-        x = i * lebar + lebar * 0.16
-        bw = lebar * 0.68
-        kuat = b["persen"] >= puncak * 0.85
+    kolom = []
+    for b in items:
+        tinggi = 86 * b["persen"] / puncak  # sisa ruang untuk angka di atas batang
+        kuat = b["persen"] > 0 and b["persen"] >= puncak * 0.85
         warna = aksen if (sorot is not None and b["gol"] == sorot) else (NAVY if kuat else "#5A8FA3")
-        bentuk.append(
-            f'<rect x="{x:.1f}" y="{dasar - tinggi:.1f}" width="{bw:.1f}" height="{tinggi:.1f}" '
-            f'rx="2" fill="{warna}"/>'
-            f'<text x="{x + bw / 2:.1f}" y="{h - 3}" text-anchor="middle" font-family="{_HURUF}" '
-            f'font-size="11" fill="{KABUT}">{escape(b["gol"])}</text>'
+        persen = f'{b["persen"]:.1f}'.replace(".", ",")
+        info = f'{b["gol"]} gol: {persen}% laga ({b["laga"]} laga)'
+        kolom.append(
+            f'<div class="tegak-kol" title="{escape(info)}">'
+            f'<span class="tegak-lajur"><span class="tegak-nilai">{b["persen"]:.0f}%</span>'
+            f'<span class="tegak-isi" style="height:{tinggi:.1f}%;background:{warna}"></span></span>'
+            f'<span class="tegak-label">{escape(b["gol"])}</span></div>'
         )
-    return _bingkai("".join(bentuk), w, h, "Distribusi jumlah gol per pertandingan")
+    return (f'<div class="tegak" role="img" aria-label="Distribusi jumlah gol per pertandingan">'
+            f'{"".join(kolom)}</div>')
 
 
 # -------------------------------------------------------------------- radar
@@ -186,12 +204,12 @@ def radar(seri: list[dict], sumbu: list[str], aksen: str) -> str:
                 f'stroke-width="1.5"{gaya}/>'
             )
     for a, nama in zip(sudut, sumbu):
-        lx, ly = pusat_x + (jari + 25) * math.cos(a), pusat_y + (jari + 25) * math.sin(a)
+        lx, ly = pusat_x + (jari + 22) * math.cos(a), pusat_y + (jari + 22) * math.sin(a)
         kos = math.cos(a)
         anchor = "middle" if abs(kos) < 0.2 else ("start" if kos > 0 else "end")
         bentuk.append(
-            f'<text x="{lx:.1f}" y="{ly + 3.5:.1f}" text-anchor="{anchor}" '
-            f'font-family="{_HURUF}" font-size="14" fill="{KABUT}">{escape(nama)}</text>'
+            f'<text x="{lx:.1f}" y="{ly + 5:.1f}" text-anchor="{anchor}" '
+            f'font-family="{_HURUF}" font-size="17" fill="{KABUT}">{escape(nama)}</text>'
         )
     return _bingkai_pas("".join(bentuk), w, h, "Radar lima ukuran performa")
 
