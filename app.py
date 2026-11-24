@@ -1,9 +1,9 @@
 """Titik masuk: konfigurasi halaman, sidebar, tema, dan rute halaman."""
 import streamlit as st
 
-from gaya.komponen import pasang_tema, warna_aksen
+from gaya.komponen import _uri_logo, pasang_tema, warna_aksen
 from gaya.panel import TEAL
-from halaman import eda_liga, history, overview, prediksi
+from halaman import analisis_laga, history, overview
 from halaman.overview import SEMUA
 from inti.data import klub_musim, muat_pertandingan
 from inti.klub import warna_klub
@@ -16,8 +16,7 @@ KUNCI_DIJAGA = ("fokus", "tren_metrik")  # rentang musim dijaga di halaman Overv
 
 HALAMAN = {
     "Overview": overview.tampil,
-    "Match Prediction": prediksi.tampil,
-    "Analisis Liga": eda_liga.tampil,
+    "Match Analysis": analisis_laga.tampil,
     "History": history.tampil,
 }
 
@@ -43,23 +42,23 @@ def _siapkan_sesi(df) -> None:
 def _sidebar(df, klub_daftar: list[str]) -> None:
     """Kontrol konteks untuk halaman selain Overview."""
     with st.sidebar:
-        if st.session_state["halaman"] in {"Analisis Liga", "History"}:
-            # Overview boleh memilih klub lama (mis. Bradford); halaman ini hanya
-            # memuat klub musim berjalan, jadi pilihan lain dikembalikan ke semua klub.
-            if st.session_state.get("fokus") not in [SEMUA] + klub_daftar:
-                st.session_state["fokus"] = SEMUA
-            st.selectbox("Fokus klub", [SEMUA] + klub_daftar, key="fokus")
         st.caption(keterangan_cakupan(df))
 
 
-def _navigasi() -> None:
-    """Navigasi tab di kolom kiri, membentang penuh dari atas ke bawah."""
+def _navigasi(df) -> None:
+    """Rel navigasi navy di kolom kiri, menempel saat halaman digulir."""
     if st.session_state.get("halaman") not in HALAMAN:
         st.session_state["halaman"] = "Overview"
+    logo = JALUR_DATA.parent / "premier league logo.png"
+    gambar = f'<img src="{_uri_logo(str(logo))}" alt="">' if logo.is_file() else ""
     with st.container(key="navigasi-kiri"):
-        st.markdown("### Premier League")
-        st.caption("Dashboard analisis")
+        st.markdown(
+            f'<div class="nav-merek">{gambar}<div><b>Premier League</b>'
+            f'<span>Dashboard analisis</span></div></div>',
+            unsafe_allow_html=True,
+        )
         st.radio("Halaman", list(HALAMAN), key="halaman", label_visibility="collapsed")
+        st.markdown(f'<div class="nav-kaki">{keterangan_cakupan(df)}</div>', unsafe_allow_html=True)
 
 
 def main() -> None:
@@ -81,7 +80,7 @@ def main() -> None:
     pasang_tema(warna_aksen(aksen))
     kol_navigasi, kol_halaman = st.columns([1.5, 8.5], gap="small", vertical_alignment="top")
     with kol_navigasi:
-        _navigasi()
+        _navigasi(df)
     with kol_halaman:
         HALAMAN[st.session_state["halaman"]]()
 

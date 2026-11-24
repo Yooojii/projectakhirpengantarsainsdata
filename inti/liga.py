@@ -245,6 +245,35 @@ def radar(df: pd.DataFrame, musim: str | None, klub: str | None = None) -> list[
 
 
 @_cache
+def kpi_tren_per_musim(df: pd.DataFrame, klub: str | None = None) -> dict[str, list[float]]:
+    """Nilai KPI per musim untuk sparkline dan delta persen, dinormalisasi per laga."""
+    seri: dict[str, list[float]] = {
+        "gol_per_laga": [], "efisiensi": [], "akurasi": [], "kartu_per_laga": []
+    }
+    for _, g in df.groupby("musim", sort=True):
+        if klub is not None:
+            k, t = _sisi(g, klub)
+            n = len(k) + len(t)
+            if n == 0:
+                continue
+            gol = int(k["gol_kandang"].sum() + t["gol_tandang"].sum())
+            tmb = int(k["tembakan_kandang"].sum() + t["tembakan_tandang"].sum())
+            tpt = int(k["tembakan_tepat_kandang"].sum() + t["tembakan_tepat_tandang"].sum())
+            krt = int(k["kartu_kuning_kandang"].sum() + t["kartu_kuning_tandang"].sum())
+        else:
+            n = len(g)
+            gol = int(g["gol_kandang"].sum() + g["gol_tandang"].sum())
+            tmb = int(g["tembakan_kandang"].sum() + g["tembakan_tandang"].sum())
+            tpt = int(g["tembakan_tepat_kandang"].sum() + g["tembakan_tepat_tandang"].sum())
+            krt = int(g["kartu_kuning_kandang"].sum() + g["kartu_kuning_tandang"].sum())
+        seri["gol_per_laga"].append(round(gol / n, 3))
+        seri["efisiensi"].append(round(100 * gol / tmb, 1) if tmb else 0.0)
+        seri["akurasi"].append(round(100 * tpt / tmb, 1) if tmb else 0.0)
+        seri["kartu_per_laga"].append(round(krt / n, 3))
+    return seri
+
+
+@_cache
 def gol_vs_xg(df: pd.DataFrame) -> pd.DataFrame:
     """Gol aktual terhadap gol harapan per klub, dari kolom xG BBC yang cakupannya terluas.
 

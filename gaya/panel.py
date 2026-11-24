@@ -31,6 +31,32 @@ def _bingkai_pas(isi: str, w: int, h: int, label: str) -> str:
     )
 
 
+# --------------------------------------------------------- sparkline KPI mini
+
+def garis_mini(nilai: list[float], naik: bool | None) -> str:
+    """Sparkline 60×18 untuk sel KPI; warna mengikuti arah delta."""
+    w, h, pad = 60, 18, 2
+    if len(nilai) < 2:
+        return ""
+    lo, hi = min(nilai), max(nilai)
+    rentang = (hi - lo) or 1.0
+    titik = []
+    for i, v in enumerate(nilai):
+        x = pad + i * (w - 2 * pad) / (len(nilai) - 1)
+        y = h - pad - (v - lo) / rentang * (h - 2 * pad)
+        titik.append((x, y))
+    pts = " ".join(f"{x:.1f},{y:.1f}" for x, y in titik)
+    warna = "#15803D" if naik is True else ("#B91C1C" if naik is False else KABUT)
+    return (
+        f'<svg viewBox="0 0 {w} {h}" width="{w}" height="{h}" '
+        f'style="display:inline-block;vertical-align:middle;flex-shrink:0">'
+        f'<polyline class="garis-mini" pathLength="1" fill="none" stroke="{warna}" stroke-width="1.6" '
+        f'opacity="0.55" stroke-linejoin="round" stroke-linecap="round" points="{pts}"/>'
+        f'<circle class="titik-mini" cx="{titik[-1][0]:.1f}" cy="{titik[-1][1]:.1f}" r="2.5" fill="{warna}"/>'
+        f'</svg>'
+    )
+
+
 # ------------------------------------------------------------------ garis tren
 
 def garis_tren(nilai: list[float], label: str) -> str:
@@ -91,14 +117,15 @@ def sebar_xg(titik: list[dict], sorot: str | None, aksen: str) -> str:
         f'font-size="7.5" fill="{KABUT}">&#8593; gol per laga</text>'
     )
     # klub tersorot digambar paling akhir supaya tidak tertutup titik lain
-    for t in sorted(titik, key=lambda t: sorot is not None and t["klub"] == sorot):
+    for i, t in enumerate(sorted(titik, key=lambda t: sorot is not None and t["klub"] == sorot)):
         aktif = sorot is not None and t["klub"] == sorot
         warna = aksen if aktif else (NAVY if t["selisih"] > 0 else KABUT)
         r = 4.6 if aktif else 3.2
         info = (f'{t["klub"]}: {t["gol"]:.2f} gol, {t["xg"]:.2f} xG per laga '
                 f'({t["laga"]} laga)').replace(".", ",")
         bentuk.append(
-            f'<circle cx="{px(t["xg"]):.1f}" cy="{py(t["gol"]):.1f}" r="{r}" fill="{warna}"'
+            f'<circle class="titik-xg" style="--i:{i}" cx="{px(t["xg"]):.1f}" cy="{py(t["gol"]):.1f}" '
+            f'r="{r}" fill="{warna}"'
             + (' stroke="#FFFFFF" stroke-width="1.4"' if aktif else "")
             + f"><title>{escape(info)}</title></circle>"
         )
@@ -122,17 +149,18 @@ def donat(irisan: list[dict], aksen: str) -> str:
     for i, bagian in enumerate(irisan):
         panjang = keliling * bagian["nilai"] / 100
         bentuk.append(
-            f'<circle cx="{w / 2}" cy="{w / 2}" r="{r}" fill="none" stroke="{warna[i]}" '
+            f'<circle class="busur" style="--i:{i}" cx="{w / 2}" cy="{w / 2}" r="{r}" fill="none" '
+            f'stroke="{warna[i]}" '
             f'stroke-width="17" stroke-dasharray="{panjang:.2f} {keliling - panjang:.2f}" '
             f'stroke-dashoffset="{-mulai:.2f}" transform="rotate(-90 {w / 2} {w / 2})"/>'
         )
         mulai += panjang
     utama = irisan[0]
     bentuk.append(
-        f'<text x="{w / 2}" y="{w / 2 + 3}" text-anchor="middle" font-family="{_HURUF}" '
+        f'<g class="donat-teks"><text x="{w / 2}" y="{w / 2 + 3}" text-anchor="middle" font-family="{_HURUF}" '
         f'font-size="22" font-weight="600" fill="{NAVY}">{utama["nilai"]:.0f}%</text>'
         f'<text x="{w / 2}" y="{w / 2 + 16}" text-anchor="middle" font-family="{_HURUF}" '
-        f'font-size="7.5" fill="{KABUT}">{escape(utama["label"].lower())}</text>'
+        f'font-size="7.5" fill="{KABUT}">{escape(utama["label"].lower())}</text></g>'
     )
     label = "Proporsi hasil pertandingan"
     return _bingkai_pas("".join(bentuk), w, w, label)
@@ -141,27 +169,36 @@ def donat(irisan: list[dict], aksen: str) -> str:
 # --------------------------------------------------------------- batang tegak
 
 def batang_tegak(items: list[dict], aksen: str, sorot: str | None = None) -> str:
-    """Distribusi gol per laga; batang tertinggi memakai navy, sisanya memudar.
+    """Distribusi gol per laga sebagai matriks titik: satu titik mewakili dua persen laga.
 
-    Dibuat dengan HTML, bukan SVG ber-preserveAspectRatio="none", karena SVG itu
-    meregangkan teks label sumbu jadi gepeng mengikuti lebar kartu.
+    Kolom dengan persen tertinggi memakai navy dan labelnya berpil gelap; sisanya teal
+    pudar. Titik muncul dari bawah, kolom demi kolom, seperti papan yang terisi.
     """
+    per_titik = 2.0
     puncak = max(b["persen"] for b in items) or 1
     kolom = []
-    for b in items:
-        tinggi = 86 * b["persen"] / puncak  # sisa ruang untuk angka di atas batang
+    for k, b in enumerate(items):
         kuat = b["persen"] > 0 and b["persen"] >= puncak * 0.85
-        warna = aksen if (sorot is not None and b["gol"] == sorot) else (NAVY if kuat else "#5A8FA3")
+        if sorot is not None and b["gol"] == sorot:
+            warna = aksen
+        else:
+            warna = NAVY if kuat else "#5A8FA3"
+        utuh = int(b["persen"] // per_titik)
+        sisa = b["persen"] - utuh * per_titik
+        titik = [f'<i style="--i:{i}"></i>' for i in range(utuh)]
+        if sisa >= per_titik / 2:  # setengah titik ke atas digambar pudar
+            titik.append(f'<i class="lebih" style="--i:{utuh}"></i>')
         persen = f'{b["persen"]:.1f}'.replace(".", ",")
         info = f'{b["gol"]} gol: {persen}% laga ({b["laga"]} laga)'
+        kelas = "matriks-kol puncak" if kuat else "matriks-kol"
         kolom.append(
-            f'<div class="tegak-kol" title="{escape(info)}">'
-            f'<span class="tegak-lajur"><span class="tegak-nilai">{b["persen"]:.0f}%</span>'
-            f'<span class="tegak-isi" style="height:{tinggi:.1f}%;background:{warna}"></span></span>'
-            f'<span class="tegak-label">{escape(b["gol"])}</span></div>'
+            f'<div class="{kelas}" title="{escape(info)}" style="--warna:{warna};--k:{k}">'
+            f'<span class="matriks-tumpuk">{"".join(titik)}'
+            f'<span class="matriks-nilai">{b["persen"]:.0f}%</span></span>'
+            f'<span class="matriks-label">{escape(b["gol"])}</span></div>'
         )
-    return (f'<div class="tegak" role="img" aria-label="Distribusi jumlah gol per pertandingan">'
-            f'{"".join(kolom)}</div>')
+    return (f'<div class="matriks" role="img" aria-label="Distribusi jumlah gol per pertandingan, '
+            f'satu titik sama dengan dua persen laga">{"".join(kolom)}</div>')
 
 
 # -------------------------------------------------------------------- radar
@@ -193,14 +230,14 @@ def radar(seri: list[dict], sumbu: list[str], aksen: str) -> str:
     for i, s in enumerate(seri):
         if s.get("sorot"):
             bentuk.append(
-                f'<polygon points="{titik(s["nilai"])}" fill="{aksen}" fill-opacity="0.16" '
+                f'<polygon class="radar-bentuk" points="{titik(s["nilai"])}" fill="{aksen}" fill-opacity="0.16" '
                 f'stroke="{aksen}" stroke-width="2"/>'
             )
         else:
             warna = KABUT if len(seri) == 2 else netral[i % len(netral)]
             gaya = ' stroke-dasharray="4 3"' if len(seri) == 2 else ""
             bentuk.append(
-                f'<polygon points="{titik(s["nilai"])}" fill="none" stroke="{warna}" '
+                f'<polygon class="radar-bentuk kedua" points="{titik(s["nilai"])}" fill="none" stroke="{warna}" '
                 f'stroke-width="1.5"{gaya}/>'
             )
     for a, nama in zip(sudut, sumbu):
@@ -230,7 +267,7 @@ def batang_mendatar(items: list[dict], aksen: str, sorot: str | None = None,
     ada_sorot = (sorot is not None
                  and (any(b["klub"] == sorot for b in items) or tambahan is not None))
     baris = []
-    for b in items:
+    for i, b in enumerate(items):
         aktif = sorot is not None and b["klub"] == sorot
         if aktif:
             warna = aksen
@@ -243,7 +280,7 @@ def batang_mendatar(items: list[dict], aksen: str, sorot: str | None = None,
         baris.append(
             f'<div class="{kelas}"><span class="deret-nama">{escape(b["klub"])}</span>'
             f'<span class="deret-lajur"><span class="deret-isi" '
-            f'style="width:{lebar:.1f}%;background:{warna}"></span></span>'
+            f'style="width:{lebar:.1f}%;background:{warna};--i:{i}"></span></span>'
             f'<span class="deret-angka">{b["nilai"]}</span></div>'
         )
     if tambahan is not None:
@@ -252,7 +289,7 @@ def batang_mendatar(items: list[dict], aksen: str, sorot: str | None = None,
             f'<div class="deret-baris sorot tambahan">'
             f'<span class="deret-nama">{escape(tambahan["klub"])}</span>'
             f'<span class="deret-lajur"><span class="deret-isi" '
-            f'style="width:{lebar:.1f}%;background:{aksen}"></span></span>'
+            f'style="width:{lebar:.1f}%;background:{aksen};--i:{len(items)}"></span></span>'
             f'<span class="deret-angka">{tambahan["nilai"]}</span></div>'
         )
     return f'<div class="deret">{"".join(baris)}</div>'

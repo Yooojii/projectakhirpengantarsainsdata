@@ -82,6 +82,33 @@ def _lencana(klub: str) -> str:
     return f'<img class="papan-logo" src="{_uri_logo(str(jalur))}" alt="" width="24" height="24">'
 
 
+def angka_hitung(nilai: float, desimal: int = 0, tunda_ms: int | None = None) -> str:
+    """Angka yang menghitung naik dari nol lewat CSS (`@property --hitung`), tanpa JavaScript.
+
+    Bagian bulat dan pecahan dihitung sebagai dua penghitung terpisah, dipisah koma
+    gaya Indonesia. Pembaca layar mendapat nilai akhirnya dari teks tersembunyi,
+    karena isi `::after` tidak selalu dibacakan.
+    """
+    teks = f"{abs(nilai):.{desimal}f}"
+    bulat, _, pecahan = teks.partition(".")
+    tunda = f";--tunda:{tunda_ms}ms" if tunda_ms is not None else ""
+    tanda = "-" if nilai < 0 and float(teks) != 0 else ""
+    isi = f'{tanda}<span class="hitung" style="--akhir:{int(bulat)}{tunda}"></span>'
+    if desimal:
+        kelas = "hitung dua" if desimal == 2 else "hitung"
+        isi += f',<span class="{kelas}" style="--akhir:{int(pecahan)}{tunda}"></span>'
+    terbaca = tanda + teks.replace(".", ",")
+    return f'<span class="sr">{terbaca}</span><span aria-hidden="true">{isi}</span>'
+
+
+def logo_kecil(klub: str, kelas: str = "logo-kecil") -> str:
+    """Logo klub 20 px untuk daftar; singkatan dalam bulatan bila logonya tidak ada."""
+    jalur = logo_klub(klub)
+    if jalur is None:
+        return f'<span class="kode-kecil">{escape(singkatan(klub))}</span>'
+    return f'<img class="{kelas}" src="{_uri_logo(str(jalur))}" alt="">'
+
+
 def papan_skor(klub_k: str, klub_t: str, skor: tuple, peluang: dict, aksen: str,
                berubah: bool = False) -> str:
     """Kandang di kiri, skor di dalam lingkaran, tamu di kanan; garis tengah terputus di lingkaran.

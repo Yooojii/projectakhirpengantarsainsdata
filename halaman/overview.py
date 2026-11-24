@@ -6,13 +6,14 @@ import pandas as pd
 import streamlit as st
 
 from gaya import panel
-from gaya.komponen import _uri_logo, warna_aksen
+from gaya.komponen import _uri_logo, angka_hitung, warna_aksen
 from inti.data import KELOMPOK_KOLOM, muat_pertandingan
 from inti.klub import logo_klub, singkatan, warna_klub
 from inti.liga import (
     distribusi_gol,
     gol_vs_xg,
     juara,
+    kpi_tren_per_musim,
     laga_klub,
     proporsi_hasil,
     radar,
@@ -103,26 +104,56 @@ def tabel_kelengkapan(df: pd.DataFrame) -> pd.DataFrame:
 # ---------------------------------------------------------------- potongan HTML
 
 
-def _kpi(ringkas: dict) -> str:
-    if ringkas["laga"] == 0:  # klub tidak bermain di rentang ini; 0,0% pelanggaran menyesatkan
-        label = ["Gol", "Tembakan", "Tepat sasaran", "Laga", "Kartu kuning", "Pelanggaran berkartu"]
+def _delta_badge(seri: list[float], lebih_baik_naik: bool = True) -> tuple[str, bool | None]:
+    """Hitung delta persen antara musim terakhir dan sebelumnya; kembalikan (badge_html, naik)."""
+    if len(seri) < 2 or seri[-2] == 0:
+        return "", None
+    pct = (seri[-1] - seri[-2]) / abs(seri[-2]) * 100
+    naik_metrik = pct > 0
+    naik_visual = naik_metrik if lebih_baik_naik else not naik_metrik
+    kelas = "naik" if naik_visual else "turun"
+    panah = "▲" if naik_metrik else "▼"
+    teks = f"{panah} {_koma(abs(pct))}%"
+    return f'<span class="kpi-delta {kelas}">{teks}</span>', naik_visual
+
+
+def _kpi(ringkas: dict, tren: dict[str, list[float]]) -> str:
+    if ringkas["laga"] == 0:
+        label = ["Gol per Laga", "Efisiensi Tembakan", "Akurasi Tembakan", "Kartu Kuning per Laga"]
         return '<div class="kpi">' + "".join(
             f'<div class="kpi-sel"><div class="label">{escape(teks)}</div>'
             f'<div class="nilai">-</div></div>' for teks in label
         ) + "</div>"
+
+    n = max(ringkas["laga"], 1)
+    gol_pl = ringkas["gol"] / n
+    efisiensi = 100 * ringkas["gol"] / ringkas["tembakan"] if ringkas["tembakan"] else 0.0
+    akurasi = 100 * ringkas["tembakan_tepat"] / ringkas["tembakan"] if ringkas["tembakan"] else 0.0
+    krt_pl = ringkas["kartu_kuning"] / n
+
+    # (label, nilai_html, kunci_tren, lebih_baik_naik)
     sel = [
-        ("Gol", _angka(ringkas["gol"]), ""),
-        ("Tembakan", _angka(ringkas["tembakan"]), ""),
-        ("Tepat sasaran", _angka(ringkas["tembakan_tepat"]), ""),
-        ("Laga", _angka(ringkas["laga"]), ""),
-        ("Kartu kuning", _angka(ringkas["kartu_kuning"]), ""),
-        ("Pelanggaran berkartu", f'{ringkas["kartu_per_pelanggaran"]:.1f}'.replace(".", ","), "%"),
+        ("Gol per Laga",          angka_hitung(gol_pl, 2),                       "gol_per_laga",   True),
+        ("Efisiensi Tembakan",    angka_hitung(efisiensi, 1) + "<small>%</small>", "efisiensi",      True),
+        ("Akurasi Tembakan",      angka_hitung(akurasi, 1) + "<small>%</small>",   "akurasi",        True),
+        ("Kartu Kuning per Laga", angka_hitung(krt_pl, 2),                       "kartu_per_laga", False),
     ]
-    return '<div class="kpi">' + "".join(
-        f'<div class="kpi-sel"><div class="label">{escape(label)}</div>'
-        f'<div class="nilai">{nilai}{f"<small>{sat}</small>" if sat else ""}</div></div>'
-        for label, nilai, sat in sel
-    ) + "</div>"
+    bagian = []
+    for label, nilai_html, kunci, lebih_baik_naik in sel:
+        seri = tren.get(kunci, [])
+        badge, naik = _delta_badge(seri, lebih_baik_naik) if seri else ("", None)
+        spark = panel.garis_mini(seri, naik) if len(seri) >= 2 else ""
+        meta = f'<div class="kpi-meta">{spark}{badge}</div>' if (spark or badge) else ""
+        bagian.append(
+            f'<div class="kpi-sel">'
+            f'<div class="label">{escape(label)}</div>'
+            f'<div class="kpi-baris">'
+            f'<div class="nilai">{nilai_html}</div>'
+            f'{meta}'
+            f'</div>'
+            f'</div>'
+        )
+    return '<div class="kpi">' + "".join(bagian) + "</div>"
 
 
 def _lencana_besar(klub: str | None, aksen: str = "") -> str:
@@ -416,7 +447,7 @@ def _kepala(df: pd.DataFrame) -> tuple[str | None, pd.DataFrame]:
     judul_kol, klub_kol, musim_kol = st.columns([3.7, 1.35, 2.2], vertical_alignment="center")
     with klub_kol:
         st.selectbox(
-            "Kompetisi / Klub", [SEMUA] + klub_daftar,
+            "Klub", [SEMUA] + klub_daftar,
             format_func=lambda nama: "Premier League" if nama == SEMUA else nama,
             key="fokus",
         )
@@ -439,10 +470,10 @@ def _kepala(df: pd.DataFrame) -> tuple[str | None, pd.DataFrame]:
     pilihan = st.session_state.get("fokus", SEMUA)
     klub = None if pilihan == SEMUA else pilihan
     with judul_kol:
-        lingkup = "Seluruh liga" if klub is None else klub
+        lingkup = "Premier League" if klub is None else klub
         st.markdown(
             f'<div class="dasbor-kepala"><h2>{escape(lingkup)}</h2>'
-            f'<span class="ruang">{escape(awal)}–{escape(akhir)} · rentang berlaku untuk seluruh KPI dan chart</span></div>',
+            f'<span class="ruang">Musim {escape(awal)} sampai {escape(akhir)}</span></div>',
             unsafe_allow_html=True,
         )
 
@@ -457,8 +488,9 @@ def tampil() -> None:
     aksen = panel.TEAL if klub is None else warna_aksen(warna_klub(klub))
 
     ringkas = ringkas_kpi(df_aktif, None, klub)
+    tren_kpi = kpi_tren_per_musim(df_aktif, klub)
     with st.container(key="dasbor-overview"):
-        st.markdown(_pemberitahuan_absen(df, df_aktif, klub) + _kpi(ringkas), unsafe_allow_html=True)
+        st.markdown(_pemberitahuan_absen(df, df_aktif, klub) + _kpi(ringkas, tren_kpi), unsafe_allow_html=True)
         with st.container(key="baris-radar-tren"):
             radar_col, tren_col = st.columns(2, gap="small", vertical_alignment="top")
             with radar_col:

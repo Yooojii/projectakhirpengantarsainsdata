@@ -89,10 +89,13 @@ def test_aksen_idempoten_dan_netral_lolos():
 
 # ------------------------------------------------------------------------ css
 
-def test_css_memuat_token_warna_dan_tanpa_bayangan():
+def test_css_memuat_token_warna_dan_bayangan_hanya_dari_token():
     css = BACA_CSS()
     for nilai in re.findall(r"box-shadow\s*:\s*([^;}]+)", css):
-        assert nilai.replace("!important", "").strip() == "none"
+        nilai = nilai.replace("!important", "").strip()
+        # bayangan lembut hanya lewat dua token; selain itu hanya garis tepi inset
+        assert nilai in {"none", "var(--bayangan)", "var(--bayangan-angkat)"} or nilai.startswith("inset"), nilai
+    assert "--bayangan:" in css and "--bayangan-angkat:" in css
     assert "text-shadow" not in css and "drop-shadow" not in css
     assert "IBM Plex Sans Condensed" in css and "IBM Plex Sans" in css
     assert "fonts.googleapis.com" in css
@@ -110,26 +113,37 @@ def test_css_tanpa_hal_yang_dilarang():
     css = BACA_CSS().lower()
     assert "gradient" not in css
     assert "uppercase" not in css
-    assert ":hover" not in css
     assert "#0b0b0b" not in css and not re.search(r"#111(?![0-9a-f])", css)
     assert not re.search("[\U0001F300-\U0001FAFF←-⇿☀-➿]", css)
     assert "prefers-reduced-motion" in css
     assert "dark" not in css
 
 
-def test_css_radius_empat_piksel_dan_jarak_kelipatan_delapan():
+def test_css_radius_dari_skala_dan_jarak_kelipatan_empat():
     css = BACA_CSS()
+    assert _prop(":root", "--radius-kartu") == "16px"
+    assert _prop(":root", "--radius-dalam") == "12px"
+    skala = {"0", "50%", "999px", "8px", "20px", "0 4px 4px 0",
+             "var(--radius-kartu)", "var(--radius-dalam)"}
     for r in re.findall(r"border-radius\s*:\s*([^;}]+)", css):
-        assert r.strip() in {"4px", "50%", "0"}
+        assert r.replace("!important", "").strip() in skala, r
     for ukuran in re.findall(r"(?:margin|padding|gap)[a-z-]*\s*:\s*([^;}]+)", css):
         for angka in re.findall(r"(\d+)px", ukuran):
-            assert int(angka) % 8 == 0 or int(angka) == 4, ukuran
+            assert int(angka) % 4 == 0, ukuran
 
 
-def test_css_hanya_satu_gerakan():
+def test_css_setiap_gerakan_terpakai_dan_bisa_dimatikan():
     css = BACA_CSS()
-    assert css.count("@keyframes") == 1
-    assert "transition" not in css
+    nama = re.findall(r"@keyframes\s+([\w-]+)", css)
+    assert len(nama) == len(set(nama))
+    tanpa_definisi = re.sub(r"@keyframes[^{]*\{.*?\}\s*\}", "", css, flags=re.S)
+    for n in nama:
+        assert re.search(rf"animation:\s*{n}\b", tanpa_definisi), f"@keyframes {n} tidak dipakai"
+    kurang_gerak = re.search(r"@media \(prefers-reduced-motion: reduce\) \{(.*?)\n\}", css, re.S).group(1)
+    assert "animation: none !important" in kurang_gerak
+    assert "transition: none !important" in kurang_gerak
+    # tanpa animasi, angka berhitung harus langsung menunjukkan nilai akhirnya
+    assert "--hitung: var(--akhir)" in kurang_gerak
 
 
 def test_tema_dikunci_terang():
@@ -366,7 +380,7 @@ def test_jarak_dan_bentuk():
     assert _prop(".dalam", "margin-top") == "16px"
     assert _prop('.stApp [data-testid="stVerticalBlock"]', "gap") == "16px"
     assert _prop(".stApp h2", "margin").startswith("48px")
-    assert _prop(".panel", "border-radius") == "4px"
+    assert _prop(".panel", "border-radius") == "var(--radius-kartu)"
     assert _prop(".panel", "padding") == "16px"
 
 

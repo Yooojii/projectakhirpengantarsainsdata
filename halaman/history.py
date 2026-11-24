@@ -3,10 +3,13 @@ from html import escape
 import pandas as pd
 import streamlit as st
 
-from gaya.komponen import warna_aksen
+from gaya.komponen import _uri_logo, angka_hitung, logo_kecil, warna_aksen
 from inti.data import klub_musim, muat_pertandingan
-from inti.klub import singkatan, warna_klub
+from inti.klub import logo_klub, singkatan, warna_klub
 from inti.sesi import BULAN, JALUR_DATA
+
+MUSIM_BERJALAN = "2026/27"
+KABUT = "#8FA6B0"
 
 
 def rekor_pertemuan(df: pd.DataFrame, klub_a: str, klub_b: str) -> dict:
@@ -108,184 +111,168 @@ def _daftar_pertemuan(df: pd.DataFrame, klub_a: str, klub_b: str, n: int = 10) -
     return sub
 
 
+# ------------------------------------------------------------- potongan HTML
+
+def _tgl(ts: pd.Timestamp) -> str:
+    return f"{ts.day} {BULAN[ts.month - 1][:3]} {ts.year}"
+
+
+def _logo_duel(klub: str) -> str:
+    jalur = logo_klub(klub)
+    if jalur is None:
+        return f'<span class="kode-besar">{escape(singkatan(klub))}</span>'
+    return f'<img src="{_uri_logo(str(jalur))}" alt="">'
+
+
+def _hasil_klub(row, klub: str) -> str:
+    if row.hasil == "D":
+        return "S"
+    return "M" if (row.tim_kandang == klub) == (row.hasil == "H") else "K"
+
+
+def _duel(df: pd.DataFrame, klub: str, lawan: str, aksen: str) -> str:
+    """Kepala navy: dua klub berhadapan, rekor menang-seri-kalah di tengah, batang proporsi di bawah."""
+    rekor = rekor_pertemuan(df, klub, lawan)
+    status = keadaan_riwayat(rekor["total"])
+    warna_lawan = warna_aksen(warna_klub(lawan))
+    if warna_lawan == aksen:
+        warna_lawan = KABUT
+    if status == "kosong":
+        angka = '<div class="duel-angka"><div><b>0</b><small>pertemuan</small></div></div>'
+        batang = ""
+        catatan = '<div class="duel-catatan">Belum pernah bertemu di Premier League.</div>'
+    else:
+        angka = (
+            '<div class="duel-angka">'
+            f'<div><b>{angka_hitung(rekor["menang"])}</b>'
+            f'<small>{escape(singkatan(klub))} menang</small></div>'
+            f'<div><b>{angka_hitung(rekor["seri"], tunda_ms=200)}</b><small>seri</small></div>'
+            f'<div><b>{angka_hitung(rekor["kalah"], tunda_ms=280)}</b>'
+            f'<small>{escape(singkatan(lawan))} menang</small></div>'
+            '</div>'
+        )
+        bagian = [(rekor["menang"], aksen), (rekor["seri"], "#7FA6B5"), (rekor["kalah"], warna_lawan)]
+        batang = '<div class="duel-batang">' + "".join(
+            f'<span style="flex:{n};background:{w};--i:{i}"></span>'
+            for i, (n, w) in enumerate(bagian) if n > 0
+        ) + "</div>"
+        if status == "tipis":
+            catatan = (f'<div class="duel-catatan peringatan">Baru {rekor["total"]} kali bertemu, '
+                       'terlalu sedikit untuk dibaca sebagai pola.</div>')
+        else:
+            catatan = (f'<div class="duel-catatan">{rekor["total"]} pertemuan di Premier League '
+                       'sejak 2000/01.</div>')
+    return (
+        '<div class="duel"><div class="duel-baris">'
+        f'<div class="duel-tim">{_logo_duel(klub)}<div><b>{escape(klub)}</b>'
+        '<small>Klub pilihan</small></div></div>'
+        f'{angka}'
+        f'<div class="duel-tim kanan">{_logo_duel(lawan)}<div><b>{escape(lawan)}</b>'
+        '<small>Lawan</small></div></div>'
+        f'</div>{batang}{catatan}</div>'
+    )
+
+
+def _lini_pertemuan(df: pd.DataFrame, klub: str, lawan: str) -> str:
+    laga = _daftar_pertemuan(df, klub, lawan, 10).iloc[::-1]  # terbaru di atas
+    if laga.empty:
+        isi = '<div class="kartu-kosong">Belum ada pertemuan untuk ditampilkan.</div>'
+    else:
+        baris = []
+        for i, r in enumerate(laga.itertuples()):
+            hasil = _hasil_klub(r, klub)
+            baris.append(
+                f'<div class="lini-baris" style="--i:{i}"><time>{_tgl(r.tanggal)}</time>'
+                f'<div class="tuan"><span>{escape(r.tim_kandang)}</span>{logo_kecil(r.tim_kandang)}</div>'
+                f'<span class="lini-skor {hasil}">{int(r.gol_kandang)} - {int(r.gol_tandang)}</span>'
+                f'<div class="tamu">{logo_kecil(r.tim_tandang)}<span>{escape(r.tim_tandang)}</span></div>'
+                '</div>'
+            )
+        isi = f'<div class="lini">{"".join(baris)}</div>'
+    return (f'<div class="blok" style="--urutan:1"><div class="blok-judul"><b>Pertemuan terakhir</b>'
+            f'<span>Sisi {escape(klub)}</span></div>{isi}</div>')
+
+
+def _blok_bentuk(df: pd.DataFrame, klub: str, lawan: str) -> str:
+    baris = []
+    for nama in (klub, lawan):
+        hasil = bentuk_permainan(df, nama, 10)
+        poin = sum(3 if h == "M" else 1 if h == "S" else 0 for h in hasil)
+        lencana = "".join(f'<span class="{h}" style="--i:{i}">{h}</span>' for i, h in enumerate(hasil))
+        baris.append(
+            f'<div class="bentuk-baris"><div class="bentuk-nama">{logo_kecil(nama)}'
+            f'<span>{escape(nama)}</span></div><span class="bentuk-poin">{poin} poin</span></div>'
+            f'<div class="bentuk">{lencana}</div>'
+        )
+    return (f'<div class="blok" style="--urutan:2"><div class="blok-judul"><b>Bentuk permainan</b>'
+            f'<span>Sepuluh laga terakhir</span></div>{"".join(baris)}'
+            '<div class="klasemen-legenda"><span><i style="background:#15803D"></i>M menang</span>'
+            '<span><i style="background:#CFD6CC"></i>S seri</span>'
+            '<span><i style="background:#A4161A"></i>K kalah</span></div></div>')
+
+
+def _blok_klasemen(df: pd.DataFrame, klub: str, lawan: str, aksen: str) -> str:
+    papan = klasemen(df, MUSIM_BERJALAN)
+    akhir = df.loc[df["musim"] == MUSIM_BERJALAN, "tanggal"].max()
+    n = len(papan)
+    baris = []
+    for i, r in enumerate(papan.itertuples(), start=1):
+        kelas = []
+        if i <= 4:
+            kelas.append("eropa")
+        if i > n - 3:
+            kelas.append("degradasi")
+        if r.klub == klub:
+            kelas.append("saya")
+        gaya = f"--i:{i};--aksen:{aksen}" if r.klub == klub else f"--i:{i}"
+        nama = escape(r.klub) + (' <small class="keterangan">lawan</small>' if r.klub == lawan else "")
+        baris.append(
+            f'<tr class="{" ".join(kelas)}" style="{gaya}">'
+            f'<td class="pos kiri"><span>{i}</span></td>'
+            f'<td class="klub kiri"><span class="klub-isi">{logo_kecil(r.klub)}<span>{nama}</span></span></td>'
+            f'<td>{r.main}</td><td>{r.menang}</td><td>{r.seri}</td><td>{r.kalah}</td>'
+            f'<td>{r.gol_memasukkan}</td><td>{r.gol_kemasukan}</td><td>{r.selisih:+d}</td>'
+            f'<td class="poin">{r.poin}</td></tr>'
+        )
+    kepala = "".join(f"<th>{h}</th>" for h in ["Main", "M", "S", "K", "GM", "GK", "SG", "Poin"])
+    return (
+        f'<div class="blok" style="--urutan:3"><div class="blok-judul"><b>Klasemen {MUSIM_BERJALAN}</b>'
+        f'<span>Sampai {akhir.day} {BULAN[akhir.month - 1]} {akhir.year}</span></div>'
+        '<table class="klasemen"><thead><tr><th class="kiri">Pos</th><th class="kiri">Klub</th>'
+        f'{kepala}</tr></thead><tbody>{"".join(baris)}</tbody></table>'
+        '<div class="klasemen-legenda"><span><i style="background:#157D7B"></i>Empat besar</span>'
+        '<span><i style="background:#A4161A"></i>Zona degradasi</span></div></div>'
+    )
+
+
 def tampil() -> None:
     df = muat_pertandingan(str(JALUR_DATA))
-    klub_saya = st.session_state.get("klub", "Arsenal")
-    aksen = warna_aksen(warna_klub(klub_saya))
+    semua_klub = klub_musim(df, MUSIM_BERJALAN)
+    if st.session_state.get("hist_klub") not in semua_klub:
+        bawaan = st.session_state.get("klub", "Arsenal")
+        st.session_state["hist_klub"] = bawaan if bawaan in semua_klub else semua_klub[0]
 
-    semua_klub = klub_musim(df, "2026/27")
-    daftar_lawan = [k for k in semua_klub if k != klub_saya]
-
-    st.markdown('<div class="bagian"><h3>Riwayat Pertemuan & Klasemen</h3></div>', unsafe_allow_html=True)
-
-    # 1. Pemilih lawan (19 klub lain musim berjalan)
-    lawan = st.selectbox("Pilih Lawan", daftar_lawan, key="history_lawan")
-
-    # 2. Rekor pertemuan
-    rekor = rekor_pertemuan(df, klub_saya, lawan)
-    status = keadaan_riwayat(rekor["total"])
-
-    st.markdown(f'<div class="bagian"><small class="keterangan">Rekor Pertemuan: {escape(klub_saya)} vs {escape(lawan)}</small></div>', unsafe_allow_html=True)
-
-    if status == "kosong":
+    kol_judul, kol_klub, kol_lawan = st.columns([3, 1.3, 1.3], vertical_alignment="bottom")
+    with kol_judul:
         st.markdown(
-            '<div class="panel" style="margin-top: 12px; margin-bottom: 24px;">'
-            '<p style="font-size: 16px; color: var(--teks); margin: 0;">'
-            'Belum pernah bertemu di Liga Inggris.'
-            '</p></div>',
+            '<div class="kepala-hal"><div><h2>History</h2>'
+            '<p>Rekor pertemuan dua klub, bentuk terkini, dan klasemen musim berjalan.</p></div></div>',
             unsafe_allow_html=True,
         )
-    else:
-        if status == "tipis":
-            st.markdown(
-                f'<div class="risiko-peringatan" style="color: var(--peringatan); font-size: 14px; font-weight: 500; margin-bottom: 16px;">'
-                f'Baru {rekor["total"]} kali bertemu. Terlalu sedikit untuk jadi pola.'
-                '</div>',
-                unsafe_allow_html=True,
-            )
+    with kol_klub:
+        klub = st.selectbox("Klub", semua_klub, key="hist_klub")
+    daftar_lawan = [k for k in semua_klub if k != klub]
+    if st.session_state.get("history_lawan") not in daftar_lawan:
+        st.session_state["history_lawan"] = daftar_lawan[0]
+    with kol_lawan:
+        lawan = st.selectbox("Lawan", daftar_lawan, key="history_lawan")
+    aksen = warna_aksen(warna_klub(klub))
 
-        col1, col2, col3, col4 = st.columns(4)
-        with col1:
-            st.markdown(
-                f'<div class="panel"><div class="keterangan">{escape(klub_saya)} Menang</div>'
-                f'<div class="angka" style="font-size: 24px; font-weight: 600; color: {aksen};">{rekor["menang"]}</div></div>',
-                unsafe_allow_html=True,
-            )
-        with col2:
-            st.markdown(
-                f'<div class="panel"><div class="keterangan">Seri</div>'
-                f'<div class="angka" style="font-size: 24px; font-weight: 600;">{rekor["seri"]}</div></div>',
-                unsafe_allow_html=True,
-            )
-        with col3:
-            st.markdown(
-                f'<div class="panel"><div class="keterangan">{escape(lawan)} Menang</div>'
-                f'<div class="angka" style="font-size: 24px; font-weight: 600;">{rekor["kalah"]}</div></div>',
-                unsafe_allow_html=True,
-            )
-        with col4:
-            st.markdown(
-                f'<div class="panel"><div class="keterangan">Total Laga</div>'
-                f'<div class="angka" style="font-size: 24px; font-weight: 600;">{rekor["total"]}</div></div>',
-                unsafe_allow_html=True,
-            )
-
-        # 3. Sepuluh pertemuan terakhir
-        st.markdown('<div class="dalam"><small class="keterangan">Sepuluh Pertemuan Terakhir</small></div>', unsafe_allow_html=True)
-        laga_h2h = _daftar_pertemuan(df, klub_saya, lawan, 10)
-        baris_h2h = []
-        for row in laga_h2h.itertuples():
-            tgl = row.tanggal
-            tgl_str = f"{tgl.day} {BULAN[tgl.month - 1]} {tgl.year}"
-            skor_str = f"{row.gol_kandang} - {row.gol_tandang}"
-            # Titik penanda hasil klub saya
-            if row.tim_kandang == klub_saya:
-                res = "M" if row.hasil == "H" else ("S" if row.hasil == "D" else "K")
-            else:
-                res = "M" if row.hasil == "A" else ("S" if row.hasil == "D" else "K")
-
-            warna_titik = aksen if res == "M" else ("var(--garis)" if res == "S" else "var(--bahaya)")
-            dot = f'<span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: {warna_titik}; margin-right: 8px;"></span>'
-
-            baris_h2h.append(
-                f'<tr>'
-                f'<td class="teks" style="font-size: 13px; color: var(--teks-2);">{dot}{tgl_str}</td>'
-                f'<td class="teks">{escape(singkatan(row.tim_kandang))}</td>'
-                f'<td style="font-weight: 600; text-align: center;">{skor_str}</td>'
-                f'<td class="teks">{escape(singkatan(row.tim_tandang))}</td>'
-                f'</tr>'
-            )
-
-        st.markdown(
-            '<table class="tabel" style="width: 100%; margin-top: 8px; margin-bottom: 24px;">'
-            '<thead><tr>'
-            '<th class="teks">Tanggal</th>'
-            '<th class="teks">Tuan Rumah</th>'
-            '<th style="text-align: center;">Skor</th>'
-            '<th class="teks">Tamu</th>'
-            '</tr></thead>'
-            f'<tbody>{"".join(baris_h2h)}</tbody>'
-            '</table>',
-            unsafe_allow_html=True,
-        )
-
-    # 4. Bentuk Permainan
-    st.markdown('<div class="bagian"><small class="keterangan">Bentuk Permainan (Sepuluh Laga Terakhir)</small></div>', unsafe_allow_html=True)
-    b_saya = bentuk_permainan(df, klub_saya, 10)
-    b_lawan = bentuk_permainan(df, lawan, 10)
-
-    def _render_bentuk(nama, hasil_list, is_saya):
-        badges = []
-        for r in hasil_list:
-            if r == "M":
-                bg = aksen if is_saya else "var(--teks)"
-                color = "#FFFFFF"
-            elif r == "S":
-                bg = "var(--garis)"
-                color = "var(--teks)"
-            else:
-                bg = "var(--bahaya)"
-                color = "#FFFFFF"
-            badges.append(
-                f'<span style="display: inline-block; width: 24px; height: 24px; line-height: 24px; '
-                f'text-align: center; border-radius: 4px; background: {bg}; color: {color}; '
-                f'font-family: var(--huruf-sempit); font-size: 12px; font-weight: 600; margin-right: 4px;">{r}</span>'
-            )
-        return (
-            f'<div class="panel" style="margin-top: 8px;">'
-            f'<div class="keterangan" style="margin-bottom: 6px;">{escape(nama)}</div>'
-            f'<div>{"".join(badges)}</div>'
-            f'</div>'
-        )
-
-    col_b1, col_b2 = st.columns(2)
-    with col_b1:
-        st.markdown(_render_bentuk(klub_saya, b_saya, True), unsafe_allow_html=True)
-    with col_b2:
-        st.markdown(_render_bentuk(lawan, b_lawan, False), unsafe_allow_html=True)
-
-    # 5. Klasemen Musim Berjalan
-    st.markdown(
-        '<div class="bagian"><small class="keterangan">Klasemen sampai 2 November 2026</small></div>',
-        unsafe_allow_html=True,
-    )
-    klasemen_df = klasemen(df, "2026/27")
-
-    baris_klasemen = []
-    for idx, row in enumerate(klasemen_df.itertuples(), start=1):
-        terpilih = row.klub == klub_saya
-        style_row = f'background: {aksen}15; font-weight: 600;' if terpilih else ''
-        teks_color = f'color: {aksen};' if terpilih else ''
-        baris_klasemen.append(
-            f'<tr style="{style_row}">'
-            f'<td style="text-align: center; {teks_color}">{idx}</td>'
-            f'<td class="teks" style="{teks_color}">{escape(row.klub)}</td>'
-            f'<td>{row.main}</td>'
-            f'<td>{row.menang}</td>'
-            f'<td>{row.seri}</td>'
-            f'<td>{row.kalah}</td>'
-            f'<td>{row.gol_memasukkan}</td>'
-            f'<td>{row.gol_kemasukan}</td>'
-            f'<td>{row.selisih:+d}</td>'
-            f'<td style="font-weight: 700; {teks_color}">{row.poin}</td>'
-            f'</tr>'
-        )
-
-    st.markdown(
-        '<table class="tabel" style="width: 100%; margin-top: 12px;">'
-        '<thead><tr>'
-        '<th style="text-align: center;">Pos</th>'
-        '<th class="teks">Klub</th>'
-        '<th>Main</th>'
-        '<th>M</th>'
-        '<th>S</th>'
-        '<th>K</th>'
-        '<th>GM</th>'
-        '<th>GK</th>'
-        '<th>SG</th>'
-        '<th>Poin</th>'
-        '</tr></thead>'
-        f'<tbody>{"".join(baris_klasemen)}</tbody>'
-        '</table>',
-        unsafe_allow_html=True,
-    )
+    st.markdown(_duel(df, klub, lawan, aksen), unsafe_allow_html=True)
+    with st.container(key="hist-grid"):
+        kol_a, kol_b = st.columns([1.25, 1])
+        with kol_a:
+            st.markdown(_lini_pertemuan(df, klub, lawan), unsafe_allow_html=True)
+        with kol_b:
+            st.markdown(_blok_bentuk(df, klub, lawan), unsafe_allow_html=True)
+    st.markdown(_blok_klasemen(df, klub, lawan, aksen), unsafe_allow_html=True)
