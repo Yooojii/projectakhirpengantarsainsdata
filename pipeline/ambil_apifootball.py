@@ -27,8 +27,7 @@ SIMPAN = AKAR / "data" / "apifootball"
 BERKAS_KUNCI = AKAR.parent / "apikeyfootball.txt"
 HOST = "https://v3.football.api-sports.io"
 LIGA = 39
-MUSIM_TERBUKA = [2024]  # satu musim penuh sudah cukup untuk melatih perkiraan statistik;
-                        # tambahkan 2023 dan 2022 bila ingin data lebih banyak
+MUSIM_TERBUKA = [2024, 2022]  # laga yang sudah punya statistik BBC dilewati supaya kuota tidak terbuang
 JEDA_DETIK = 6.5                   # paket gratis dibatasi 10 permintaan per menit
 SISA_MINIMAL = 3                   # sisakan sedikit kuota untuk pengecekan manual
 
@@ -101,6 +100,11 @@ def daftar_laga(klien: Klien, musim: int) -> list[dict]:
     return data
 
 
+def _kunci_laga(f: dict, musim: int) -> tuple[str, str, str]:
+    nama = lambda sisi: PETA_TIM.get(f["teams"][sisi]["name"], f["teams"][sisi]["name"])
+    return f"{musim}/{(musim + 1) % 100:02d}", nama("home"), nama("away")
+
+
 def unduh() -> None:
     SIMPAN.mkdir(parents=True, exist_ok=True)
     (SIMPAN / "statistik").mkdir(exist_ok=True)
@@ -109,12 +113,18 @@ def unduh() -> None:
     klien.sisa = status["limit_day"] - status["current"]
     print(f"Kuota hari ini: {status['current']} terpakai dari {status['limit_day']}")
 
+    import ambil_bbc
+
+    bbc = ambil_bbc.tabel_bbc()
+    ada_bbc = set(zip(bbc.musim, bbc.tim_kandang, bbc.tim_tandang)) if not bbc.empty else set()
+
     for musim in MUSIM_TERBUKA:
         if not klien.masih_boleh():
             break
         laga = [f for f in daftar_laga(klien, musim) if f["fixture"]["status"]["short"] == "FT"]
         belum = [f for f in laga
-                 if not (SIMPAN / "statistik" / f"{f['fixture']['id']}.json").exists()]
+                 if not (SIMPAN / "statistik" / f"{f['fixture']['id']}.json").exists()
+                 and _kunci_laga(f, musim) not in ada_bbc]  # yang sudah ada di BBC tidak perlu kuota
         print(f"Musim {musim}/{(musim + 1) % 100:02d}: {len(laga) - len(belum)} dari {len(laga)} sudah ada")
         for f in belum:
             if not klien.masih_boleh():

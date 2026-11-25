@@ -22,7 +22,7 @@ def test_tidak_mengulang_laga_yang_sudah_dimainkan():
 
 def test_semua_tanggal_hari_sabtu_mulai_tujuh_november():
     sisa = jadwal_sisa(muat_pertandingan())
-    assert sisa.tanggal.min() == pd.Timestamp("2026-11-14")
+    assert sisa.tanggal.min() == pd.Timestamp("2026-11-28")
     assert set(sisa.tanggal.dt.dayofweek) == {5}
 
 def test_tidak_ada_klub_bermain_dua_kali_pada_tanggal_yang_sama():

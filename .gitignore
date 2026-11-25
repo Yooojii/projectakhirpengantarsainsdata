@@ -9,3 +9,5 @@ model/*.joblib
 
 # kunci API-Football, jangan pernah di-commit
 apikeyfootball.txt
+# kunci Gemini, jangan pernah di-commit
+apikeygemini.txt

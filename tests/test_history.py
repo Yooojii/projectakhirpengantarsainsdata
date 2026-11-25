@@ -10,7 +10,7 @@ def df():
 
 def test_keadaan_kosong_untuk_pasangan_yang_belum_pernah_bertemu(df):
     """Review focus 2: enam pasangan punya nol pertemuan."""
-    r = rekor_pertemuan(df, "Brighton", "Hull")
+    r = rekor_pertemuan(df, "Hull", "Leeds")
     assert r["total"] == 0
     assert keadaan_riwayat(r["total"]) == "kosong"
 
@@ -31,7 +31,7 @@ def test_klasemen_dua_puluh_klub_terurut_poin(df):
     k = klasemen(df, "2026/27")
     assert len(k) == 20
     assert k.poin.is_monotonic_decreasing
-    assert k.main.unique().tolist() == [10]
+    assert k.main.unique().tolist() == [11]
 
 
 def test_bentuk_permainan_sepuluh_hasil(df):

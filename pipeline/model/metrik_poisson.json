@@ -8,14 +8,14 @@
     "2026/27"
   ],
   "uji": {
-    "laga": 480,
-    "akurasi_hasil": 0.4833,
-    "log_loss": 1.0232,
-    "mae_gol": 0.8966,
-    "mae_statistik": 2.1504,
-    "skor_tepat": 0.1292,
-    "akurasi_bandar": 0.4917,
-    "log_loss_bandar": 1.0146
+    "laga": 490,
+    "akurasi_hasil": 0.4837,
+    "log_loss": 1.0246,
+    "mae_gol": 0.9023,
+    "mae_statistik": 2.158,
+    "skor_tepat": 0.1265,
+    "akurasi_bandar": 0.4918,
+    "log_loss_bandar": 1.0173
   },
   "per_musim": {
     "2003/04": {
@@ -217,14 +217,14 @@
       "log_loss_bandar": 1.0153
     },
     "2026/27": {
-      "laga": 100,
-      "akurasi_hasil": 0.46,
-      "log_loss": 1.0262,
-      "mae_gol": 0.9419,
-      "mae_statistik": 2.2279,
-      "skor_tepat": 0.12,
-      "akurasi_bandar": 0.48,
-      "log_loss_bandar": 1.0121
+      "laga": 110,
+      "akurasi_hasil": 0.4636,
+      "log_loss": 1.032,
+      "mae_gol": 0.9631,
+      "mae_statistik": 2.2549,
+      "skor_tepat": 0.1091,
+      "akurasi_bandar": 0.4818,
+      "log_loss_bandar": 1.0242
     }
   },
   "statistik_tambahan": [
@@ -238,60 +238,60 @@
   ],
   "evaluasi_tambahan": {
     "penguasaan_bola_kandang": {
-      "laga": 100,
-      "mae": 7.804,
-      "mae_tebakan_rata_rata": 10.611,
-      "perbaikan": 0.2646,
-      "rata_rata_asli": 50.66
+      "laga": 110,
+      "mae": 7.738,
+      "mae_tebakan_rata_rata": 10.81,
+      "perbaikan": 0.2842,
+      "rata_rata_asli": 50.98
     },
     "umpan_kandang": {
-      "laga": 100,
-      "mae": 75.728,
-      "mae_tebakan_rata_rata": 107.428,
-      "perbaikan": 0.2951,
-      "rata_rata_asli": 451.14
+      "laga": 110,
+      "mae": 79.301,
+      "mae_tebakan_rata_rata": 112.168,
+      "perbaikan": 0.293,
+      "rata_rata_asli": 456.5
     },
     "umpan_tandang": {
-      "laga": 100,
-      "mae": 76.954,
-      "mae_tebakan_rata_rata": 100.498,
-      "perbaikan": 0.2343,
-      "rata_rata_asli": 438.34
+      "laga": 110,
+      "mae": 73.855,
+      "mae_tebakan_rata_rata": 99.115,
+      "perbaikan": 0.2549,
+      "rata_rata_asli": 436.04
     },
     "akurasi_umpan_kandang": {
-      "laga": 100,
-      "mae": 3.834,
-      "mae_tebakan_rata_rata": 5.125,
-      "perbaikan": 0.2519,
-      "rata_rata_asli": 81.36
+      "laga": 110,
+      "mae": 3.867,
+      "mae_tebakan_rata_rata": 5.383,
+      "perbaikan": 0.2816,
+      "rata_rata_asli": 81.43
     },
     "akurasi_umpan_tandang": {
-      "laga": 100,
-      "mae": 4.467,
-      "mae_tebakan_rata_rata": 5.406,
-      "perbaikan": 0.1737,
-      "rata_rata_asli": 80.45
+      "laga": 110,
+      "mae": 4.308,
+      "mae_tebakan_rata_rata": 5.306,
+      "perbaikan": 0.1881,
+      "rata_rata_asli": 80.37
     },
     "penyelamatan_kiper_kandang": {
-      "laga": 100,
-      "mae": 1.292,
-      "mae_tebakan_rata_rata": 1.277,
-      "perbaikan": -0.0119,
-      "rata_rata_asli": 2.56
+      "laga": 110,
+      "mae": 1.295,
+      "mae_tebakan_rata_rata": 1.273,
+      "perbaikan": -0.0171,
+      "rata_rata_asli": 2.6
     },
     "penyelamatan_kiper_tandang": {
-      "laga": 100,
-      "mae": 1.507,
-      "mae_tebakan_rata_rata": 1.592,
-      "perbaikan": 0.0535,
-      "rata_rata_asli": 3.15
+      "laga": 110,
+      "mae": 1.561,
+      "mae_tebakan_rata_rata": 1.631,
+      "perbaikan": 0.0429,
+      "rata_rata_asli": 3.25
     },
     "penguasaan_bola_tandang": {
-      "laga": 100,
-      "mae": 7.804,
-      "mae_tebakan_rata_rata": 10.611,
-      "perbaikan": 0.2646,
-      "rata_rata_asli": 49.34
+      "laga": 110,
+      "mae": 7.738,
+      "mae_tebakan_rata_rata": 10.81,
+      "perbaikan": 0.2842,
+      "rata_rata_asli": 49.02
     }
   },
   "simulasi": 20000
