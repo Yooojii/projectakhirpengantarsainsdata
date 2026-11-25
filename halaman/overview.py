@@ -256,8 +256,14 @@ def _isi_panel_tren(df: pd.DataFrame, klub: str | None) -> None:
         st.info("Tidak ada musim pada rentang yang dipilih.")
         return
 
-    st.altair_chart(grafik_tren(pilihan, kolom, satuan, format_angka, warna),
-                    width="stretch", theme=None)
+    st.vega_lite_chart(_spek_tren(pilihan, kolom, satuan, format_angka, warna),
+                       width="stretch", theme=None)
+
+
+@st.cache_data(show_spinner=False, max_entries=64)
+def _spek_tren(data: pd.DataFrame, kolom: str, satuan: str, format_angka: str, warna: str) -> dict:
+    """Spesifikasi Vega-Lite grafik tren; dihitung sekali untuk tiap kombinasi filter."""
+    return grafik_tren(data, kolom, satuan, format_angka, warna).to_dict()
 
 
 def grafik_tren(data: pd.DataFrame, kolom: str, satuan: str, format_angka: str,

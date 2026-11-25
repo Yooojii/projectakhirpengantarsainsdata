@@ -3,7 +3,7 @@ from html import escape
 import pandas as pd
 import streamlit as st
 
-from gaya.komponen import _uri_logo, angka_hitung, logo_kecil, warna_aksen
+from gaya.komponen import LOGO_SEDANG, _uri_logo, angka_hitung, logo_kecil, warna_aksen
 from inti.data import klub_musim, muat_pertandingan
 from inti.klub import logo_klub, singkatan, warna_klub
 from inti.sesi import BULAN, JALUR_DATA
@@ -121,7 +121,7 @@ def _logo_duel(klub: str) -> str:
     jalur = logo_klub(klub)
     if jalur is None:
         return f'<span class="kode-besar">{escape(singkatan(klub))}</span>'
-    return f'<img src="{_uri_logo(str(jalur))}" alt="">'
+    return f'<img src="{_uri_logo(str(jalur), LOGO_SEDANG)}" alt="">'
 
 
 def _hasil_klub(row, klub: str) -> str:

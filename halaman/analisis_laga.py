@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 
-from gaya.komponen import _uri_logo, angka_hitung, logo_kecil, warna_aksen
+from gaya.komponen import LOGO_SEDANG, _uri_logo, angka_hitung, logo_kecil, warna_aksen
 from halaman.history import rekor_pertemuan
 from halaman.prediksi_simulasi import hitung_prediksi, siapkan_sesi
 from inti.data import klub_musim, muat_pertandingan
@@ -62,7 +62,7 @@ def _logo_besar(klub: str) -> str:
     jalur = logo_klub(klub)
     if jalur is None:
         return f'<span class="kode-besar">{escape(singkatan(klub))}</span>'
-    return f'<img src="{_uri_logo(str(jalur))}" alt="">'
+    return f'<img src="{_uri_logo(str(jalur), LOGO_SEDANG)}" alt="">'
 
 
 def _hasil_untuk(klub: str, kandang: str, hasil: str) -> str:

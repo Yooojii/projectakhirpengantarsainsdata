@@ -1,0 +1,421 @@
+/* Landing page BallBoard.
+   Identitas sama dengan dashboard: navy, teal, latar hijau pucat, IBM Plex. Hijau limau dari
+   logo hanya dipakai untuk tombol masuk. Hero memakai garis lapangan sebagai tekstur. */
+
+.landing {
+  --lp-navy: #0E3A52;
+  --lp-navy-2: #0A2C3F;
+  --lp-teal: #157D7B;
+  --lp-limau: #8BD43E;
+  --lp-limau-gelap: #6FB52A;
+  --lp-latar: #F4F6F2;
+  --lp-kartu: #FFFFFF;
+  --lp-teks: #0E1F18;
+  --lp-redup: #46544D;
+  --lp-tepi: #E1E6DF;
+  --lp-sumur: #ECF0EB;
+  --lp-bayang: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 24px 48px -28px rgba(2, 24, 12, 0.6);
+  --lp-kaca: rgba(255, 255, 255, 0.8);
+  --lp-kaca-tepi: rgba(255, 255, 255, 0.85);
+  --lp-kaca-blur: blur(22px) saturate(1.6);
+  --lp-kurva: cubic-bezier(0.2, 0.8, 0.2, 1);
+  font-family: "IBM Plex Sans", sans-serif;
+  color: var(--lp-teks);
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+/* Kerangka Streamlit: landing memakai lebar penuh tanpa rel navigasi dashboard */
+.stApp .block-container:has(.landing) { max-width: none; padding: 16px 24px 48px !important; }
+.stApp [data-testid="stMain"]:has(.landing) { scroll-behavior: smooth; }
+.stApp [data-testid="stMarkdownContainer"]:has(> .landing) { margin-bottom: 0; }
+.landing :where(section) { scroll-margin-top: 96px; }
+.landing a { text-decoration: none; color: inherit; }
+.landing a:focus-visible { outline: 3px solid var(--lp-teal); outline-offset: 3px; border-radius: 999px; }
+.landing h1, .landing h2, .landing h3 { font-family: "IBM Plex Sans", sans-serif; margin: 0; padding: 0; letter-spacing: -0.02em; }
+.landing p { margin: 0; max-width: 64ch; }
+.landing ul, .landing ol { margin: 0; padding: 0; list-style: none; }
+.stApp .landing [data-testid="stMarkdownContainer"] p { font-size: inherit; }
+
+/* ---- Tombol ---- */
+.lp-tombol {
+  display: inline-flex; align-items: center; justify-content: center; min-height: 48px;
+  padding: 0 24px; border-radius: 999px; font-weight: 600; font-size: 16px; white-space: nowrap;
+  transition: transform 200ms var(--lp-kurva), box-shadow 200ms ease, background 200ms ease;
+  cursor: pointer;
+}
+.lp-utama { background: var(--lp-limau); color: var(--lp-navy) !important; box-shadow: 0 8px 24px -12px rgba(111, 181, 42, 0.9); }
+.lp-utama:hover { background: #9BE04F; transform: translateY(-2px); }
+.lp-kaca { background: rgba(255, 255, 255, 0.12); color: #FFFFFF !important; border: 1px solid rgba(255, 255, 255, 0.28); }
+.lp-kaca:hover { background: rgba(255, 255, 255, 0.2); transform: translateY(-2px); }
+.lp-tombol:active { transform: scale(0.97); }
+
+.lp-chip {
+  display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; border-radius: 999px;
+  font-size: 13px; font-weight: 500; background: var(--lp-sumur); color: var(--lp-teal);
+}
+.lp-chip-terang { background: rgba(139, 212, 62, 0.18); color: #C8F09E; }
+
+/* ---- Navigasi pil melayang ---- */
+.lp-nav {
+  position: sticky; top: 12px; z-index: 50;
+  display: flex; align-items: center; gap: 16px; justify-content: space-between;
+  padding: 8px 8px 8px 16px; margin-bottom: 16px;
+  background: rgba(255, 255, 255, 0.82); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--lp-tepi); border-radius: 999px; box-shadow: var(--lp-bayang);
+}
+.lp-merek { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 18px; color: var(--lp-navy) !important; }
+.lp-merek img { width: 40px; height: auto; }
+.lp-tautan { position: relative; isolation: isolate; display: grid; grid-template-columns: repeat(5, 116px); padding: 4px; background: rgba(14, 58, 82, 0.06); border-radius: 999px; }
+/* warna lewat variabel: deklarasi !important tetap bisa diubah oleh animasi sorotan */
+.lp-tautan a { --lp-tautan-warna: var(--lp-redup); padding: 8px 4px; text-align: center; border-radius: 999px; font-size: 14px; font-weight: 500; color: var(--lp-tautan-warna) !important; transition: background 200ms ease, color 300ms ease; }
+/* Hover hanya mengubah warna teks, tanpa latar: latar putih akan menutupi pil navy pada tautan
+   aktif. Dibatasi ke perangkat yang benar-benar punya hover, karena di layar sentuh status
+   :hover menempel setelah diketuk. Tautan aktif tetap putih karena animasi sorotan menimpa
+   variabel warnanya. */
+@media (hover: hover) {
+  .lp-tautan a:hover { --lp-tautan-warna: var(--lp-navy); }
+}
+/* pil navy di belakang tautan aktif; posisinya digerakkan oleh gulir (lihat bawah) */
+.lp-penanda { position: absolute; z-index: -1; top: 4px; bottom: 4px; left: 4px; width: 116px; border-radius: 999px; background: var(--lp-navy); box-shadow: 0 6px 16px -8px rgba(14, 58, 82, 0.8); opacity: 0; pointer-events: none; }
+.lp-nav .lp-tombol { min-height: 44px; padding: 0 20px; font-size: 15px; }
+
+/* ---- Hero: panel navy dengan garis lapangan ---- */
+.lp-hero {
+  position: relative; overflow: hidden; isolation: isolate;
+  display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); align-items: center; gap: 32px;
+  min-height: 560px; padding: 64px 56px 72px;
+  background: radial-gradient(120% 90% at 85% 20%, #14506F 0%, var(--lp-navy) 55%, var(--lp-navy-2) 100%);
+  border-radius: 32px; color: #FFFFFF;
+  animation: lp-hero-masuk 700ms var(--lp-kurva) both;
+}
+.lp-lapangan { position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: 0.16; }
+.lp-lapangan i { position: absolute; border: 2px solid #FFFFFF; }
+.lp-lapangan i:nth-child(1) { left: 58%; top: -2px; bottom: -2px; width: 0; border-width: 0 0 0 2px; }
+.lp-lapangan i:nth-child(2) { left: calc(58% - 120px); top: calc(50% - 120px); width: 240px; height: 240px; border-radius: 50%; }
+.lp-lapangan i:nth-child(3) { right: -2px; top: calc(50% - 150px); width: 140px; height: 300px; border-right-width: 0; }
+.lp-hero-isi { display: flex; flex-direction: column; align-items: flex-start; gap: 24px; }
+.lp-hero .lp-chip { background: rgba(255, 255, 255, 0.12); color: #D9ECF2; border: 1px solid rgba(255, 255, 255, 0.18); }
+.lp-hero h1 {
+  font-family: "IBM Plex Sans Condensed", "IBM Plex Sans", sans-serif;
+  font-size: clamp(48px, 6.4vw, 88px); font-weight: 700; line-height: 0.95; color: #FFFFFF;
+}
+.lp-hero h1 .lp-redam { display: block; color: #7FD6CF; }
+/* Streamlit menyisipkan ikon tautan di setiap judul markdown; tidak dipakai di sini */
+.landing [data-testid="stHeaderActionElements"] { display: none !important; }
+.lp-hero p { font-size: 18px; line-height: 1.6; color: #C9D8DE; }
+.lp-aksi { display: flex; flex-wrap: wrap; gap: 12px; }
+.lp-hero-kaki { position: absolute; left: 56px; bottom: 24px; font-size: 13px !important; color: #8FB0BD !important; }
+
+.lp-hero-visual { position: relative; min-height: 420px; display: flex; align-items: center; justify-content: center; }
+.lp-lambang {
+  width: min(100%, 420px); height: auto;
+  filter: drop-shadow(0 30px 40px rgba(0, 0, 0, 0.35));
+  animation: lp-lambang 1000ms var(--lp-kurva) 200ms both;
+}
+.lp-kartu-apung {
+  position: absolute; display: flex; flex-direction: column; gap: 2px;
+  padding: 16px 20px; border-radius: 20px;
+  background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.22); box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.5);
+  animation: lp-apung-masuk 800ms var(--lp-kurva) both;
+}
+.lp-kartu-apung small { font-size: 13px; color: #B8CED6; }
+.lp-kartu-apung b {
+  font-family: "IBM Plex Sans Condensed", sans-serif; font-variant-numeric: tabular-nums;
+  font-size: 40px; font-weight: 700; line-height: 1.05; color: #FFFFFF;
+}
+.lp-kartu-apung span { font-size: 13px; color: #D9ECF2; }
+.lp-apung-1 { top: 4%; right: 0; animation-delay: 500ms; }
+.lp-apung-2 { bottom: 10%; left: 0; animation-delay: 650ms; }
+.lp-apung-3 { bottom: -2%; right: 4%; flex-direction: row; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 999px; animation-delay: 800ms; }
+
+/* ---- Bagian umum ---- */
+.lp-bagian { padding: 96px 0 0; }
+.lp-kepala { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+.lp-kepala h2, .lp-gelap h2, .lp-ajakan h2 {
+  font-size: clamp(32px, 4vw, 48px); font-weight: 700; line-height: 1.05; color: var(--lp-navy);
+}
+.lp-kepala p { font-size: 18px; line-height: 1.6; color: var(--lp-redup); }
+.lp-redup { color: var(--lp-redup); font-size: 15px; line-height: 1.6; }
+
+/* ---- Overview: tiga kartu tab dengan pratinjau ---- */
+.lp-tiga { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.lp-tab {
+  display: flex; flex-direction: column; gap: 12px; padding: 16px 16px 24px;
+  background: var(--lp-kartu); border: 1px solid var(--lp-tepi); border-radius: 28px; box-shadow: var(--lp-bayang);
+  transition: transform 260ms var(--lp-kurva), box-shadow 260ms ease;
+}
+.lp-tab:hover { transform: translateY(-4px); box-shadow: 0 2px 4px rgba(14, 31, 24, 0.06), 0 28px 48px -24px rgba(14, 58, 82, 0.45); }
+.lp-tab:focus-visible { border-radius: 28px; }
+.lp-tab h3 { font-size: 24px; font-weight: 700; color: var(--lp-navy); padding: 0 8px; }
+.lp-tab p { font-size: 15px; line-height: 1.6; color: var(--lp-redup); padding: 0 8px; }
+.lp-tab-kaki { margin: auto 8px 0; padding-top: 12px; border-top: 1px solid var(--lp-tepi); font-size: 14px; font-weight: 600; color: var(--lp-teal); }
+.lp-foto { display: block; height: 216px; border-radius: 20px; overflow: hidden; background: var(--lp-sumur); }
+.lp-foto img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform 600ms var(--lp-kurva); }
+.lp-tab:hover .lp-foto img { transform: scale(1.05); }
+
+/* ---- Dataset ---- */
+.lp-strip { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; margin-bottom: 24px; }
+.lp-angka { display: flex; flex-direction: column; padding: 20px 24px; border-radius: 24px; background: var(--lp-kartu); border: 1px solid var(--lp-tepi); }
+.lp-angka b { font-family: "IBM Plex Sans Condensed", sans-serif; font-variant-numeric: tabular-nums; font-size: 40px; font-weight: 700; line-height: 1.05; color: var(--lp-navy); }
+.lp-angka span { font-size: 14px; color: var(--lp-redup); }
+.lp-sumber {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 40px; padding: 36px 40px;
+  background: var(--lp-kartu); border: 1px solid var(--lp-tepi); border-radius: 28px; box-shadow: var(--lp-bayang);
+}
+.lp-sumber-kiri { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+.lp-sumber h3 { font-size: 28px; font-weight: 700; color: var(--lp-navy); }
+.lp-fakta { margin: 8px 0 0; display: flex; flex-direction: column; gap: 0; width: 100%; }
+.lp-fakta > div { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 12px; padding: 12px 0; border-top: 1px solid var(--lp-tepi); }
+.lp-fakta dt { font-size: 14px; color: var(--lp-redup); }
+.lp-fakta dd { margin: 0; font-size: 15px; font-weight: 600; color: var(--lp-navy); }
+.lp-sumber-kanan { padding-left: 40px; border-left: 1px solid var(--lp-tepi); }
+.lp-sumber h4 { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 0 0 8px; padding: 0; font-size: 16px; font-weight: 600; color: var(--lp-navy); }
+.lp-sumber h4 small { font-size: 13px; font-weight: 600; color: var(--lp-teal); background: #DDEFEE; padding: 2px 10px; border-radius: 999px; }
+.lp-centang { display: flex; flex-direction: column; gap: 14px; margin-top: 12px !important; }
+.landing .lp-centang > li { margin: 0; padding: 0; display: flex; gap: 12px; align-items: flex-start; font-size: 15px; line-height: 1.5; }
+.lp-centang svg { flex: 0 0 22px; width: 22px; height: 22px; margin-top: 1px; padding: 3px; border-radius: 50%; background: #DDEFEE; fill: none; stroke: var(--lp-teal); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---- Pre-processing: alur bernomor ---- */
+.lp-alur { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+/* kartu langkah adalah <li>: aturan li bawaan Streamlit dikalahkan dengan .landing di depan */
+.landing .lp-alur > .lp-langkah {
+  margin: 0; list-style: none;
+  position: relative; display: flex; flex-direction: column; gap: 16px; padding: 28px 24px 24px;
+  background: var(--lp-kartu); border: 1px solid var(--lp-tepi); border-radius: 28px; box-shadow: var(--lp-bayang);
+}
+/* garis alur dari nomor ke nomor langkah berikutnya */
+.lp-langkah:not(:last-child)::after {
+  content: ""; position: absolute; z-index: 2; top: 49px; left: 72px; right: -48px; height: 2px;
+  background: linear-gradient(90deg, var(--lp-teal) 0 50%, transparent 0) 0 0 / 10px 2px repeat-x;
+}
+.lp-nomor {
+  position: relative; z-index: 3; width: 44px; height: 44px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--lp-navy); color: #FFFFFF; box-shadow: 0 0 0 6px var(--lp-kartu);
+  font-family: "IBM Plex Sans Condensed", sans-serif; font-weight: 700; font-size: 18px;
+}
+.lp-langkah h3 {
+  min-height: 2.5em; display: flex; align-items: flex-end;
+  font-size: 20px; font-weight: 700; color: var(--lp-navy); line-height: 1.25;
+  padding-bottom: 16px !important; border-bottom: 1px solid var(--lp-tepi);
+}
+.lp-langkah ul { display: flex; flex-direction: column; gap: 10px; flex: 1; }
+.landing .lp-langkah ul > li { margin: 0; position: relative; padding-left: 18px; font-size: 14px; line-height: 1.55; color: var(--lp-redup); }
+.lp-langkah li::before { content: ""; position: absolute; left: 0; top: 8px; width: 8px; height: 2px; border-radius: 2px; background: var(--lp-teal); }
+.lp-langkah-kaki { align-self: flex-start; margin-top: 4px; padding: 6px 12px; border-radius: 999px; background: #DDEFEE; font-size: 13px; font-weight: 600; color: var(--lp-teal); }
+
+/* ---- Modelling: panel gelap ---- */
+.lp-gelap {
+  margin-top: 96px; padding: 56px; border-radius: 32px; background: var(--lp-navy-2); color: #FFFFFF;
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; align-items: start;
+}
+.lp-gelap h2 { color: #FFFFFF; margin-top: 16px !important; }
+.lp-gelap-kiri { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
+.lp-gelap-kiri p { font-size: 17px; line-height: 1.65; color: #C9D8DE; }
+.lp-catatan { padding: 16px 20px; border-left: 3px solid var(--lp-limau); background: rgba(255, 255, 255, 0.05); border-radius: 0 16px 16px 0; font-size: 15px !important; }
+.lp-gelap-kanan { padding: 24px; border-radius: 24px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.12); display: flex; flex-direction: column; gap: 16px; }
+.lp-model-kepala { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.lp-model-kepala span { font-weight: 600; font-size: 16px; }
+.lp-model-kepala small { font-size: 13px; color: #8FB0BD; }
+.lp-model { display: grid; grid-template-columns: 136px minmax(0, 1fr) 56px; grid-template-rows: auto auto; column-gap: 12px; align-items: center; }
+.lp-model-nama { font-size: 14px; color: #D9ECF2; }
+.lp-model-lajur { height: 10px; border-radius: 999px; background: rgba(255, 255, 255, 0.08); overflow: hidden; }
+.lp-model-lajur i { display: block; height: 100%; border-radius: 999px; background: #7FD6CF; transform-origin: left center; }
+.lp-bandar .lp-model-lajur i { background: var(--lp-limau); }
+.lp-model b { font-family: "IBM Plex Sans Condensed", sans-serif; font-variant-numeric: tabular-nums; font-size: 18px; text-align: right; }
+.lp-model small { grid-column: 2 / 4; font-size: 12px; color: #8FB0BD; margin-top: 2px; }
+.lp-poin-grid { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.lp-poin { padding: 20px; border-radius: 20px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); }
+.lp-poin b { display: block; font-size: 16px; margin-bottom: 8px; color: #FFFFFF; }
+.lp-poin p { font-size: 14px; line-height: 1.55; color: #B8CED6; }
+
+/* ---- Key insight: satu sorotan lalu enam kartu seragam ---- */
+.lp-sorotan {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 48px; align-items: center;
+  padding: 40px 44px; margin-bottom: 16px; border-radius: 28px; color: #FFFFFF;
+  background: radial-gradient(120% 140% at 100% 0%, #14506F 0%, var(--lp-navy) 55%, var(--lp-navy-2) 100%);
+}
+.lp-sorotan-teks { display: flex; flex-direction: column; gap: 10px; }
+.lp-sorotan b, .lp-insight b {
+  font-family: "IBM Plex Sans Condensed", sans-serif; font-variant-numeric: tabular-nums; font-weight: 700; line-height: 1;
+}
+.lp-sorotan-teks > b { font-size: 72px; color: #7FD6CF; }
+.lp-sorotan h3 { font-size: 24px; font-weight: 700; color: #FFFFFF; }
+.lp-sorotan p { font-size: 16px; line-height: 1.6; color: #C9D8DE; }
+.lp-hasil { display: flex; flex-direction: column; gap: 16px; }
+.lp-hasil-bar { display: flex; gap: 6px; height: 20px; }
+.lp-hasil-bar i { border-radius: 999px; background: #7FD6CF; transform-origin: left center; }
+.lp-hasil-bar i:nth-child(2) { background: rgba(255, 255, 255, 0.35); }
+.lp-hasil-bar i:nth-child(3) { background: var(--lp-limau); }
+/* keterangan memakai proporsi yang sama dengan bar di atasnya, jadi tiap label mulai tepat di bawah ruasnya */
+.lp-hasil-label { display: flex; gap: 6px; }
+.lp-hasil-label span { min-width: 0; display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: #B8CED6; }
+.lp-hasil-label span i { width: 10px; height: 10px; border-radius: 3px; background: #7FD6CF; }
+.lp-hasil-label span:nth-child(2) i { background: rgba(255, 255, 255, 0.35); }
+.lp-hasil-label span:nth-child(3) i { background: var(--lp-limau); }
+.lp-hasil-label b { font-size: 28px; color: #FFFFFF; }
+
+.lp-insight-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.lp-insight {
+  display: flex; flex-direction: column; gap: 10px; padding: 28px;
+  background: var(--lp-kartu); border: 1px solid var(--lp-tepi); border-radius: 24px; box-shadow: var(--lp-bayang);
+}
+.lp-insight b { font-size: 44px; color: var(--lp-teal); margin-bottom: 6px; }
+.lp-insight h3 { font-size: 18px; font-weight: 700; color: var(--lp-navy); line-height: 1.3; }
+.lp-insight p { font-size: 14px; line-height: 1.6; color: var(--lp-redup); }
+
+/* ---- Kaki ---- */
+.lp-kaki {
+  display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--lp-tepi);
+  font-size: 13px; color: var(--lp-redup);
+}
+
+/* ---- Latar dan kartu kaca ----
+   Tenang dan bersih: gradasi lembut dari hijau mint ke abu kebiruan, dengan dua cahaya lebar
+   bernada teal dan limau di sudut atas. Tanpa garis atau pola, supaya tidak ramai saat digulir.
+   Latar menempel di .stApp yang tidak ikut bergulir, jadi blur kartu kaca menangkap warnanya. */
+.stApp:has(.landing) {
+  background:
+    radial-gradient(60% 50% at 0% 0%, rgba(21, 125, 123, 0.16), transparent 70%),
+    radial-gradient(50% 45% at 100% 0%, rgba(139, 212, 62, 0.14), transparent 70%),
+    linear-gradient(180deg, #EEF5F1 0%, #F2F5F4 50%, #EAF0F2 100%) !important;
+}
+.stApp:has(.landing) [data-testid="stAppViewContainer"],
+.stApp:has(.landing) [data-testid="stMain"],
+.stApp:has(.landing) [data-testid="stHeader"] { background: transparent !important; }
+
+/* kaca seperti contoh: putih tembus pandang, blur besar dengan saturasi, tepi putih, kilap atas */
+.lp-tab, .lp-angka, .lp-sumber, .landing .lp-alur > .lp-langkah, .lp-insight {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.72) 0%, rgba(255, 255, 255, 0.5) 100%);
+  border: 1px solid var(--lp-kaca-tepi);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 24px 48px -28px rgba(14, 58, 82, 0.4);
+}
+/* Kartu dan panel sengaja tanpa backdrop-filter: latar di belakangnya gradasi halus, jadi blur
+   tidak terlihat bedanya, padahal puluhan elemen ber-blur membuat gulir terasa berat. Hanya
+   navigasi melayang yang memakai blur karena isi halaman bergulir di bawahnya. */
+.lp-nav { background: rgba(255, 255, 255, 0.7); border-color: var(--lp-kaca-tepi); -webkit-backdrop-filter: var(--lp-kaca-blur); backdrop-filter: var(--lp-kaca-blur); }
+.lp-nomor { box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.7); }
+.lp-tautan { background: rgba(14, 58, 82, 0.06); }
+.lp-chip, .lp-langkah-kaki, .lp-sumber h4 small { background: rgba(21, 125, 123, 0.12); }
+.lp-foto { background: rgba(255, 255, 255, 0.5); }
+/* panel navy juga sedikit tembus pandang */
+.lp-hero { background: radial-gradient(120% 90% at 85% 20%, rgba(20, 80, 111, 0.9) 0%, rgba(14, 58, 82, 0.94) 55%, rgba(10, 44, 63, 0.97) 100%); border: 1px solid rgba(255, 255, 255, 0.4); }
+.lp-gelap { background: rgba(10, 44, 63, 0.9); border: 1px solid rgba(255, 255, 255, 0.3); }
+.lp-sorotan { background: radial-gradient(120% 140% at 100% 0%, rgba(20, 80, 111, 0.9) 0%, rgba(14, 58, 82, 0.93) 55%, rgba(10, 44, 63, 0.96) 100%); border: 1px solid rgba(255, 255, 255, 0.3); }
+
+/* ---- Gerak: satu rangkaian masuk di hero, bagian lain muncul saat digulir ---- */
+.lp-masuk { animation: lp-naik 700ms var(--lp-kurva) both; animation-delay: calc(150ms + var(--d, 0) * 110ms); }
+@keyframes lp-hero-masuk { from { opacity: 0; transform: scale(0.985); } to { opacity: 1; transform: none; } }
+@keyframes lp-naik { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+@keyframes lp-lambang { from { opacity: 0; transform: translateY(24px) rotate(-6deg) scale(0.92); } to { opacity: 1; transform: none; } }
+@keyframes lp-apung-masuk { from { opacity: 0; transform: translateY(16px) scale(0.96); } to { opacity: 1; transform: none; } }
+@keyframes lp-tumbuh { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes lp-gambar { from { opacity: 0; transform: scale(0.4); } to { opacity: 1; transform: none; } }
+.lp-gambar { transform-box: fill-box; transform-origin: center; animation: lp-gambar 900ms var(--lp-kurva) 400ms both; }
+
+/* Muncul saat digulir: hanya di peramban yang mendukung animasi berbasis scroll.
+   Peramban lain menampilkan semuanya langsung, tanpa ada yang tersembunyi. */
+@supports (animation-timeline: view()) {
+  .lp-muncul {
+    animation: lp-naik linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 55%;
+  }
+  .lp-model-lajur i, .lp-hasil-bar i {
+    animation: lp-tumbuh linear both;
+    animation-timeline: view();
+    animation-range: entry 10% cover 35%;
+  }
+}
+
+/* Navigasi mengikuti bagian yang sedang dibaca. Tiap bagian memberi nama linimasa view;
+   tautan menyala selama bagiannya melewati garis 40% dari atas layar. Klik tautan menggulir
+   ke bagian itu, sehingga sorotannya ikut berpindah. */
+@supports (timeline-scope: --a) {
+  /* section#...: Streamlit memberi judul h3 "Overview" id yang sama */
+  .landing { timeline-scope: --lp-s1, --lp-s2, --lp-s3, --lp-s4, --lp-s5; }
+  section#overview { view-timeline: --lp-s1 block; }
+  section#dataset { view-timeline: --lp-s2 block; }
+  section#praproses { view-timeline: --lp-s3 block; }
+  section#modelling { view-timeline: --lp-s4 block; }
+  section#insight { view-timeline: --lp-s5 block; }
+  /* Pil meluncur dari tautan sebelumnya ke tautan bagian ini selama 160 px gulir terakhir
+     sebelum bagian itu mencapai garis 40%. Isian "forwards" menahan posisinya; animasi yang
+     dideklarasikan belakangan menang, jadi bagian terbawah yang sudah dilewati yang tampil. */
+  .lp-penanda {
+    animation: lp-ke-1 linear forwards, lp-ke-2 linear forwards, lp-ke-3 linear forwards,
+               lp-ke-4 linear forwards, lp-ke-5 linear forwards;
+    animation-timeline: --lp-s1, --lp-s2, --lp-s3, --lp-s4, --lp-s5;
+    animation-range: cover calc(60vh - 160px) cover 60vh;
+  }
+  /* Warna teks memakai mekanisme yang sama dengan pil, jadi keduanya tidak bisa berselisih
+     di ukuran layar mana pun: tautan N menyala ketika pil sudah setengah jalan menuju N
+     (linimasa bagian N) dan padam ketika pil setengah jalan menuju N+1 (linimasa bagian N+1).
+     Keduanya berisian "forwards"; animasi padam dideklarasikan belakangan sehingga menang. */
+  .lp-tautan a {
+    animation-name: lp-aktif, lp-pasif;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+    animation-range: cover calc(60vh - 80px) cover calc(60vh - 79px);
+  }
+  .lp-tautan a:nth-child(1) { animation-timeline: --lp-s1, --lp-s2; }
+  .lp-tautan a:nth-child(2) { animation-timeline: --lp-s2, --lp-s3; }
+  .lp-tautan a:nth-child(3) { animation-timeline: --lp-s3, --lp-s4; }
+  .lp-tautan a:nth-child(4) { animation-timeline: --lp-s4, --lp-s5; }
+  .lp-tautan a:nth-child(5) { animation-name: lp-aktif; animation-timeline: --lp-s5; }
+}
+@keyframes lp-aktif { from, to { --lp-tautan-warna: #FFFFFF; } }
+@keyframes lp-pasif { from, to { --lp-tautan-warna: var(--lp-redup); } }
+@keyframes lp-ke-1 { from { opacity: 0; transform: translateX(0) scale(0.6); } to { opacity: 1; transform: translateX(0); } }
+@keyframes lp-ke-2 { from { opacity: 1; transform: translateX(0); } to { opacity: 1; transform: translateX(116px); } }
+@keyframes lp-ke-3 { from { opacity: 1; transform: translateX(116px); } to { opacity: 1; transform: translateX(232px); } }
+@keyframes lp-ke-4 { from { opacity: 1; transform: translateX(232px); } to { opacity: 1; transform: translateX(348px); } }
+@keyframes lp-ke-5 { from { opacity: 1; transform: translateX(348px); } to { opacity: 1; transform: translateX(464px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .landing *:not(.lp-tautan a, .lp-penanda), .landing *::before, .landing *::after { animation: none !important; transition: none !important; }
+  .stApp [data-testid="stMain"]:has(.landing) { scroll-behavior: auto; }
+}
+
+/* ---- Responsif ---- */
+@media (max-width: 900px) {
+  .lp-tautan { display: none; }
+}
+@media (max-width: 1024px) {
+  .lp-hero { grid-template-columns: minmax(0, 1fr); padding: 48px 32px 72px; }
+  .lp-hero-visual { min-height: 360px; }
+  .lp-tiga, .lp-alur, .lp-insight-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lp-sorotan, .lp-sumber { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .lp-sumber-kanan { padding: 28px 0 0; border-left: 0; border-top: 1px solid var(--lp-tepi); }
+  .lp-langkah:not(:last-child)::after { display: none; }
+  .lp-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .lp-gelap { grid-template-columns: minmax(0, 1fr); padding: 40px 32px; }
+  .lp-poin-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lp-hero-kaki { left: 32px; }
+}
+@media (max-width: 640px) {
+  .stApp .block-container:has(.landing) { padding: 12px 16px 32px !important; }
+  .lp-nav { padding: 6px 6px 6px 12px; }
+  .lp-merek { font-size: 16px; }
+  .lp-nav .lp-tombol { padding: 0 16px; font-size: 14px; }
+  .lp-hero { padding: 40px 24px 64px; border-radius: 24px; min-height: 0; }
+  .lp-hero p { font-size: 16px; }
+  .lp-hero-visual { min-height: 300px; }
+  .lp-kartu-apung b { font-size: 30px; }
+  .lp-apung-3 { display: none; }
+  .lp-hero-kaki { left: 24px; }
+  .lp-bagian { padding-top: 64px; }
+  .lp-tiga, .lp-alur, .lp-poin-grid, .lp-insight-grid { grid-template-columns: minmax(0, 1fr); }
+  .lp-hasil-label { flex-direction: column; gap: 10px; }
+  .lp-hasil-label span { flex: none !important; flex-direction: row; align-items: center; gap: 8px; }
+  .lp-hasil-label b { font-size: 20px; margin-left: auto; }
+  .lp-sorotan-teks > b { font-size: 56px; }
+  .lp-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lp-sumber, .lp-gelap, .lp-sorotan { padding: 28px 24px; }
+  .lp-fakta > div { grid-template-columns: 1fr; gap: 2px; }
+  .lp-model { grid-template-columns: 112px minmax(0, 1fr) 52px; }
+  .lp-gelap { margin-top: 64px; border-radius: 24px; }
+}

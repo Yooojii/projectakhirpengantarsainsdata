@@ -4,7 +4,6 @@ from functools import lru_cache
 from html import escape
 from pathlib import Path
 
-import altair as alt
 import pandas as pd
 import streamlit as st
 
@@ -68,10 +67,30 @@ def _persen(p: float) -> str:
     return f"{round(p * 100)}%"
 
 
+# Logo klub di data/ berukuran 256 px (10-24 KB) padahal tampil 20-64 px, dan satu halaman bisa
+# memuat puluhan logo yang sama. Mengirim versi kecil memangkas ukuran halaman History dan
+# Match Analysis hingga ratusan KB per muat ulang.
+LOGO_KECIL = 48    # tampil 20-24 px, dua kali lipat untuk layar retina
+LOGO_SEDANG = 128  # tampil 56-64 px
+
+
 @lru_cache(maxsize=None)
-def _uri_logo(jalur: str) -> str:
-    with open(jalur, "rb") as f:
-        return "data:image/png;base64," + base64.b64encode(f.read()).decode("ascii")
+def _uri_logo(jalur: str, sisi: int | None = None) -> str:
+    """Gambar PNG sebagai data URI; `sisi` memperkecilnya (sisi terpanjang, piksel) dan
+    mengirimnya sebagai WebP, sekitar tiga kali lebih kecil dari PNG dengan transparansi utuh."""
+    if sisi is None:
+        with open(jalur, "rb") as f:
+            return "data:image/png;base64," + base64.b64encode(f.read()).decode("ascii")
+    else:
+        from io import BytesIO
+
+        from PIL import Image
+        with Image.open(jalur) as gambar:
+            gambar = gambar.convert("RGBA")
+            gambar.thumbnail((sisi, sisi), Image.LANCZOS)
+            wadah = BytesIO()
+            gambar.save(wadah, format="WEBP", quality=82, method=4)
+    return "data:image/webp;base64," + base64.b64encode(wadah.getvalue()).decode("ascii")
 
 
 def _lencana(klub: str) -> str:
@@ -79,7 +98,7 @@ def _lencana(klub: str) -> str:
     jalur = logo_klub(klub)
     if jalur is None:
         return f'<span class="papan-kode">{escape(singkatan(klub))}</span>'
-    return f'<img class="papan-logo" src="{_uri_logo(str(jalur))}" alt="" width="24" height="24">'
+    return f'<img class="papan-logo" src="{_uri_logo(str(jalur), LOGO_KECIL)}" alt="" width="24" height="24">'
 
 
 def angka_hitung(nilai: float, desimal: int = 0, tunda_ms: int | None = None) -> str:
@@ -106,7 +125,7 @@ def logo_kecil(klub: str, kelas: str = "logo-kecil") -> str:
     jalur = logo_klub(klub)
     if jalur is None:
         return f'<span class="kode-kecil">{escape(singkatan(klub))}</span>'
-    return f'<img class="{kelas}" src="{_uri_logo(str(jalur))}" alt="">'
+    return f'<img class="{kelas}" src="{_uri_logo(str(jalur), LOGO_KECIL)}" alt="">'
 
 
 def papan_skor(klub_k: str, klub_t: str, skor: tuple, peluang: dict, aksen: str,
@@ -163,7 +182,7 @@ def bar_atribut(nilai: int, aksen: str | None) -> str:
 
 def grafik_dasar(data: pd.DataFrame, x: str, y: str, judul: str, sorot: str | None,
                  aksen: str, seri: str = "klub", label_x: str | None = None,
-                 label_y: str | None = None) -> alt.Chart:
+                 label_y: str | None = None) -> "alt.Chart":
     """Grafik garis tanpa bingkai; satu deret disorot dengan aksen, sisanya #CFD6CC.
 
     `judul` adalah kalimat temuan dari pemanggil. `label_x`/`label_y` ditulis dengan kata
@@ -175,7 +194,9 @@ def grafik_dasar(data: pd.DataFrame, x: str, y: str, judul: str, sorot: str | No
     jelas = lambda kol: kol.replace("_", " ").capitalize()
     huruf = "IBM Plex Sans Condensed"
 
-    def lapis(bagian: pd.DataFrame, tebal: float) -> alt.Chart:
+    import altair as alt  # impor lambat: modul ini juga dipakai landing page tanpa grafik Altair
+
+    def lapis(bagian: pd.DataFrame, tebal: float) -> "alt.Chart":
         return alt.Chart(bagian).mark_line(interpolate="monotone", strokeWidth=tebal).encode(
             x=alt.X(x, title=label_x or jelas(x), axis=alt.Axis(grid=False)),
             y=alt.Y(y, title=label_y or jelas(y), axis=alt.Axis(grid=True)),

@@ -5,11 +5,9 @@ import streamlit as st
 
 from gaya.komponen import _uri_logo, pasang_tema, warna_aksen
 from gaya.panel import TEAL
-from halaman import analisis_laga, history, overview
-from halaman.overview import SEMUA
+from halaman import landing
 from inti.data import klub_musim, muat_pertandingan
 from inti.klub import warna_klub
-from inti.model import muat_evaluasi, muat_model
 from inti.sesi import JALUR_DATA, JALUR_METRIK, JALUR_MODEL, keterangan_cakupan
 
 MUSIM_BERJALAN = "2026/27"
@@ -26,16 +24,51 @@ ANGGOTA = [
     ("Muhammad Alvaro Satria Priyambada", "M0401241100"),
 ]
 
+SEMUA = "Semua klub"  # sama dengan halaman.overview.SEMUA (pilihan klub "Premier League")
+
+
+# Modul halaman dashboard dimuat saat dibuka, bukan saat aplikasi mulai: Altair dan scipy
+# (model) memakan beberapa detik, dan landing page tidak membutuhkannya.
+def _overview() -> None:
+    from halaman import overview
+    overview.tampil()
+
+
+def _analisis() -> None:
+    from halaman import analisis_laga
+    analisis_laga.tampil()
+
+
+def _history() -> None:
+    from halaman import history
+    history.tampil()
+
+
 HALAMAN = {
-    "Overview": overview.tampil,
-    "Match Analysis": analisis_laga.tampil,
-    "History": history.tampil,
+    "Overview": _overview,
+    "Match Analysis": _analisis,
+    "History": _history,
 }
+# nilai ?buka=... dari tombol landing page -> tab dashboard yang dibuka
+PINTU = {"overview": "Overview", "analisis": "Match Analysis", "history": "History"}
+
+
+def _baca_tautan() -> None:
+    """Tombol di landing page dan logo dashboard berupa tautan; baca lalu bersihkan URL-nya."""
+    tujuan = st.query_params.get("buka")
+    if tujuan in PINTU:
+        st.session_state["masuk"] = True
+        st.session_state["halaman"] = PINTU[tujuan]
+        st.query_params.clear()
+    elif st.query_params.get("beranda") is not None:
+        st.session_state["masuk"] = False
+        st.query_params.clear()
 
 
 def _siapkan_sesi(df) -> None:
     """Isi session_state sekali: model, evaluasi, dan wadah skuad."""
     if "model" not in st.session_state:
+        from inti.model import muat_evaluasi, muat_model
         st.session_state["model"] = muat_model(str(JALUR_MODEL))
         st.session_state["evaluasi"] = muat_evaluasi(str(JALUR_METRIK))
     st.session_state.setdefault("skuad", {})
@@ -77,8 +110,10 @@ def _navigasi(df) -> None:
     logo = JALUR_DATA.parent / "ballboard_logo.png"
     gambar = f'<img src="{_uri_logo(str(logo))}" alt="BallBoard">' if logo.is_file() else ""
     with st.container(key="navigasi-kiri"):
+        # logo dan nama sekaligus tautan kembali ke landing page
         st.markdown(
-            f'<div class="nav-merek">{gambar}<span>Premier League: Dashboard Analysis</span></div>',
+            f'<a class="nav-merek" href="?beranda=1" target="_self" title="Kembali ke beranda">'
+            f'{gambar}<span>Premier League: Dashboard Analysis</span></a>',
             unsafe_allow_html=True,
         )
         st.radio("Halaman", list(HALAMAN), key="halaman", label_visibility="collapsed")
@@ -91,6 +126,11 @@ def main() -> None:
         layout="wide",
         initial_sidebar_state="collapsed",
     )
+    _baca_tautan()
+    if not st.session_state.get("masuk"):
+        pasang_tema(TEAL)  # font, header Streamlit tersembunyi, dan token warna yang sama
+        landing.tampil()
+        return
     df = muat_pertandingan(str(JALUR_DATA))
     _siapkan_sesi(df)
     klub_daftar = klub_musim(df, MUSIM_BERJALAN)

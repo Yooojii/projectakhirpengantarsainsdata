@@ -449,7 +449,7 @@ def test_logo_ada_untuk_semua_klub_di_data():
 
 def test_papan_skor_memuat_logo_kecil_atau_singkatan_sebagai_cadangan():
     h = papan_skor("Arsenal", "Klub Antah Berantah", (1, 0), PELUANG, ARSENAL)
-    assert h.count("<img") == 1 and "data:image/png;base64," in h
+    assert h.count("<img") == 1 and "data:image/webp;base64," in h  # logo diperkecil (WebP)
     assert "alt=\"\"" in h
     assert singkatan("Klub Antah Berantah") in h
     assert "width=\"24\"" in h  # tidak lebih besar dari nama klub (24 px)
@@ -468,3 +468,12 @@ def test_aksen_tidak_ada_klub_yang_sama_dengan_peringatan_atau_bahaya():
     for klub in WARNA:
         assert warna_klub(klub).upper() not in cadangan, klub
         assert warna_aksen(warna_klub(klub)).upper() not in cadangan, klub
+
+
+def test_logo_kecil_jauh_lebih_ringan_dari_aslinya():
+    from gaya.komponen import LOGO_KECIL, _uri_logo
+    from inti.klub import logo_klub
+    jalur = str(logo_klub("Arsenal"))
+    asli, kecil = _uri_logo(jalur), _uri_logo(jalur, LOGO_KECIL)
+    assert kecil.startswith("data:image/webp;base64,")
+    assert len(kecil) * 4 < len(asli)
