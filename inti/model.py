@@ -33,6 +33,26 @@ def _tabel_ensemble(path: str) -> pd.DataFrame | None:
     return pd.read_csv(path, low_memory=False).set_index(["musim", "tim_kandang", "tim_tandang"]).sort_index()
 
 
+JALUR_KESIMPULAN = JALUR_ENSEMBLE.parent / "kesimpulan_laga.json"
+
+
+@lru_cache(maxsize=1)
+def _tabel_kesimpulan(path: str) -> dict:
+    if not os.path.exists(path):
+        return {}
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def kesimpulan_laga(musim: str, tim_k: str, tim_t: str, path: str = str(JALUR_KESIMPULAN)) -> dict | None:
+    """Paragraf kesimpulan laga dari pipeline/kesimpulan_laga.py, atau None kalau belum ada.
+
+    Kembalian berisi `teks`, `status` ("selesai" atau "mendatang"), dan `sumber`
+    ("gemini" atau "template").
+    """
+    return _tabel_kesimpulan(path).get(f"{musim}|{tim_k}|{tim_t}")
+
+
 def prediksi_ensemble(tim_k: str, tim_t: str, musim: str = "2026/27",
                       path: str = str(JALUR_ENSEMBLE)) -> dict | None:
     """Prediksi ensemble untuk satu laga, atau None kalau laganya tidak ada."""

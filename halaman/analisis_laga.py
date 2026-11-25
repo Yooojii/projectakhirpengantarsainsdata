@@ -15,7 +15,7 @@ from halaman.history import rekor_pertemuan
 from halaman.prediksi_simulasi import hitung_prediksi, siapkan_sesi
 from inti.data import klub_musim, muat_pertandingan
 from inti.klub import logo_klub, singkatan, warna_klub
-from inti.model import prediksi_ensemble
+from inti.model import kesimpulan_laga, prediksi_ensemble
 from inti.sesi import BULAN, JALUR_DATA
 
 MUSIM_BERJALAN = "2026/27"
@@ -206,6 +206,17 @@ def _catatan(baris: list[str]) -> str:
     return f'<div class="catatan">{isi}</div>'
 
 
+def _kesimpulan(musim: str, klub_k: str, klub_t: str, status: str) -> str:
+    """Kotak paragraf kesimpulan; kosong kalau paragrafnya belum ada atau statusnya tidak cocok."""
+    isi = kesimpulan_laga(musim, klub_k, klub_t)
+    if not isi or isi.get("status") != status:
+        return ""
+    judul = "Kesimpulan laga" if status == "selesai" else "Pratinjau laga"
+    sumber = "ditulis AI (Gemini) dari data laga" if isi.get("sumber") == "gemini" else "disusun otomatis dari data laga"
+    return (f'<div class="kesimpulan"><div class="stat-judul">{judul}<span>{sumber}</span></div>'
+            f'<p>{escape(isi["teks"])}</p></div>')
+
+
 def _sorotan(klub_k: str, klub_t: str, skor: tuple[int, int], lencana: str, kelas_lencana: str,
              meta: str, kaki: str) -> str:
     return (
@@ -312,6 +323,7 @@ def panel_laga(df: pd.DataFrame, indeks: int) -> str:
     return (
         '<div class="analisis">'
         f'{sorotan}'
+        f'{_kesimpulan(str(r["musim"]), k, t, "selesai")}'
         f'<div class="bagian-stat"><div class="stat-judul">Statistik pertandingan<span>{escape(k)} kiri, {escape(t)} kanan</span></div>{stat}</div>'
         f'{_bentuk_duo(df, k, t, r["tanggal"])}'
         f'{_catatan(catatan_laga(r))}'
@@ -419,7 +431,8 @@ def tampil_simulasi(df: pd.DataFrame, klub_k: str, klub_t: str) -> None:
         skor = tuple(int(x) for x in dipilih.split("-"))
         tempat_atas.markdown(
             _sorotan(klub_k, klub_t, skor, "Simulasi", "prediksi", meta, "")
-            + blok_peluang(klub_k, klub_t, p, wk, wt),
+            + blok_peluang(klub_k, klub_t, p, wk, wt)
+            + _kesimpulan(MUSIM_BERJALAN, klub_k, klub_t, "mendatang"),
             unsafe_allow_html=True,
         )
 

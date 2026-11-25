@@ -12,6 +12,7 @@ Pemakaian:
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 import sys
@@ -145,10 +146,13 @@ def main(ulang: bool = False) -> None:
     for r in sasaran.itertuples():
         kunci_laga = f"{r.musim}|{r.tim_kandang}|{r.tim_tandang}"
         status = "selesai" if r.sudah_main else "mendatang"
-        lama = hasil.get(kunci_laga)
-        if lama and lama.get("status") == status and lama.get("sumber") == "gemini":
-            continue
         d = rangkum(r, laga)
+        sidik = hashlib.sha1(json.dumps(d, sort_keys=True, ensure_ascii=False).encode()).hexdigest()[:12]
+        lama = hasil.get(kunci_laga)
+        # ditulis ulang bila statusnya berubah, datanya berubah (misalnya model dilatih ulang),
+        # atau sebelumnya jatuh ke template
+        if lama and lama.get("sidik") == sidik and lama.get("sumber") == "gemini":
+            continue
         prompt = ATURAN.format(fokus=FOKUS_SELESAI if r.sudah_main else FOKUS_MENDATANG,
                                data=json.dumps(d, ensure_ascii=False, indent=1))
         try:
@@ -160,7 +164,7 @@ def main(ulang: bool = False) -> None:
             sumber = "template"
         if sumber == "template":
             teks, gagal = template(d), gagal + 1
-        hasil[kunci_laga] = {"status": status, "sumber": sumber, "teks": teks}
+        hasil[kunci_laga] = {"status": status, "sumber": sumber, "teks": teks, "sidik": sidik}
         KELUAR.write_text(json.dumps(hasil, ensure_ascii=False, indent=1), encoding="utf-8")
         baru += 1
         time.sleep(JEDA_DETIK)

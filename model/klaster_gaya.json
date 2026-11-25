@@ -1,0 +1,88 @@
+{
+ "k": 5,
+ "siluet_per_k": {
+  "2": 0.54,
+  "3": 0.407,
+  "4": 0.375,
+  "5": 0.365,
+  "6": 0.352,
+  "7": 0.34
+ },
+ "baris": 540,
+ "fitur": [
+  "gol",
+  "tembakan",
+  "tembakan_tepat",
+  "sepak_pojok",
+  "gol_kebobolan",
+  "tembakan_kebobolan",
+  "tembakan_tepat_kebobolan"
+ ],
+ "kategori": {
+  "Elite": {
+   "jumlah": 85,
+   "poin_per_38": 79.3,
+   "indeks_serangan": 1.54,
+   "indeks_pertahanan": 1.44,
+   "gol": 2.02,
+   "tembakan": 15.75,
+   "tembakan_tepat": 7.21,
+   "sepak_pojok": 6.73,
+   "gol_kebobolan": 0.9,
+   "tembakan_kebobolan": 8.93,
+   "tembakan_tepat_kebobolan": 3.86
+  },
+  "Seimbang": {
+   "jumlah": 88,
+   "poin_per_38": 63.8,
+   "indeks_serangan": 0.57,
+   "indeks_pertahanan": 0.65,
+   "gol": 1.58,
+   "tembakan": 13.71,
+   "tembakan_tepat": 5.74,
+   "sepak_pojok": 5.82,
+   "gol_kebobolan": 1.15,
+   "tembakan_kebobolan": 10.97,
+   "tembakan_tepat_kebobolan": 4.45
+  },
+  "Tumpul dan rapuh": {
+   "jumlah": 129,
+   "poin_per_38": 35.4,
+   "indeks_serangan": -0.86,
+   "indeks_pertahanan": -1.09,
+   "gol": 1.03,
+   "tembakan": 10.35,
+   "tembakan_tepat": 4.29,
+   "sepak_pojok": 4.58,
+   "gol_kebobolan": 1.74,
+   "tembakan_kebobolan": 14.71,
+   "tembakan_tepat_kebobolan": 6.39
+  },
+  "Menyerang": {
+   "jumlah": 116,
+   "poin_per_38": 49.1,
+   "indeks_serangan": 0.05,
+   "indeks_pertahanan": -0.36,
+   "gol": 1.34,
+   "tembakan": 12.14,
+   "tembakan_tepat": 5.26,
+   "sepak_pojok": 5.51,
+   "gol_kebobolan": 1.45,
+   "tembakan_kebobolan": 12.99,
+   "tembakan_tepat_kebobolan": 5.63
+  },
+  "Bertahan": {
+   "jumlah": 122,
+   "poin_per_38": 45.9,
+   "indeks_serangan": -0.61,
+   "indeks_pertahanan": 0.03,
+   "gol": 1.11,
+   "tembakan": 10.99,
+   "tembakan_tepat": 4.57,
+   "sepak_pojok": 4.8,
+   "gol_kebobolan": 1.35,
+   "tembakan_kebobolan": 12.3,
+   "tembakan_tepat_kebobolan": 5.26
+  }
+ }
+}

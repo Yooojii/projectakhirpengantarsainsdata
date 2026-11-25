@@ -50,5 +50,5 @@ def test_judul_bagian_dan_satu_tombol_masuk():
 
 def test_tautan_landing_cocok_dengan_pintu_app():
     import app
-    assert set(app.PINTU) == {"overview", "analisis", "history"}
+    assert set(app.PINTU) == {"overview", "analisis", "history", "gaya"}
     assert set(app.PINTU.values()) == set(app.HALAMAN)

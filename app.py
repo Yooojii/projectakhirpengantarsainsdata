@@ -44,13 +44,19 @@ def _history() -> None:
     history.tampil()
 
 
+def _gaya() -> None:
+    from halaman import gaya_bermain
+    gaya_bermain.tampil()
+
+
 HALAMAN = {
     "Overview": _overview,
     "Match Analysis": _analisis,
     "History": _history,
+    "Team Styles": _gaya,
 }
 # nilai ?buka=... dari tombol landing page -> tab dashboard yang dibuka
-PINTU = {"overview": "Overview", "analisis": "Match Analysis", "history": "History"}
+PINTU = {"overview": "Overview", "analisis": "Match Analysis", "history": "History", "gaya": "Team Styles"}
 
 
 def _baca_tautan() -> None:

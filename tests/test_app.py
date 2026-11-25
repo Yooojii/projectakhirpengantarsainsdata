@@ -6,9 +6,9 @@ from app import HALAMAN
 from inti.sesi import AKAR, JALUR_DATA, keterangan_cakupan, skuad_klub
 
 
-def test_tiga_halaman_dengan_urutan_tetap():
+def test_empat_halaman_dengan_urutan_tetap():
     # Match Prediction dan Analisis Liga digabung menjadi Match Analysis
-    assert list(HALAMAN) == ["Overview", "Match Analysis", "History"]
+    assert list(HALAMAN) == ["Overview", "Match Analysis", "History", "Team Styles"]
 
 
 def test_nama_halaman_tanpa_ikon_dan_tanpa_huruf_kapital_seluruhnya():

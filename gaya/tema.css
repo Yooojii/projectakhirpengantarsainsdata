@@ -861,6 +861,11 @@ table.tabel th.teks, table.tabel td.teks {
 .catatan i {
   flex: 0 0 8px; height: 8px; margin-top: 8px; border-radius: 50%; background: var(--teal);
 }
+.kesimpulan { padding: 0 24px 24px; animation: muncul 480ms var(--kurva) both; animation-delay: 240ms; }
+.kesimpulan p {
+  margin: 0; padding: 16px; border-radius: var(--radius-dalam); background: var(--sumur);
+  font-size: 15px; line-height: 1.6;
+}
 .bentuk-duo { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 0 24px 24px; }
 .bentuk-duo > div { padding: 12px 16px; border-radius: var(--radius-dalam); background: var(--sumur); }
 .bentuk-duo small { display: block; font-size: 12px; color: var(--teks-2); margin-bottom: 8px; }
