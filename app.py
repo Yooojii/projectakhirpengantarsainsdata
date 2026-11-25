@@ -1,9 +1,9 @@
 """Titik masuk: konfigurasi halaman, sidebar, tema, dan rute halaman."""
-from html import escape
 
 import streamlit as st
 
-from gaya.komponen import _uri_logo, pasang_tema, warna_aksen
+from gaya.komponen import (_uri_logo, kaki_kelompok, mulai_kumpul_logo, pasang_tema,
+                           selesai_kumpul_logo, warna_aksen)
 from gaya.panel import TEAL
 from halaman import landing
 from inti.data import klub_musim, muat_pertandingan
@@ -14,15 +14,6 @@ MUSIM_BERJALAN = "2026/27"
 # kunci widget yang pilihannya harus bertahan saat pindah halaman
 KUNCI_DIJAGA = ("fokus", "tren_metrik")  # rentang musim dijaga di halaman Overview
 
-# nama dan NIM ditulis persis seperti yang diberikan kelompok
-ANGGOTA = [
-    ("Nadine Kinanti Azzahra", "M0401241025"),
-    ("Yasmin Aufaahani Abdullah", "M0401241129"),
-    ("Rizky Arif Wicaksono", "M0401241054"),
-    ("Abdullah' ammar rabbaniyyin", "M0401241066"),
-    ("Muhammad Shira Pramudita", "M0401241094"),
-    ("Muhammad Alvaro Satria Priyambada", "M0401241100"),
-]
 
 SEMUA = "Semua klub"  # sama dengan halaman.overview.SEMUA (pilihan klub "Premier League")
 
@@ -96,17 +87,6 @@ def _sidebar(df, klub_daftar: list[str]) -> None:
         st.caption(keterangan_cakupan(df))
 
 
-def _kaki_kelompok() -> str:
-    """"© Kelompok 8"; arahkan kursor (atau fokus dengan Tab) untuk melihat anggota."""
-    daftar = "".join(f"<li><b>{escape(nama)}</b><span>{escape(nim)}</span></li>" for nama, nim in ANGGOTA)
-    return (
-        '<div class="nav-kaki">&copy; '
-        '<span class="kelompok" tabindex="0" aria-describedby="anggota-kelompok">Kelompok 8'
-        f'<span class="anggota" id="anggota-kelompok" role="tooltip"><small>Anggota kelompok</small>'
-        f'<ul>{daftar}</ul></span></span></div>'
-    )
-
-
 def _navigasi(df) -> None:
     """Rel navigasi navy di kolom kiri, menempel saat halaman digulir."""
     if st.session_state.get("halaman") not in HALAMAN:
@@ -123,7 +103,7 @@ def _navigasi(df) -> None:
             unsafe_allow_html=True,
         )
         st.radio("Halaman", list(HALAMAN), key="halaman", label_visibility="collapsed")
-        st.markdown(_kaki_kelompok(), unsafe_allow_html=True)
+        st.markdown(kaki_kelompok("nav-kaki"), unsafe_allow_html=True)
 
 
 def main() -> None:
@@ -152,7 +132,23 @@ def main() -> None:
     with kol_navigasi:
         _navigasi(df)
     with kol_halaman:
-        HALAMAN[st.session_state["halaman"]]()
+        # Setiap halaman punya slot sendiri. Saat tab diganti, Streamlit membiarkan elemen
+        # halaman lama tampil (pudar) sampai halaman baru selesai digambar; bila semua halaman
+        # memakai posisi yang sama, filter "Lawan" History misalnya tampak di atas Team Styles
+        # seperti pop up. st.empty() yang dibuat di awal langsung mengganti isi slot lama
+        # dengan kosong, jadi sisa halaman sebelumnya hilang seketika.
+        aktif = st.session_state["halaman"]
+        with st.container(key="isi-halaman"):
+            slot = {nama: st.empty() for nama in HALAMAN}
+        # logo klub dikirim sekali per halaman (lihat atribut_logo di gaya/komponen.py)
+        mulai_kumpul_logo()
+        try:
+            with slot[aktif].container():
+                HALAMAN[aktif]()
+        finally:
+            gaya_logo = selesai_kumpul_logo()
+        if gaya_logo:
+            st.markdown(gaya_logo, unsafe_allow_html=True)
 
 
 if __name__ == "__main__":

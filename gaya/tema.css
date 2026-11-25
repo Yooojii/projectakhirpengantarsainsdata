@@ -57,6 +57,14 @@
   clip-path: inset(50%); white-space: nowrap;
 }
 
+/* ---- Logo sekali kirim: <img> menampilkan logo dari variabel CSS di latar belakangnya ----
+   (lihat atribut_logo di gaya/komponen.py). !important: banyak aturan logo memakai shorthand
+   background untuk lingkaran putih, dan shorthand itu mereset ukuran serta posisi latar. */
+img[style*="--lg-"] {
+  background-size: contain !important; background-repeat: no-repeat !important;
+  background-position: center !important; background-origin: content-box !important;
+}
+
 /* ---- Dasar ---- */
 .stApp {
   background: var(--latar);
@@ -738,12 +746,15 @@ table.tabel th.teks, table.tabel td.teks {
 /* Panel kanan: berganti dengan sapuan halus setiap kali isinya berubah */
 .analisis {
   background: var(--permukaan); border: 1px solid var(--tepi); border-radius: var(--radius-kartu);
-  box-shadow: var(--bayangan); overflow: hidden;
+  box-shadow: var(--bayangan);
   animation: ganti 520ms var(--kurva) both;
 }
+/* Panel tidak memotong isinya (overflow terlihat) supaya kartu keterangan lencana bisa keluar
+   dari tepi panel; sudut atas header navy dibulatkan sendiri mengikuti sudut panel. */
 .sorotan {
   position: relative; padding: 24px 24px 20px;
   background: var(--navy); color: #FFFFFF; text-align: center;
+  border-top-left-radius: var(--radius-kartu); border-top-right-radius: var(--radius-kartu);
 }
 .sorotan-meta { font-size: 13px; color: #A9C2CC; }
 .sorotan-lencana {
@@ -799,7 +810,7 @@ table.tabel th.teks, table.tabel td.teks {
 .st-key-panel-sim.st-key-panel-sim {
   gap: 0 !important;
   background: var(--permukaan); border: 1px solid var(--tepi); border-radius: var(--radius-kartu);
-  box-shadow: var(--bayangan); overflow: hidden;
+  box-shadow: var(--bayangan);
   animation: ganti 520ms var(--kurva) both;
 }
 .st-key-panel-sim [data-testid="stElementContainer"]:has([data-testid="stButtonGroup"]) {
@@ -862,9 +873,11 @@ table.tabel th.teks, table.tabel td.teks {
   flex: 0 0 8px; height: 8px; margin-top: 8px; border-radius: 50%; background: var(--teal);
 }
 .kesimpulan { padding: 0 24px 24px; animation: muncul 480ms var(--kurva) both; animation-delay: 240ms; }
-.kesimpulan p {
+/* ukuran teks sama dengan catatan di bawahnya (14 px); selektor dipertajam karena aturan
+   paragraf markdown Streamlit sebelumnya menimpa ukuran ini menjadi 16 px */
+.stApp [data-testid="stMarkdownContainer"] .kesimpulan p {
   margin: 0; padding: 16px; border-radius: var(--radius-dalam); background: var(--sumur);
-  font-size: 15px; line-height: 1.6;
+  font-size: 14px; line-height: 1.5; max-width: none;  /* selebar kotak catatan di bawahnya */
 }
 .bentuk-duo { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 0 24px 24px; }
 .bentuk-duo > div { padding: 12px 16px; border-radius: var(--radius-dalam); background: var(--sumur); }
@@ -872,15 +885,61 @@ table.tabel th.teks, table.tabel td.teks {
 
 /* ---- Lencana hasil M/S/K ---- */
 .bentuk { display: flex; gap: 4px; flex-wrap: wrap; }
-.bentuk span {
+.bentuk > span {
+  position: relative; cursor: default; outline: none;
   width: 24px; height: 24px; border-radius: 8px;
   display: inline-flex; align-items: center; justify-content: center;
   font-family: var(--huruf-sempit); font-size: 12px; font-weight: 600;
-  animation: letup 360ms var(--kurva) both; animation-delay: calc(300ms + var(--i, 0) * 45ms);
+  /* backwards, bukan both: setelah muncul lencana tidak menyisakan transform, jadi di layar
+     sempit kartu keterangan bisa menempel ke baris lencana */
+  animation: letup 360ms var(--kurva) backwards; animation-delay: calc(300ms + var(--i, 0) * 45ms);
 }
-.bentuk .M { background: var(--menang); color: #FFFFFF; }
-.bentuk .S { background: var(--garis); color: var(--teks); }
-.bentuk .K { background: var(--bahaya); color: #FFFFFF; }
+.bentuk > .M { background: var(--menang); color: #FFFFFF; }
+.bentuk > .S { background: var(--garis); color: var(--teks); }
+.bentuk > .K { background: var(--bahaya); color: #FFFFFF; }
+
+/* Kartu keterangan lencana, seperti papan skor mini: tanggal di atas, lalu tuan rumah, skor,
+   dan tamu. Muncul di atas lencana saat disorot atau difokus dengan Tab. */
+.bentuk > span:hover, .bentuk > span:focus-visible { z-index: 30; }
+.bentuk > span:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+.bentuk .tip {
+  position: absolute; z-index: 30; bottom: calc(100% + 12px); left: 50%;
+  display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 16px 12px;
+  border-radius: var(--radius-dalam); background: var(--navy); color: #FFFFFF;
+  font-family: var(--huruf); font-size: 14px; font-weight: 600; line-height: 1.3; white-space: nowrap;
+  box-shadow: var(--bayangan-angkat);
+  opacity: 0; pointer-events: none;
+  transition: opacity 160ms ease, transform 200ms var(--kurva);
+}
+.bentuk .tip::after {
+  content: ""; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+  border: 8px solid transparent; border-top-color: var(--navy);
+}
+.bentuk > span:hover .tip, .bentuk > span:focus-visible .tip { opacity: 1; }
+/* Arah buka kartu: ke sisi yang lapang supaya tidak keluar layar atau menimbulkan gulir
+   samping. Kartu "kiri" berawal di tepi kiri lencana dan membuka ke kanan; kartu "kanan"
+   berakhir di tepi kanan lencana dan membuka ke kiri. Panah tetap menunjuk lencananya. */
+.bentuk > span:nth-child(-n+2) .tip,
+.bentuk-duo > div:first-child .bentuk > span .tip { left: -8px; right: auto; transform: translate(0, 4px); }
+.bentuk > span:nth-child(n+3) .tip,
+.bentuk-duo > div:last-child .bentuk > span .tip { left: auto; right: -8px; transform: translate(0, 4px); }
+.bentuk > span:hover .tip, .bentuk > span:focus-visible .tip,
+.bentuk-duo > div .bentuk > span:hover .tip, .bentuk-duo > div .bentuk > span:focus-visible .tip { transform: none; }
+.bentuk > span:nth-child(-n+2) .tip::after,
+.bentuk-duo > div:first-child .bentuk > span .tip::after { left: 12px; right: auto; transform: none; }
+.bentuk > span:nth-child(n+3) .tip::after,
+.bentuk-duo > div:last-child .bentuk > span .tip::after { left: auto; right: 12px; transform: none; }
+.bentuk .tip small { font-size: 13px; font-weight: 600; color: #B8CED6; }
+.tip-laga { display: flex; align-items: center; gap: 8px; }
+.tip-laga b { font-weight: 600; }
+.tip-laga img, .tip-laga .kode-kecil {
+  width: 24px; height: 24px; flex: 0 0 24px; padding: 4px; box-sizing: border-box;
+  object-fit: contain; background: #FFFFFF; border-radius: 50%;
+}
+.tip-laga em {
+  font-style: normal; font-family: var(--huruf-sempit); font-size: 16px; font-weight: 700;
+  font-variant-numeric: tabular-nums; padding: 0 4px;
+}
 
 /* ================================================================
    History
@@ -998,6 +1057,9 @@ table.klasemen td.poin { font-weight: 700; }
 @keyframes ganti { from { opacity: 0; transform: translateY(8px) scale(0.99); } to { opacity: 1; transform: none; } }
 @keyframes pudar { from { opacity: 0; } to { opacity: 1; } }
 @keyframes letup { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes letup-b { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes muncul-b { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@keyframes tumbuh-x-b { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 @keyframes tumbuh-x { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 @keyframes tumbuh-y { from { transform: scaleY(0); } to { transform: scaleY(1); } }
 @keyframes mekar { from { transform: scale(0.15); opacity: 0; } to { transform: scale(1); opacity: 1; } }
@@ -1019,6 +1081,164 @@ table.klasemen td.poin { font-weight: 700; }
   .hitung { --hitung: var(--akhir); }
   .garis-mini { stroke-dashoffset: 0; }
   .titik-mini, .matriks-tumpuk i { opacity: 1; transform: none; }
+}
+
+/* ---- Team Styles ----
+   Satu gerakan utama: logo klub muncul satu per satu di peta, berurutan dari poin tertinggi.
+   Kategori dan peringkat menyusul dengan gerak yang lebih tenang. Semua memakai animasi
+   yang sudah ada dan ikut mati pada prefers-reduced-motion. */
+.st-key-gaya-atas [data-testid="stHorizontalBlock"] { align-items: stretch; }
+.st-key-gaya-atas [data-testid="stColumn"] > div,
+.st-key-gaya-atas [data-testid="stColumn"] [data-testid="stLayoutWrapper"],
+.st-key-gaya-atas [data-testid="stColumn"] [data-testid="stVerticalBlock"],
+.st-key-gaya-atas [data-testid="stColumn"] [data-testid="stElementContainer"],
+.st-key-gaya-atas [data-testid="stColumn"] [data-testid="stMarkdown"],
+.st-key-gaya-atas [data-testid="stColumn"] [data-testid="stMarkdown"] > div,
+.st-key-gaya-atas [data-testid="stColumn"] [data-testid="stMarkdownContainer"],
+.st-key-gaya-atas [data-testid="stColumn"] [data-testid="stMarkdownContainer"] > div { height: 100%; }
+.gaya-peta, .gaya-kategori { height: 100%; box-sizing: border-box; display: flex; flex-direction: column; }
+
+/* peta: bidang persegi panjang dengan empat kuadran dan garis rata-rata liga */
+.peta-bingkai {
+  display: grid; grid-template-columns: 20px minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto;
+  gap: 8px; flex: 1; min-height: 380px;
+}
+.peta-sumbu-y {
+  grid-row: 1; grid-column: 1; writing-mode: vertical-rl; transform: rotate(180deg);
+  justify-self: center; align-self: center; font-size: 12px; color: var(--teks-2); white-space: nowrap;
+}
+.peta-sumbu-x { grid-row: 2; grid-column: 2; justify-self: center; font-size: 12px; color: var(--teks-2); }
+.peta-bidang {
+  grid-row: 1; grid-column: 2; position: relative; min-height: 360px;
+  border-radius: var(--radius-dalam); background: var(--sumur);
+  display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr;
+  animation: pudar 480ms ease both;
+}
+.peta-kuadran {
+  padding: 8px 12px; font-size: 12px; font-weight: 600; color: var(--teks-2);
+  animation: pudar 600ms ease both; animation-delay: 200ms;
+}
+.peta-kuadran.ki { grid-area: 1 / 1; border-top-left-radius: var(--radius-dalam); }
+.peta-kuadran.ka {
+  grid-area: 1 / 2; text-align: right; color: var(--teal);
+  background: rgba(21, 125, 123, 0.08); border-top-right-radius: var(--radius-dalam);
+}
+.peta-kuadran.bi { grid-area: 2 / 1; display: flex; align-items: flex-end; }
+.peta-kuadran.ba { grid-area: 2 / 2; display: flex; align-items: flex-end; justify-content: flex-end; }
+.peta-garis { position: absolute; border: 0 dashed var(--kabut); pointer-events: none; }
+.peta-garis.datar { left: 0; right: 0; top: 50%; border-top-width: 1px; }
+.peta-garis.tegak { top: 0; bottom: 0; left: 50%; border-left-width: 1px; }
+.peta-titik {
+  position: absolute; z-index: 2; width: 32px; height: 32px; margin: 0 0 -16px -16px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 50%; background: var(--permukaan); border: 2px solid var(--warna);
+  box-shadow: var(--bayangan); box-sizing: border-box; cursor: default; outline: none;
+  animation: mekar 520ms var(--kurva) backwards; animation-delay: calc(240ms + var(--i, 0) * 45ms);
+  /* left/bottom: saat musim berganti, klub meluncur dari posisi lama ke posisi baru,
+     bergantian sedikit menurut --i supaya gerakannya terbaca sebagai arus, bukan lompatan */
+  transition: left 900ms var(--kurva), bottom 900ms var(--kurva), border-color 400ms ease,
+              transform 200ms var(--kurva), box-shadow 200ms ease;
+  transition-delay: calc(var(--i, 0) * 20ms), calc(var(--i, 0) * 20ms), 0ms, 0ms, 0ms;
+}
+.peta-titik .peta-logo, .peta-titik .kode-kecil { width: 20px; height: 20px; object-fit: contain; }
+.peta-titik .kode-kecil { font-size: 8px; }
+.peta-titik:hover, .peta-titik:focus-visible {
+  z-index: 20; transform: scale(1.25); box-shadow: var(--bayangan-angkat); transition-delay: 0ms;
+}
+.peta-titik:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+.peta-tip {
+  position: absolute; bottom: calc(100% + 8px); display: flex; flex-direction: column; gap: 4px;
+  padding: 8px 12px; border-radius: var(--radius-dalam); background: var(--navy); color: #FFFFFF;
+  font-size: 13px; line-height: 1.3; white-space: nowrap; box-shadow: var(--bayangan-angkat);
+  opacity: 0; pointer-events: none; transform: translateY(4px) scale(0.8);
+  transition: opacity 160ms ease, transform 200ms var(--kurva);
+}
+.peta-titik.kanan .peta-tip { left: -8px; transform-origin: 16px 100%; }
+.peta-titik.kiri .peta-tip { right: -8px; transform-origin: calc(100% - 16px) 100%; }
+.peta-titik:hover .peta-tip, .peta-titik:focus-visible .peta-tip { opacity: 1; transform: scale(0.8); }
+.peta-tip b { font-size: 14px; }
+.peta-tip i { font-style: normal; font-weight: 600; background: #FFFFFF; border-radius: 999px; padding: 0 8px; align-self: flex-start; }
+.peta-tip small { font-size: 12px; color: #C9D8DE; font-variant-numeric: tabular-nums; }
+.stApp [data-testid="stMarkdownContainer"] .peta-ket { margin: 12px 0 0; font-size: 12px; line-height: 1.4; color: var(--teks-2); }
+
+/* kategori: lima baris dengan garis warna di kiri dan deretan logo */
+.kat-baris {
+  padding: 12px 0 12px 16px; border-left: 4px solid var(--warna);
+  animation: muncul 520ms var(--kurva) both; animation-delay: calc(160ms + var(--j, 0) * 90ms);
+}
+.kat-baris + .kat-baris { margin-top: 8px; }
+.kat-kepala { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.kat-kepala b { font-size: 15px; font-weight: 700; }
+.kat-jumlah { font-size: 12px; color: var(--teks-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.stApp [data-testid="stMarkdownContainer"] .kat-baris p { margin: 0 0 8px; font-size: 13px; color: var(--teks-2); line-height: 1.4; }
+.kat-logo-baris { display: flex; flex-wrap: wrap; gap: 4px; }
+.kat-logo {
+  width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 50%; background: var(--sumur);
+  animation: letup 360ms var(--kurva) backwards; animation-delay: calc(400ms + var(--j, 0) * 90ms + var(--i, 0) * 40ms);
+  transition: transform 200ms var(--kurva);
+}
+.kat-logo:hover { transform: translateY(-2px); }
+/* kembaran animasi untuk diputar ulang saat musim berganti (lihat _putaran di gaya_bermain.py) */
+.gaya-kategori.putar-b .kat-baris {
+  animation: muncul-b 520ms var(--kurva) both; animation-delay: calc(var(--j, 0) * 70ms);
+}
+.gaya-kategori.putar-b .kat-logo {
+  animation: letup-b 360ms var(--kurva) backwards; animation-delay: calc(160ms + var(--j, 0) * 70ms + var(--i, 0) * 40ms);
+}
+.kat-logo img, .kat-logo .kode-kecil { width: 20px; height: 20px; object-fit: contain; }
+.kat-kosong { font-size: 12px; color: var(--teks-2); }
+
+/* peringkat: pemilih tema lalu kartu lima besar dengan batang */
+.rk-kepala { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-top: 8px; }
+.rk-kepala b { font-size: 18px; font-weight: 600; }
+.rk-kepala span { font-size: 13px; color: var(--teks-2); }
+.st-key-gaya-peringkat [data-testid="stButtonGroup"] { display: flex; gap: 8px; flex-wrap: wrap; }
+.st-key-gaya-peringkat button[data-testid^="stBaseButton-pills"] {
+  border-radius: 999px; border: 1px solid var(--tepi); background: var(--permukaan); color: var(--teks);
+  transition: background 200ms ease, color 200ms ease, transform 200ms var(--kurva), border-color 200ms ease;
+}
+.st-key-gaya-peringkat button[data-testid^="stBaseButton-pills"]:hover { transform: translateY(-2px); color: var(--teal); border-color: var(--teal); }
+.st-key-gaya-peringkat button[data-testid="stBaseButton-pillsActive"],
+.st-key-gaya-peringkat button[data-testid="stBaseButton-pillsActive"]:hover {
+  background: var(--navy); border-color: var(--navy); color: #FFFFFF;
+}
+.st-key-gaya-peringkat button[data-testid^="stBaseButton-pills"] p { font-size: 14px; font-weight: 600; }
+.rk-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.rk-kartu {
+  background: var(--permukaan); border: 1px solid var(--tepi); border-radius: var(--radius-kartu);
+  box-shadow: var(--bayangan); padding: 20px;
+  animation: muncul 480ms var(--kurva) both; animation-delay: calc(var(--urutan, 0) * 70ms);
+}
+.rk-judul { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 12px; }
+.rk-judul b { font-size: 15px; font-weight: 600; }
+.rk-judul span { font-size: 12px; color: var(--teks-2); text-align: right; }
+.rk-daftar { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 4px; }
+.stApp .rk-daftar > li {
+  margin: 0; padding: 8px 0; list-style: none;
+  display: grid; grid-template-columns: 20px 20px minmax(0, 1fr) auto; grid-template-rows: auto auto;
+  column-gap: 12px; row-gap: 4px; align-items: center;
+}
+.rk-daftar > li + li { border-top: 1px solid var(--lajur); }
+.rk-no { font-family: var(--huruf-sempit); font-weight: 700; font-size: 14px; color: var(--teks-2); text-align: center; }
+.rk-daftar > li:first-child .rk-no { color: var(--teal); }
+.rk-daftar img, .rk-daftar .kode-kecil { width: 20px; height: 20px; object-fit: contain; }
+.rk-nama { min-width: 0; display: flex; align-items: baseline; gap: 8px; }
+.rk-nama b { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rk-nama small { font-size: 11px; font-weight: 600; white-space: nowrap; }
+.rk-nilai { font-family: var(--huruf-sempit); font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.rk-lajur { grid-column: 3 / 5; height: 4px; border-radius: 999px; background: var(--lajur); overflow: hidden; }
+.rk-lajur i {
+  display: block; height: 100%; border-radius: 999px; transform-origin: left center;
+  animation: tumbuh-x 700ms var(--kurva) backwards; animation-delay: calc(200ms + var(--urutan, 0) * 70ms + var(--i, 0) * 60ms);
+}
+.rk-kartu .rk-daftar > li { --urutan: inherit; }
+/* kembaran animasi untuk diputar ulang saat tema atau musim berganti */
+.rk-grid.putar-b .rk-kartu {
+  animation: muncul-b 480ms var(--kurva) both; animation-delay: calc(var(--urutan, 0) * 70ms);
+}
+.rk-grid.putar-b .rk-lajur i {
+  animation: tumbuh-x-b 700ms var(--kurva) backwards; animation-delay: calc(200ms + var(--urutan, 0) * 70ms + var(--i, 0) * 60ms);
 }
 
 @media (max-width: 1100px) {
@@ -1049,4 +1269,21 @@ table.klasemen td.poin { font-weight: 700; }
   .skor-besar { font-size: 48px; }
   .sorotan-baris, .duel-baris { gap: 12px; }
   .bentuk-duo { grid-template-columns: 1fr; }
+  .rk-grid { grid-template-columns: minmax(0, 1fr); }
+  .peta-bingkai { min-height: 320px; }
+  .peta-bidang { min-height: 300px; }
+  /* Layar sempit: kartu keterangan menempel ke awal baris lencana (bukan ke lencananya)
+     supaya tidak melewati tepi layar; panah digeser ke lencana yang disorot memakai --i
+     (lebar lencana 24 px + jarak 4 px). */
+  .bentuk { position: relative; }
+  .bentuk > span { position: static; }
+  /* .stApp di depan: harus mengalahkan aturan arah buka desktop yang lebih spesifik */
+  .stApp .bentuk > span .tip,
+  .stApp .bentuk-duo > div:first-child .bentuk > span .tip,
+  .stApp .bentuk-duo > div:last-child .bentuk > span .tip {
+    left: -8px; right: auto; bottom: calc(100% + 12px); min-width: calc(100% + 16px);
+  }
+  .stApp .bentuk > span .tip::after,
+  .stApp .bentuk-duo > div:first-child .bentuk > span .tip::after,
+  .stApp .bentuk-duo > div:last-child .bentuk > span .tip::after { left: calc(var(--i, 0) * 28px + 12px); right: auto; }
 }

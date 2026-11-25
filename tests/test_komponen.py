@@ -477,3 +477,36 @@ def test_logo_kecil_jauh_lebih_ringan_dari_aslinya():
     asli, kecil = _uri_logo(jalur), _uri_logo(jalur, LOGO_KECIL)
     assert kecil.startswith("data:image/webp;base64,")
     assert len(kecil) * 4 < len(asli)
+
+
+def test_lencana_laga_menampilkan_lawan_dan_skor_dari_sisi_klub():
+    from collections import namedtuple
+
+    from gaya.komponen import lencana_laga
+    Laga = namedtuple("Laga", "tim_kandang tim_tandang gol_kandang gol_tandang hasil tanggal")
+    laga = Laga("Chelsea", "Arsenal", 1, 3, "A", pd.Timestamp("2026-10-04"))
+    h = lencana_laga("Arsenal", laga, 2)
+    assert h.startswith('<span class="M"')  # tandang dan menang
+    # kartu ditulis seperti papan skor: tuan rumah, skor, tamu
+    assert "<b>Chelsea</b>" in h and "<em>1 - 3</em>" in h and "<b>Arsenal</b>" in h
+    assert h.index("Chelsea") < h.index("1 - 3") < h.index("<b>Arsenal</b>")
+    assert "<small>4 Okt 2026</small>" in h
+    assert 'aria-label="Menang 3-1 melawan Chelsea, tandang, 4 Okt 2026"' in h
+    assert 'tabindex="0"' in h  # bisa difokus dengan Tab, bukan hanya disorot mouse
+    seri = lencana_laga("Chelsea", laga._replace(gol_kandang=2, gol_tandang=2, hasil="D"))
+    assert "<em>2 - 2</em>" in seri and 'aria-label="Seri 2-2 melawan Arsenal, kandang' in seri
+
+
+def test_logo_dikirim_sekali_per_halaman():
+    from gaya.komponen import logo_kecil, mulai_kumpul_logo, selesai_kumpul_logo
+    mulai_kumpul_logo()
+    try:
+        html = logo_kecil("Arsenal") + logo_kecil("Arsenal") + logo_kecil("Chelsea")
+    finally:
+        gaya = selesai_kumpul_logo()
+    assert "data:image/webp" not in html  # <img> hanya merujuk variabel CSS
+    assert gaya.count("data:image/webp") == 2  # Arsenal sekali, Chelsea sekali
+    nama = re.findall(r"var\((--lg-[0-9a-f]+)\)", html)
+    assert nama[0] == nama[1] != nama[2] and all(n in gaya for n in nama)
+    # di luar halaman dashboard (mis. tes, landing) logo tetap ditulis langsung
+    assert "data:image/webp" in logo_kecil("Arsenal")

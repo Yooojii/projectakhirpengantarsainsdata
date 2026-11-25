@@ -1,5 +1,8 @@
 """Komponen visual papan taktik. Streamlit hanya dipakai di sini, bukan di inti/."""
 import base64
+import re
+import threading
+import zlib
 from functools import lru_cache
 from html import escape
 from pathlib import Path
@@ -17,6 +20,23 @@ _CSS = Path(__file__).with_name("tema.css")
 
 def BACA_CSS() -> str:
     return _CSS.read_text(encoding="utf-8")
+
+
+@lru_cache(maxsize=8)
+def _padatkan_teks(css: str) -> str:
+    css = re.sub(r"/\*.*?\*/", "", css, flags=re.S)       # komentar
+    css = re.sub(r"\s+", " ", css)                           # spasi dan baris baru
+    return re.sub(r"\s*([{};])\s*", r"\1", css).strip()      # spasi di sekitar { } ;
+
+
+def padatkan_css(css: str) -> str:
+    """CSS tanpa komentar dan spasi berlebih, untuk dikirim ke peramban.
+
+    Tema dikirim ulang setiap kali halaman dijalankan ulang (setiap klik filter); komentar
+    penjelasannya berguna di berkas sumber, bukan di peramban. Hasilnya disimpan per isi
+    berkas, jadi suntingan CSS tetap langsung terbaca.
+    """
+    return _padatkan_teks(css)
 
 
 # ----------------------------------------------------------------- warna aksen
@@ -56,7 +76,7 @@ def warna_aksen(hex: str) -> str:
 def pasang_tema(aksen: str) -> None:
     """Suntikkan tema.css satu kali per jalan skrip; tulis ulang --aksen untuk klub terpilih."""
     st.markdown(
-        f"<style>{BACA_CSS()}\n:root {{ --aksen: {warna_aksen(aksen)}; }}</style>",
+        f"<style>{padatkan_css(BACA_CSS())}\n:root {{ --aksen: {warna_aksen(aksen)}; }}</style>",
         unsafe_allow_html=True,
     )
 
@@ -93,12 +113,50 @@ def _uri_logo(jalur: str, sisi: int | None = None) -> str:
     return "data:image/webp;base64," + base64.b64encode(wadah.getvalue()).decode("ascii")
 
 
+# ---- logo sekali kirim per halaman ----
+# Satu halaman bisa memuat logo klub yang sama puluhan kali (klasemen, daftar laga, lencana
+# bentuk dan kartu keterangannya). Selama halaman dashboard digambar, setiap logo dicatat
+# sekali sebagai variabel CSS (--lg-N) dan <img> hanya merujuk variabel itu; app.py lalu
+# mengirim satu blok <style> berisi semua logo yang terpakai. Di luar itu (mis. tes atau
+# landing page) logo tetap ditulis langsung di src seperti biasa. Catatan disimpan per utas
+# karena tiap sesi Streamlit berjalan di utasnya sendiri.
+_LOGO = threading.local()
+_PIKSEL = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="
+
+
+def mulai_kumpul_logo() -> None:
+    _LOGO.daftar = {}
+
+
+def selesai_kumpul_logo() -> str:
+    """Blok <style> berisi semua logo yang dipakai halaman ini; catatan dikosongkan."""
+    daftar = getattr(_LOGO, "daftar", None) or {}
+    _LOGO.daftar = None
+    if not daftar:
+        return ""
+    isi = ";".join(f'{nama}:url("{uri}")' for uri, nama in daftar.items())
+    return f"<style>:root{{{isi}}}</style>"
+
+
+def atribut_logo(jalur: str, sisi: int | None = None) -> str:
+    """Atribut src (dan gaya) untuk <img> logo, memakai variabel CSS bila sedang mengumpulkan."""
+    uri = _uri_logo(jalur, sisi)
+    daftar = getattr(_LOGO, "daftar", None)
+    if daftar is None:
+        return f'src="{uri}"'
+    # nama tetap per logo (bukan urutan pakai): saat filter diganti Streamlit memperbarui
+    # halaman bertahap, dan blok <style> lama yang masih terpasang sesaat tetap menunjuk
+    # ke logo yang benar
+    nama = daftar.setdefault(uri, f"--lg-{zlib.crc32(uri.encode()):08x}")
+    return f'src="{_PIKSEL}" style="background-image:var({nama})"'
+
+
 def _lencana(klub: str) -> str:
     """Logo kecil (24 px, sama dengan tinggi nama), atau singkatan tiga huruf bila tak ada."""
     jalur = logo_klub(klub)
     if jalur is None:
         return f'<span class="papan-kode">{escape(singkatan(klub))}</span>'
-    return f'<img class="papan-logo" src="{_uri_logo(str(jalur), LOGO_KECIL)}" alt="" width="24" height="24">'
+    return f'<img class="papan-logo" {atribut_logo(str(jalur), LOGO_KECIL)} alt="" width="24" height="24">'
 
 
 def angka_hitung(nilai: float, desimal: int = 0, tunda_ms: int | None = None) -> str:
@@ -120,12 +178,73 @@ def angka_hitung(nilai: float, desimal: int = 0, tunda_ms: int | None = None) ->
     return f'<span class="sr">{terbaca}</span><span aria-hidden="true">{isi}</span>'
 
 
+_BULAN_PENDEK = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"]
+_KATA_HASIL = {"M": "Menang", "S": "Seri", "K": "Kalah"}
+
+
+def lencana_laga(klub: str, laga, i: int = 0) -> str:
+    """Lencana M/S/K satu laga dengan kartu keterangan yang muncul saat disorot atau difokus.
+
+    `laga` adalah satu baris pertandingan (namedtuple dari itertuples) berisi tim_kandang,
+    tim_tandang, gol_kandang, gol_tandang, hasil, dan tanggal. Kartu menulis laganya seperti
+    papan skor: tuan rumah di kiri, tamu di kanan. Label untuk pembaca layar menyebut hasil
+    dari sisi `klub` ("Menang 3-1 melawan Chelsea, tandang, ...").
+    """
+    kandang = laga.tim_kandang == klub
+    lawan = laga.tim_tandang if kandang else laga.tim_kandang
+    gk, gt = int(laga.gol_kandang), int(laga.gol_tandang)
+    sendiri, kemasukan = (gk, gt) if kandang else (gt, gk)
+    if laga.hasil == "D":
+        hasil = "S"
+    else:
+        hasil = "M" if kandang == (laga.hasil == "H") else "K"
+    tgl = laga.tanggal
+    tanggal = f"{tgl.day} {_BULAN_PENDEK[tgl.month - 1]} {tgl.year}"
+    tempat = "kandang" if kandang else "tandang"
+    kata = _KATA_HASIL[hasil]
+    label = f"{kata} {sendiri}-{kemasukan} melawan {lawan}, {tempat}, {tanggal}"
+    return (
+        f'<span class="{hasil}" style="--i:{i}" tabindex="0" aria-label="{escape(label)}">{hasil}'
+        f'<span class="tip" aria-hidden="true">'
+        f'<small>{tanggal}</small>'
+        f'<span class="tip-laga"><b>{escape(laga.tim_kandang)}</b>{logo_kecil(laga.tim_kandang)}'
+        f'<em>{gk} - {gt}</em>{logo_kecil(laga.tim_tandang)}<b>{escape(laga.tim_tandang)}</b></span>'
+        '</span></span>'
+    )
+
+
+# nama dan NIM ditulis persis seperti yang diberikan kelompok
+ANGGOTA = [
+    ("Nadine Kinanti Azzahra", "M0401241025"),
+    ("Yasmin Aufaahani Abdullah", "M0401241129"),
+    ("Rizky Arif Wicaksono", "M0401241054"),
+    ("Abdullah' ammar rabbaniyyin", "M0401241066"),
+    ("Muhammad Shira Pramudita", "M0401241094"),
+    ("Muhammad Alvaro Satria Priyambada", "M0401241100"),
+]
+
+
+def kaki_kelompok(kelas: str) -> str:
+    """"© Kelompok 8"; arahkan kursor (atau fokus dengan Tab) untuk melihat anggota.
+
+    Dipakai di rel navigasi dashboard (kelas "nav-kaki") dan di kaki landing page
+    (kelas "lp-hak"); tampilannya diatur masing-masing lewat kelas pembungkus itu.
+    """
+    daftar = "".join(f"<li><b>{escape(nama)}</b><span>{escape(nim)}</span></li>" for nama, nim in ANGGOTA)
+    return (
+        f'<div class="{kelas}">&copy; '
+        f'<span class="kelompok" tabindex="0" aria-describedby="anggota-{kelas}">Kelompok 8'
+        f'<span class="anggota" id="anggota-{kelas}" role="tooltip"><small>Anggota kelompok</small>'
+        f'<ul>{daftar}</ul></span></span></div>'
+    )
+
+
 def logo_kecil(klub: str, kelas: str = "logo-kecil") -> str:
     """Logo klub 20 px untuk daftar; singkatan dalam bulatan bila logonya tidak ada."""
     jalur = logo_klub(klub)
     if jalur is None:
         return f'<span class="kode-kecil">{escape(singkatan(klub))}</span>'
-    return f'<img class="{kelas}" src="{_uri_logo(str(jalur), LOGO_KECIL)}" alt="">'
+    return f'<img class="{kelas}" {atribut_logo(str(jalur), LOGO_KECIL)} alt="">'
 
 
 def papan_skor(klub_k: str, klub_t: str, skor: tuple, peluang: dict, aksen: str,

@@ -16,7 +16,7 @@ from pathlib import Path
 import pandas as pd
 import streamlit as st
 
-from gaya.komponen import _uri_logo
+from gaya.komponen import _uri_logo, kaki_kelompok, padatkan_css
 from inti.data import muat_pertandingan
 from inti.liga import juara, kandang_tandang, tren_musim
 from inti.sesi import AKAR, BULAN, JALUR_DATA
@@ -157,7 +157,7 @@ def _nav(logo: str) -> str:
     return (
         '<nav class="lp-nav" aria-label="Navigasi landing page">'
         f'<a class="lp-merek" href="#atas"><img src="{logo}" alt="">BallBoard</a>'
-        f'<div class="lp-tautan">{isi}<span class="lp-penanda" aria-hidden="true"></span></div>'
+        f'<div class="lp-tautan">{isi}</div>'
         f'{TOMBOL_MASUK}</nav>'
     )
 
@@ -205,6 +205,8 @@ def _overview() -> str:
          "menang, atau buka statistik lengkap laga yang sudah dimainkan.", "?buka=analisis"),
         ("History", "history", "Rekor pertemuan dua klub, bentuk sepuluh laga terakhir, dan klasemen "
          "musim berjalan dengan zona empat besar dan degradasi.", "?buka=history"),
+        ("Team Styles", "gaya", "Peta gaya bermain tiap klub hasil clustering K-Means, lima kategori "
+         "gaya, dan peringkat lima besar dari serangan sampai disiplin.", "?buka=gaya"),
     ]
     isi = "".join(
         f'<a class="lp-tab lp-muncul" href="{href}" target="_self">'
@@ -247,7 +249,7 @@ def _dataset(f: dict) -> str:
     return f'''
 <section class="lp-bagian" id="dataset">
   <div class="lp-kepala lp-muncul">
-    <h2>Behind the Numbers</h2>
+    <h2>Behind the Numbers.</h2>
     <p>Mengenal sumber, periode, dan cakupan data yang menjadi dasar setiap insight.</p>
   </div>
   <div class="lp-strip">{strip}</div>
@@ -301,7 +303,7 @@ def _praproses(f: dict) -> str:
     return f'''
 <section class="lp-bagian" id="praproses">
   <div class="lp-kepala lp-muncul">
-    <h2>Data Pipeline</h2>
+    <h2>Data Pipeline.</h2>
     <p>Empat langkah berurutan sebelum data siap dibaca dashboard dan dipakai melatih model.</p>
   </div>
   <ol class="lp-alur">{kartu}</ol>
@@ -403,7 +405,7 @@ def _insight(f: dict) -> str:
     return f'''
 <section class="lp-bagian" id="insight">
   <div class="lp-kepala lp-muncul">
-    <h2>Key Insight</h2>
+    <h2>Key Insight.</h2>
     <p>Temuan utama dari {f["musim"]} musim data, semuanya bisa ditelusuri lagi di dashboard.</p>
   </div>
   {utama}
@@ -412,11 +414,14 @@ def _insight(f: dict) -> str:
 
 
 def _kaki() -> str:
-    return '''
-<footer class="lp-kaki">
-  <span>BallBoard, tugas akhir Pengantar Sains Data oleh Kelompok 8.</span>
-  <span>Data: football-data.co.uk, API-Football, BBC Sport, openfootball.</span>
-</footer>'''
+    """Kaki halaman: "© Kelompok 8" dengan daftar anggota saat disorot, sama seperti di dashboard."""
+    return (
+        # div, bukan <footer>: tema dashboard menyembunyikan semua <footer> (kaki bawaan Streamlit)
+        '<div class="lp-kaki" role="contentinfo">'
+        f'{kaki_kelompok("lp-hak")}'
+        '<span>Data: football-data.co.uk, API-Football, BBC Sport, openfootball.</span>'
+        '</div>'
+    )
 
 
 def tampil() -> None:
@@ -426,7 +431,7 @@ def tampil() -> None:
     logo = _uri_logo(str(AKAR / "data" / "ballboard_logo.png"))
     lambang = _uri_logo(str(AKAR / "data" / "ballboard_lambang_besar.png"))
     _panaskan_modul(df)
-    st.markdown(f"<style>{_CSS.read_text(encoding='utf-8')}</style>", unsafe_allow_html=True)
+    st.markdown(f"<style>{padatkan_css(_CSS.read_text(encoding='utf-8'))}</style>", unsafe_allow_html=True)
     st.markdown(
         '<div class="landing">'
         + _nav(logo) + _hero(f, lambang) + _overview() + _dataset(f) + _praproses(f)

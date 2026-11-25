@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 
-from gaya.komponen import LOGO_SEDANG, _uri_logo, angka_hitung, logo_kecil, warna_aksen
+from gaya.komponen import LOGO_SEDANG, angka_hitung, atribut_logo, lencana_laga, logo_kecil, warna_aksen
 from halaman.history import rekor_pertemuan
 from halaman.prediksi_simulasi import hitung_prediksi, siapkan_sesi
 from inti.data import klub_musim, muat_pertandingan
@@ -62,7 +62,7 @@ def _logo_besar(klub: str) -> str:
     jalur = logo_klub(klub)
     if jalur is None:
         return f'<span class="kode-besar">{escape(singkatan(klub))}</span>'
-    return f'<img src="{_uri_logo(str(jalur), LOGO_SEDANG)}" alt="">'
+    return f'<img {atribut_logo(str(jalur), LOGO_SEDANG)} alt="">'
 
 
 def _hasil_untuk(klub: str, kandang: str, hasil: str) -> str:
@@ -72,11 +72,15 @@ def _hasil_untuk(klub: str, kandang: str, hasil: str) -> str:
     return "M" if (klub == kandang) == menang_kandang else "K"
 
 
+def laga_sebelum(df: pd.DataFrame, klub: str, sebelum: pd.Timestamp, n: int = 5) -> pd.DataFrame:
+    """n laga terakhir klub sebelum tanggal tertentu, urut lama ke baru."""
+    sub = df[((df["tim_kandang"] == klub) | (df["tim_tandang"] == klub)) & (df["tanggal"] < sebelum)]
+    return sub.sort_values("tanggal", kind="stable").tail(n)
+
+
 def bentuk_sebelum(df: pd.DataFrame, klub: str, sebelum: pd.Timestamp, n: int = 5) -> list[str]:
     """Hasil n laga terakhir klub sebelum tanggal tertentu, urut lama ke baru."""
-    sub = df[((df["tim_kandang"] == klub) | (df["tim_tandang"] == klub)) & (df["tanggal"] < sebelum)]
-    sub = sub.sort_values("tanggal", kind="stable").tail(n)
-    return [_hasil_untuk(klub, r.tim_kandang, r.hasil) for r in sub.itertuples()]
+    return [_hasil_untuk(klub, r.tim_kandang, r.hasil) for r in laga_sebelum(df, klub, sebelum, n).itertuples()]
 
 
 def rata_terakhir(df: pd.DataFrame, klub: str, sebelum: pd.Timestamp, n: int = 10) -> dict:
@@ -181,10 +185,11 @@ def _baris_stat(label: str, vk: float, vt: float, desimal: int, wk: str, wt: str
     )
 
 
-def _bentuk_html(hasil: list[str]) -> str:
-    if not hasil:
+def _bentuk_html(klub: str, laga: pd.DataFrame) -> str:
+    """Lencana lima laga; sorot lencana untuk melihat lawan dan skornya."""
+    if laga.empty:
         return '<span class="keterangan">Belum ada laga sebelumnya</span>'
-    isi = "".join(f'<span class="{h}" style="--i:{i}">{h}</span>' for i, h in enumerate(hasil))
+    isi = "".join(lencana_laga(klub, r, i) for i, r in enumerate(laga.itertuples()))
     return f'<div class="bentuk">{isi}</div>'
 
 
@@ -192,9 +197,9 @@ def _bentuk_duo(df: pd.DataFrame, klub_k: str, klub_t: str, sebelum: pd.Timestam
     return (
         '<div class="bentuk-duo">'
         f'<div><small>{escape(klub_k)}, lima laga sebelumnya</small>'
-        f'{_bentuk_html(bentuk_sebelum(df, klub_k, sebelum))}</div>'
+        f'{_bentuk_html(klub_k, laga_sebelum(df, klub_k, sebelum))}</div>'
         f'<div><small>{escape(klub_t)}, lima laga sebelumnya</small>'
-        f'{_bentuk_html(bentuk_sebelum(df, klub_t, sebelum))}</div>'
+        f'{_bentuk_html(klub_t, laga_sebelum(df, klub_t, sebelum))}</div>'
         '</div>'
     )
 
@@ -323,8 +328,8 @@ def panel_laga(df: pd.DataFrame, indeks: int) -> str:
     return (
         '<div class="analisis">'
         f'{sorotan}'
-        f'{_kesimpulan(str(r["musim"]), k, t, "selesai")}'
         f'<div class="bagian-stat"><div class="stat-judul">Statistik pertandingan<span>{escape(k)} kiri, {escape(t)} kanan</span></div>{stat}</div>'
+        f'{_kesimpulan(str(r["musim"]), k, t, "selesai")}'
         f'{_bentuk_duo(df, k, t, r["tanggal"])}'
         f'{_catatan(catatan_laga(r))}'
         '</div>'
@@ -431,8 +436,7 @@ def tampil_simulasi(df: pd.DataFrame, klub_k: str, klub_t: str) -> None:
         skor = tuple(int(x) for x in dipilih.split("-"))
         tempat_atas.markdown(
             _sorotan(klub_k, klub_t, skor, "Simulasi", "prediksi", meta, "")
-            + blok_peluang(klub_k, klub_t, p, wk, wt)
-            + _kesimpulan(MUSIM_BERJALAN, klub_k, klub_t, "mendatang"),
+            + blok_peluang(klub_k, klub_t, p, wk, wt),
             unsafe_allow_html=True,
         )
 
@@ -441,6 +445,7 @@ def tampil_simulasi(df: pd.DataFrame, klub_k: str, klub_t: str) -> None:
         st.markdown(
             '<div class="bagian-stat"><div class="stat-judul">Statistik pertandingan (perkiraan)</div>'
             f'{stat}</div>'
+            f'{_kesimpulan(MUSIM_BERJALAN, klub_k, klub_t, "mendatang")}'
             f'{_bentuk_duo(df, klub_k, klub_t, tanggal)}'
             f'{_catatan(catatan_simulasi(df, klub_k, klub_t, p, tanggal))}',
             unsafe_allow_html=True,

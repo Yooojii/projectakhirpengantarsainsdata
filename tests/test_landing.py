@@ -45,10 +45,22 @@ def test_judul_bagian_dan_satu_tombol_masuk():
     halaman = _nav("") + _hero(f, "") + html
     assert halaman.count("Buka Dashboard") == 1
     # tiap kartu tab punya foto
-    assert html.count('<span class="lp-foto"><img src="data:image/webp;base64,') == 3
+    assert html.count('<span class="lp-foto"><img src="data:image/webp;base64,') == 4
+    assert "?buka=gaya" in html and "Team Styles" in html
 
 
 def test_tautan_landing_cocok_dengan_pintu_app():
     import app
     assert set(app.PINTU) == {"overview", "analisis", "history", "gaya"}
     assert set(app.PINTU.values()) == set(app.HALAMAN)
+
+
+def test_kaki_landing_memuat_kelompok_dan_tidak_tersembunyi():
+    from gaya.komponen import ANGGOTA
+    from halaman.landing import _kaki
+    h = _kaki()
+    # <footer> disembunyikan tema (kaki bawaan Streamlit), jadi kaki landing harus div
+    assert "<footer" not in h and 'class="lp-kaki"' in h
+    assert "&copy; " in h and "Kelompok 8" in h
+    for nama, nim in ANGGOTA:
+        assert nim in h

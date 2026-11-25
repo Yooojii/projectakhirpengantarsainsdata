@@ -3,7 +3,7 @@ from html import escape
 import pandas as pd
 import streamlit as st
 
-from gaya.komponen import LOGO_SEDANG, _uri_logo, angka_hitung, logo_kecil, warna_aksen
+from gaya.komponen import LOGO_SEDANG, angka_hitung, atribut_logo, lencana_laga, logo_kecil, warna_aksen
 from inti.data import klub_musim, muat_pertandingan
 from inti.klub import logo_klub, singkatan, warna_klub
 from inti.sesi import BULAN, JALUR_DATA
@@ -86,11 +86,16 @@ def klasemen(df: pd.DataFrame, musim: str) -> pd.DataFrame:
     return res
 
 
-def bentuk_permainan(df: pd.DataFrame, klub: str, n: int = 10) -> list[str]:
-    """Hasil n laga terakhir klub ('M', 'S', 'K') urut waktu."""
-    laga_klub = df[(df["tim_kandang"] == klub) | (df["tim_tandang"] == klub)].sort_values(
+def laga_terakhir(df: pd.DataFrame, klub: str, n: int = 10) -> pd.DataFrame:
+    """n laga terakhir klub, urut waktu (lama ke baru)."""
+    return df[(df["tim_kandang"] == klub) | (df["tim_tandang"] == klub)].sort_values(
         "tanggal", kind="stable"
     ).tail(n)
+
+
+def bentuk_permainan(df: pd.DataFrame, klub: str, n: int = 10) -> list[str]:
+    """Hasil n laga terakhir klub ('M', 'S', 'K') urut waktu."""
+    laga_klub = laga_terakhir(df, klub, n)
 
     hasil = []
     for row in laga_klub.itertuples():
@@ -121,7 +126,7 @@ def _logo_duel(klub: str) -> str:
     jalur = logo_klub(klub)
     if jalur is None:
         return f'<span class="kode-besar">{escape(singkatan(klub))}</span>'
-    return f'<img src="{_uri_logo(str(jalur), LOGO_SEDANG)}" alt="">'
+    return f'<img {atribut_logo(str(jalur), LOGO_SEDANG)} alt="">'
 
 
 def _hasil_klub(row, klub: str) -> str:
@@ -198,7 +203,9 @@ def _blok_bentuk(df: pd.DataFrame, klub: str, lawan: str) -> str:
     for nama in (klub, lawan):
         hasil = bentuk_permainan(df, nama, 10)
         poin = sum(3 if h == "M" else 1 if h == "S" else 0 for h in hasil)
-        lencana = "".join(f'<span class="{h}" style="--i:{i}">{h}</span>' for i, h in enumerate(hasil))
+        # sorot lencana untuk melihat lawan, skor, dan tanggal laganya
+        lencana = "".join(lencana_laga(nama, r, i)
+                          for i, r in enumerate(laga_terakhir(df, nama, 10).itertuples()))
         baris.append(
             f'<div class="bentuk-baris"><div class="bentuk-nama">{logo_kecil(nama)}'
             f'<span>{escape(nama)}</span></div><span class="bentuk-poin">{poin} poin</span></div>'
