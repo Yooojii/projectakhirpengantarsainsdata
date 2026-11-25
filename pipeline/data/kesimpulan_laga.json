@@ -1574,591 +1574,709 @@
  "2026/27|Man United|Arsenal": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Arsenal lebih diunggulkan dalam laga pekan ke-27 ini berkat performa lima laga terakhir yang sempurna dibandingkan Man United yang belum pernah menang. Model memprediksi Arsenal memiliki peluang menang sebesar 46 persen dengan penguasaan bola 56 persen serta akurasi umpan 84 persen. Pertandingan ini diperkirakan berakhir dengan skor 1-1 melalui 14 tembakan dari tuan rumah dan 13 tembakan dari tim tamu."
+  "teks": "Arsenal diunggulkan menang dengan peluang 51 persen karena performa impresif dalam lima laga terakhir dibandingkan Man United yang tampil kurang konsisten. Model memprediksi skor akhir 1-1 dengan Arsenal mendominasi penguasaan bola sebesar 59 persen dan akurasi umpan mencapai 85 persen. Pertandingan pekan ke-27 ini diperkirakan akan menyajikan laga ketat dengan statistik 13 tembakan untuk Man United dan 14 tembakan bagi Arsenal.",
+  "sidik": "8d16cdc3675b"
  },
  "2026/27|Ipswich|Brighton": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Brighton lebih diunggulkan dalam laga pekan ke-27 ini karena memiliki rating Elo 1640 dan catatan empat kemenangan dari lima laga terakhir. Model memprediksi Brighton menang dengan peluang 60 persen dan skor akhir 0-1, sementara Ipswich hanya diberi peluang menang 17 persen dengan performa yang kurang stabil. Statistik pertandingan diperkirakan akan didominasi tim tamu dengan 62 persen penguasaan bola, 16 tembakan, dan 549 umpan yang akurat."
+  "teks": "Brighton lebih diunggulkan dalam laga pekan ke-27 pada 27 Februari 2027 karena memiliki rating Elo 1619 dan performa lima laga terakhir yang lebih baik dibandingkan Ipswich. Model memprediksi Brighton memiliki peluang menang sebesar 59 persen dengan penguasaan bola 63 persen dan 16 tembakan. Meski skor 1-1 menjadi hasil yang paling mungkin terjadi, tim tamu diproyeksikan tampil lebih dominan dengan 574 umpan dan akurasi 86 persen.",
+  "sidik": "11a6f4de3f72"
  },
  "2026/27|Fulham|Leeds": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Fulham lebih diunggulkan dengan peluang menang 45 persen karena performa mereka yang lebih stabil dalam lima laga terakhir dibandingkan Leeds. Model memprediksi laga pekan ke-27 ini akan berakhir imbang dengan skor 1-1. Pertandingan diperkirakan berjalan dengan penguasaan bola 56 persen bagi tuan rumah, serta catatan 14 tembakan berbanding 11 tembakan dari tim tamu. Kedua tim juga diprediksi akan mencatatkan statistik pelanggaran yang sama, yakni sebanyak 11 kali."
+  "teks": "Fulham lebih diunggulkan dengan peluang menang 40 persen karena performa mereka yang lebih stabil dalam lima laga terakhir dibandingkan Leeds. Pertandingan pekan ke-27 ini diprediksi berakhir imbang dengan skor 1-1. Fulham diperkirakan mendominasi penguasaan bola sebesar 54 persen dengan 14 tembakan, sementara Leeds mencatatkan 12 tembakan. Kedua tim diprediksi akan bermain cukup disiplin dengan masing-masing mencatatkan 11 pelanggaran dan 2 kartu kuning.",
+  "sidik": "b5aa10a8f515"
  },
  "2026/27|Crystal Palace|Sunderland": {
   "status": "mendatang",
-  "sumber": "gemini",
-  "teks": "Sunderland lebih diunggulkan dengan peluang menang 39 persen karena performa mereka yang lebih stabil dibanding Crystal Palace dalam lima laga terakhir. Model memprediksi laga pekan ke-27 ini akan berakhir imbang dengan skor 1-1. Kedua tim diperkirakan akan bermain cukup seimbang dengan catatan statistik identik, yakni 13 tembakan, 4 tembakan tepat sasaran, 5 sepak pojok, serta 12 pelanggaran bagi masing-masing pihak."
+  "sumber": "template",
+  "teks": "Model mengunggulkan Crystal Palace pada laga Crystal Palace melawan Sunderland, dengan peluang menang tuan rumah 38%, seri 27%, dan tamu 34%. Skor yang paling mungkin 1-1.",
+  "sidik": "5ed428125d42"
  },
  "2026/27|Everton|Nott'm Forest": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Everton lebih diunggulkan dalam laga pekan ke-27 ini berkat rating Elo 1529 dan catatan dua kemenangan beruntun di lima laga terakhir. Model memprediksi skor berakhir imbang 1-1 dengan peluang menang tuan rumah sebesar 39 persen. Pertandingan ini diperkirakan berlangsung cukup seimbang dengan statistik 13 tembakan dan 4 tembakan tepat sasaran bagi kedua tim. Everton diproyeksikan mendominasi penguasaan bola sebesar 56 persen serta mencatatkan 498 umpan dengan akurasi 82 persen."
+  "teks": "Everton lebih diunggulkan dalam laga pekan ke-27 pada 27 Februari 2027 karena memiliki rating Elo 1511 dibandingkan 1501 milik Nott'm Forest. Model memprediksi Everton memiliki peluang menang 38 persen, sedangkan Nott'm Forest berada di angka 35 persen dengan kemungkinan seri 27 persen. Pertandingan ini diperkirakan berakhir dengan skor 1-1. Statistik menunjukkan Everton diprediksi unggul tipis dalam penguasaan bola sebesar 53 persen dengan 13 tembakan, sementara Nott'm Forest mencatatkan 14 tembakan.",
+  "sidik": "c3a17a34f4d7"
  },
  "2026/27|Coventry|Bournemouth": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Bournemouth lebih diunggulkan dalam laga pekan ke-27 pada 27 Februari 2027 karena memiliki rating Elo 1588 dan catatan empat kemenangan dalam lima laga terakhir. Model memprediksi Bournemouth menang dengan peluang 49 persen, meski skor paling mungkin berakhir imbang 1-1. Statistik laga diperkirakan mencatat penguasaan bola 43 persen untuk Coventry dan 57 persen untuk Bournemouth. Selain itu, kedua tim diprediksi melakukan 11 dan 14 tembakan dengan akurasi umpan masing-masing 75 persen dan 81 persen."
+  "teks": "Bournemouth lebih diunggulkan dalam laga pekan ke-27 pada 27 Februari 2027 karena memiliki rating Elo 1599 dan tren lima laga terakhir yang sempurna dengan lima kemenangan beruntun. Model memprediksi Bournemouth menang dengan peluang 49 persen, meski skor 1-1 menjadi hasil yang paling mungkin terjadi. Statistik pertandingan diperkirakan mencakup penguasaan bola 43 persen bagi Coventry dan 57 persen bagi Bournemouth. Kedua tim diprediksi mencatatkan 12 dan 14 tembakan dengan akurasi umpan masing-masing sebesar 75 persen dan 81 persen.",
+  "sidik": "460f731e4c64"
  },
  "2026/27|Aston Villa|Chelsea": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Aston Villa lebih diunggulkan dalam laga pekan ke-27 ini berkat catatan tidak terkalahkan dalam lima laga terakhir serta rating Elo yang lebih tinggi yaitu 1557. Model memprediksi hasil imbang 1-1 dengan peluang kemenangan tuan rumah sebesar 41 persen. Pertandingan ini diperkirakan berlangsung ketat dengan statistik kedua tim yang cukup seimbang, termasuk perolehan 13 tembakan dan 5 sepak pojok bagi masing-masing pihak."
+  "teks": "Aston Villa lebih diunggulkan dalam laga pekan ke-27 pada 27 Februari 2027 karena memiliki rating Elo 1553 serta catatan lima laga terakhir yang lebih stabil daripada Chelsea. Model memprediksi peluang menang tuan rumah sebesar 47 persen dengan skor paling mungkin 1-1. Pertandingan ini diperkirakan akan berlangsung cukup seimbang dengan statistik penguasaan bola yang sama kuat di angka 50 persen bagi kedua tim.",
+  "sidik": "8c8059bd538a"
  },
  "2026/27|Hull|Man City": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Man City lebih diunggulkan dalam laga pekan ke-27 pada 27 Februari 2027 karena memiliki rating Elo 1678 yang jauh lebih tinggi dibanding Hull sebesar 1498. Model memprediksi Man City memiliki peluang menang 61 persen dengan perkiraan skor akhir 1-1. Statistik pertandingan diperkirakan mencatat penguasaan bola 30 persen bagi Hull dan 70 persen untuk Man City. Selain itu, Man City diprediksi melepaskan 16 tembakan dan 683 umpan sepanjang laga."
+  "teks": "Man City lebih diunggulkan dengan peluang menang 58 persen karena memiliki rating Elo 1672 yang jauh lebih tinggi daripada Hull. Meskipun performa lima laga terakhir kedua tim kurang stabil, model memprediksi laga ini akan berakhir imbang 1-1. Statistik pertandingan diperkirakan mencatat penguasaan bola 30 persen untuk Hull dan 70 persen untuk Man City. Selain itu, Man City diprediksi melepaskan 15 tembakan dengan 6 di antaranya tepat sasaran, sementara Hull diprediksi membuat 10 tembakan dengan 3 tepat sasaran.",
+  "sidik": "3b3f58670d20"
  },
  "2026/27|Sunderland|Man United": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Man United lebih diunggulkan dengan peluang menang 47 persen karena memiliki rating Elo 1539 yang lebih tinggi dibandingkan Sunderland. Meski Sunderland mencatat hasil kurang maksimal dalam lima laga terakhir, model memprediksi skor imbang 1-1 sebagai hasil yang paling mungkin terjadi. Pertandingan ini diperkirakan akan diwarnai penguasaan bola 57 persen bagi tim tamu dengan total 14 tembakan dan 5 sepakan tepat sasaran. Kedua tim diprediksi akan mencatatkan masing-masing 5 sepak pojok dalam laga pekan ke-28 ini."
+  "teks": "Man United sedikit lebih diunggulkan dengan peluang menang 40 persen karena memiliki rating Elo 1523 yang lebih tinggi dibandingkan Sunderland. Meski begitu, model memprediksi laga pekan ke-28 pada 3 Maret 2027 ini akan berakhir imbang dengan skor 1-1. Statistik menunjukkan Man United diperkirakan mencatat 54 persen penguasaan bola dan 14 tembakan, sementara Sunderland diproyeksikan menguasai bola 46 persen dengan 13 tembakan. Kedua tim diprediksi akan bermain cukup disiplin dengan masing-masing mencatatkan 2 kartu kuning.",
+  "sidik": "2623636b5880"
  },
  "2026/27|Arsenal|Crystal Palace": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Arsenal sangat diunggulkan dalam laga pekan ke-28 ini berkat catatan lima kemenangan beruntun dan rating Elo 1724 yang jauh melampaui Crystal Palace. Model memprediksi tuan rumah menang dengan peluang 78 persen dan skor akhir 2-0. Pertandingan ini diperkirakan akan didominasi Arsenal dengan penguasaan bola 65 persen serta catatan 20 tembakan berbanding 8 milik tim tamu."
+  "teks": "Arsenal sangat diunggulkan dalam laga pekan ke-28 ini karena mencatatkan empat kemenangan dan satu hasil seri dalam lima laga terakhir, sementara Crystal Palace menelan lima kekalahan beruntun. Model memprediksi Arsenal menang dengan peluang 76 persen dan skor akhir 2-0. Tuan rumah diperkirakan mendominasi pertandingan lewat penguasaan bola 65 persen serta mencatatkan 19 tembakan dibandingkan 8 tembakan dari tim tamu.",
+  "sidik": "6954e41c5197"
  },
  "2026/27|Bournemouth|Tottenham": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Bournemouth lebih diunggulkan dalam laga pekan ke-28 ini karena performa empat kemenangan beruntun mereka dibandingkan Tottenham yang sempat kalah di laga terakhir. Model memprediksi Bournemouth memiliki peluang menang 51 persen dengan skor akhir yang paling mungkin adalah 1-1. Dalam laga ini, Bournemouth diperkirakan mencatatkan 15 tembakan dan 6 sepak pojok, sementara Tottenham diprediksi unggul dalam penguasaan bola sebesar 54 persen."
+  "teks": "Bournemouth lebih diunggulkan dalam laga pekan ke-28 ini karena performa lima laga terakhir yang sempurna dengan lima kemenangan beruntun serta rating Elo yang lebih tinggi yaitu 1599. Model memprediksi Bournemouth memiliki peluang menang 51 persen dibandingkan Tottenham yang hanya 25 persen. Pertandingan ini diperkirakan berakhir dengan skor 1-1 dengan statistik penguasaan bola 46 persen untuk tuan rumah dan 54 persen untuk tamu. Kedua tim diprediksi mencatatkan 15 dan 11 tembakan sepanjang laga.",
+  "sidik": "d073e15aba7c"
  },
  "2026/27|Brentford|Ipswich": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Brentford lebih diunggulkan untuk memenangkan laga pekan ke-28 ini karena memiliki rating Elo 1558 yang lebih tinggi dibandingkan Ipswich dengan 1412. Model memprediksi tuan rumah memiliki peluang menang sebesar 55 persen dengan skor akhir yang paling mungkin adalah 1-1. Dalam pertandingan ini, Brentford diperkirakan mencatatkan 15 tembakan dan 52 persen penguasaan bola, sementara Ipswich diprediksi melepaskan 11 tembakan dengan 48 persen penguasaan bola."
+  "teks": "Brentford lebih diunggulkan dalam laga pekan ke-28 ini karena memiliki rating Elo 1576 dan performa yang lebih stabil dibandingkan Ipswich yang meraih tiga kekalahan beruntun. Model memprediksi peluang kemenangan tuan rumah mencapai 60 persen dengan skor akhir paling mungkin adalah 1-1. Dalam pertandingan ini, Brentford diproyeksikan mendominasi penguasaan bola sebesar 55 persen dengan 17 total tembakan. Selain itu, kedua tim diperkirakan akan mencatatkan jumlah pelanggaran dan kartu kuning yang sama, yakni 11 pelanggaran dan 2 kartu kuning.",
+  "sidik": "f3ce92325213"
  },
  "2026/27|Brighton|Fulham": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Brighton lebih diunggulkan dalam laga pekan ke-28 ini karena memiliki rating Elo 1640 dan catatan empat kemenangan dari lima laga terakhir. Model memprediksi peluang menang tuan rumah sebesar 58 persen, sedangkan Fulham hanya memiliki peluang 19 persen. Meski demikian, skor 1-1 menjadi hasil yang paling mungkin terjadi dengan perkiraan Brighton mendominasi penguasaan bola sebesar 54 persen dan melepaskan 17 tembakan. Pertandingan ini diprediksi akan berlangsung sengit dengan catatan statistik yang cukup berimbang bagi kedua tim."
+  "teks": "Brighton lebih diunggulkan dalam laga pekan ke-28 ini karena memiliki rating Elo 1619 yang lebih tinggi dibandingkan Fulham dengan 1510. Model memprediksi tuan rumah memiliki peluang menang sebesar 59 persen meski catatan performa lima laga terakhir mereka cukup fluktuatif. Pertandingan ini diperkirakan berakhir dengan skor 1-1 dengan penguasaan bola 56 persen untuk Brighton dan 44 persen untuk Fulham. Selain itu, laga ini diprediksi menghasilkan 17 tembakan bagi tuan rumah dan 10 tembakan bagi tim tamu.",
+  "sidik": "57349893eb1f"
  },
  "2026/27|Chelsea|Coventry": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Chelsea diunggulkan memenangkan laga pekan ke-28 ini dengan peluang 58 persen karena memiliki rating Elo lebih tinggi yaitu 1544 dibandingkan Coventry yang hanya 1462. Meskipun model memprediksi skor akhir 1-1, Chelsea diperkirakan mendominasi penguasaan bola sebesar 65 persen dengan 16 total tembakan. Pertandingan ini diprediksi akan diwarnai oleh 7 sepak pojok bagi tuan rumah dan 4 sepak pojok untuk tim tamu."
+  "teks": "Chelsea diunggulkan oleh model dengan peluang menang 52% karena memiliki rating Elo yang lebih tinggi yaitu 1518 dibandingkan Coventry. Meski performa lima laga terakhir kedua tim cukup fluktuatif, model memprediksi skor akhir 1-1. Dalam laga ini, tuan rumah diperkirakan akan mendominasi dengan 62% penguasaan bola dan 16 tembakan. Pertandingan pekan ke-28 ini juga diprediksi akan diwarnai oleh 11 pelanggaran dari Chelsea dan 13 pelanggaran dari Coventry.",
+  "sidik": "abb490b4b3d5"
  },
  "2026/27|Leeds|Hull": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Leeds lebih diunggulkan dalam laga pekan ke-28 ini karena memiliki rating Elo 1526 yang lebih tinggi dibandingkan 1498 milik Hull. Model memprediksi Leeds memiliki peluang menang 51 persen dengan skor akhir yang paling mungkin adalah 1-1. Dalam pertandingan ini, Leeds diprediksi mendominasi penguasaan bola sebesar 58 persen dengan catatan 15 tembakan dan 5 di antaranya tepat sasaran. Sementara itu, Hull diperkirakan melakukan 10 tembakan dengan akurasi umpan mencapai 74 persen."
+  "teks": "Leeds diunggulkan dalam laga pekan ke-28 ini karena memiliki rating Elo 1552 dan performa yang lebih stabil dengan dua kemenangan beruntun. Model memprediksi Leeds memiliki peluang menang 54 persen, namun skor paling mungkin adalah imbang 1-1. Dalam pertandingan ini, Leeds diprediksi mendominasi lewat penguasaan bola 60 persen serta 16 tembakan ke arah gawang lawan. Hull diperkirakan mencatat 40 persen penguasaan bola dan 10 tembakan dengan akurasi umpan sebesar 73 persen.",
+  "sidik": "2892386ef598"
  },
  "2026/27|Liverpool|Aston Villa": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Liverpool diunggulkan memenangkan laga pekan ke-28 pada 3 Maret 2027 dengan peluang 58 persen karena memiliki rating Elo 1613 yang lebih tinggi dibanding 1557 milik Aston Villa. Meski model memprediksi skor 1-1, tuan rumah diproyeksikan menguasai bola sebesar 55 persen dengan 19 tembakan dan 6 tepat sasaran. Sementara itu, Aston Villa yang mencatat tiga hasil seri dalam lima laga terakhir diperkirakan melakukan 385 umpan dengan akurasi 80 persen."
+  "teks": "Liverpool lebih diunggulkan dalam laga pekan ke-28 ini karena memiliki rating Elo 1628 dan catatan empat kemenangan dari lima pertandingan terakhir. Model memprediksi tuan rumah menang dengan peluang 61 persen dan skor akhir 2-1. Pertandingan ini diperkirakan akan didominasi Liverpool lewat 56 persen penguasaan bola serta 19 tembakan ke arah gawang lawan. Sementara itu, Aston Villa yang meraih tiga hasil seri beruntun diprediksi hanya mampu mencatatkan 44 persen penguasaan bola dan 11 tembakan sepanjang laga.",
+  "sidik": "ea5ef10b70fd"
  },
  "2026/27|Man City|Everton": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Man City diunggulkan menang dengan peluang 69 persen karena memiliki rating Elo 1678 yang lebih tinggi dibandingkan Everton. Meskipun Man City mencatatkan tiga kekalahan beruntun, performa Everton yang sempat meraih dua kemenangan terakhir membuat laga ini diprediksi berakhir dengan skor 2-0. Model statistik memperkirakan Man City akan mendominasi penguasaan bola sebesar 64 persen dengan 19 tembakan. Pertandingan pekan ke-28 ini akan berlangsung pada 3 Maret 2027 dengan prediksi 6 tembakan tepat sasaran bagi tuan rumah."
+  "teks": "Man City lebih diunggulkan dalam laga pekan ke-28 ini karena memiliki rating Elo 1672 dibanding Everton yang hanya 1511. Model memprediksi Man City menang dengan peluang 71 persen dan skor akhir 2-0. Tuan rumah diperkirakan mendominasi pertandingan lewat penguasaan bola 65 persen serta mencatatkan 20 tembakan berbanding 8 milik tamu. Meski performa lima laga terakhir kedua tim cukup fluktuatif, statistik menunjukkan Man City unggul signifikan dalam akurasi umpan dengan angka 90 persen.",
+  "sidik": "f763524d55b3"
  },
  "2026/27|Nott'm Forest|Newcastle": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Nott'm Forest lebih diunggulkan dalam laga pekan ke-28 ini karena memiliki rating Elo 1512 yang sedikit lebih tinggi dibandingkan Newcastle dengan 1508. Model memprediksi tuan rumah memiliki peluang menang sebesar 49 persen, sementara hasil imbang 1-1 menjadi skor yang paling mungkin terjadi. Secara statistik, Nott'm Forest diperkirakan mencatatkan 16 tembakan dan 6 sepak pojok, sedangkan Newcastle diprediksi mendominasi penguasaan bola sebesar 53 persen dengan total 458 umpan sepanjang pertandingan."
+  "teks": "Nott'm Forest lebih diunggulkan dalam laga pekan ke-28 ini karena memiliki peluang menang 44 persen meski performa lima laga terakhir mereka kurang konsisten. Model memprediksi pertandingan berakhir dengan skor 1-1 dengan dominasi penguasaan bola 54 persen untuk Newcastle. Tuan rumah diperkirakan mencatatkan 16 tembakan dan 5 tembakan tepat sasaran, sementara tim tamu diprediksi melakukan 466 umpan dengan akurasi 79 persen.",
+  "sidik": "0c8eba0c747a"
  },
  "2026/27|Man United|Everton": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Man United lebih diunggulkan dengan peluang menang 52 persen karena memiliki rating Elo 1539 yang sedikit lebih tinggi dibandingkan Everton. Meskipun tim tamu sedang dalam tren performa yang lebih baik, model memprediksi laga ini akan berakhir imbang dengan skor 1-1. Secara statistik, tuan rumah diprediksi mendominasi penguasaan bola sebesar 56 persen dengan catatan 18 tembakan sepanjang pertandingan. Kedua tim juga diperkirakan akan mencatatkan statistik yang cukup berimbang dengan masing-masing dua kartu kuning."
+  "teks": "Man United diunggulkan dalam laga pekan ke-29 pada 13 Maret 2027 karena memiliki rating Elo 1523 yang lebih tinggi dibandingkan Everton dengan 1511. Model memprediksi peluang menang tuan rumah sebesar 50 persen dengan skor akhir paling mungkin 1-1. Dalam laga ini, Man United diperkirakan mendominasi penguasaan bola sebesar 56 persen serta mencatatkan 18 tembakan berbanding 11 tembakan milik Everton.",
+  "sidik": "1547a34a8af3"
  },
  "2026/27|Liverpool|Ipswich": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Liverpool lebih diunggulkan dalam laga pekan ke-29 pada 13 Maret 2027 karena memiliki rating Elo 1613 dan catatan tiga kemenangan dari lima laga terakhir. Model memprediksi tuan rumah memiliki peluang menang sebesar 68 persen dengan skor akhir 2-0. Pertandingan ini diperkirakan akan didominasi Liverpool melalui penguasaan bola 61 persen, 19 tembakan, dan 533 umpan sukses dibandingkan 39 persen penguasaan bola, 10 tembakan, serta 356 umpan dari Ipswich."
+  "teks": "Liverpool lebih diunggulkan dalam laga pekan ke-29 pada 13 Maret 2027 karena memiliki performa lebih stabil dengan empat kemenangan dari lima laga terakhir dibandingkan Ipswich yang menelan tiga kekalahan. Model memprediksi tuan rumah memiliki peluang menang 73 persen dengan skor akhir 2-0. Liverpool diperkirakan mendominasi penguasaan bola sebesar 62 persen dan mencatatkan 21 tembakan, sementara Ipswich hanya diprediksi melakukan 9 tembakan dengan penguasaan bola 38 persen.",
+  "sidik": "ea752f3b953c"
  },
  "2026/27|Tottenham|Nott'm Forest": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Tottenham lebih diunggulkan dengan peluang menang 46 persen meski memiliki rating Elo lebih rendah daripada Nott'm Forest. Performa Tottenham dalam lima laga terakhir mencatatkan dua kemenangan dan satu hasil imbang, sementara Nott'm Forest meraih satu kemenangan dan satu hasil imbang. Model memprediksi skor akhir 1-1 dengan penguasaan bola 61 persen bagi tuan rumah. Pertandingan ini diperkirakan akan diwarnai dengan 14 tembakan dari Tottenham dan 11 tembakan dari Nott'm Forest."
+  "teks": "Tottenham lebih diunggulkan dengan peluang menang 47 persen karena mencatatkan empat kemenangan dalam lima laga terakhir dibandingkan catatan buruk tim tamu. Meski begitu, model memprediksi skor akhir 1-1 dengan peluang seri sebesar 25 persen. Pertandingan ini diperkirakan berjalan dengan dominasi tuan rumah yang diproyeksikan menguasai 62 persen bola, melakukan 15 tembakan, dan mencatat 572 umpan. Statistik tim tamu diprediksi hanya mencapai 38 persen penguasaan bola dengan 11 tembakan serta 341 umpan sepanjang laga pekan ke-29 ini.",
+  "sidik": "a1e360e629cd"
  },
  "2026/27|Sunderland|Brentford": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Sunderland lebih diunggulkan dengan peluang menang 38 persen karena performa terbaru yang lebih konsisten dibandingkan Brentford. Model memprediksi laga pekan ke-29 pada 13 Maret 2027 ini berakhir imbang dengan skor 1-1. Statistik menunjukkan Sunderland akan mencatatkan 15 tembakan dan 48 persen penguasaan bola, sementara Brentford diprediksi melakukan 420 umpan dengan akurasi 79 persen. Kedua tim diperkirakan sama-sama memperoleh 5 sepak pojok dan 4 tembakan tepat sasaran dalam pertandingan ini."
+  "teks": "Brentford lebih diunggulkan dalam laga pekan ke-29 pada 13 Maret 2027 karena memiliki rating Elo 1576 yang lebih tinggi dibandingkan Sunderland. Model memprediksi Brentford memiliki peluang menang sebesar 40 persen berkat performa yang lebih stabil dalam lima laga terakhir. Pertandingan ini diperkirakan berakhir dengan skor imbang 1-1 dengan statistik penguasaan bola 45 persen untuk tuan rumah dan 55 persen untuk tamu. Kedua tim diprediksi mencatatkan jumlah tembakan, tembakan tepat sasaran, sepak pojok, serta pelanggaran yang sama dalam laga ini.",
+  "sidik": "ee9709410cd1"
  },
  "2026/27|Leeds|Brighton": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Brighton lebih diunggulkan dalam laga pekan ke-29 pada 13 Maret 2027 karena memiliki rating Elo 1640 dan catatan empat kemenangan dari lima laga terakhir. Model memprediksi tim tamu meraih 46 persen peluang menang dengan penguasaan bola 61 persen serta 523 umpan. Meskipun skor 1-1 menjadi hasil paling mungkin, Brighton diprediksi unggul tipis dalam statistik dengan 13 tembakan dan 5 tembakan tepat sasaran. Leeds sendiri hanya memiliki peluang menang 28 persen setelah mencatatkan hasil kurang konsisten dalam lima pertandingan sebelumnya."
+  "teks": "Brighton lebih diunggulkan dalam laga pekan ke-29 pada 13 Maret 2027 karena memiliki rating Elo lebih tinggi sebesar 1619 dibandingkan Leeds yang hanya 1552. Model memprediksi kemenangan tim tamu dengan peluang 39 persen, sedangkan tuan rumah memiliki peluang 34 persen. Pertandingan ini diperkirakan berakhir dengan skor 1-1 dengan statistik penguasaan bola 39 persen berbanding 61 persen. Kedua tim diprediksi mencatatkan jumlah tembakan yang sama yaitu 13 kali dengan masing-masing 4 dan 5 tembakan tepat sasaran.",
+  "sidik": "c1ee1afb0853"
  },
  "2026/27|Coventry|Man City": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Man City lebih diunggulkan dalam laga pekan ke-29 pada 13 Maret 2027 karena memiliki rating Elo 1678 yang jauh lebih tinggi daripada Coventry. Model memprediksi Man City menang dengan peluang 60 persen, meskipun skor paling mungkin adalah 1-1. Dalam laga ini, Man City diperkirakan mendominasi dengan 70 persen penguasaan bola dan 16 tembakan, sementara Coventry diprediksi hanya mencatatkan 30 persen penguasaan bola dan 10 tembakan."
+  "teks": "Man City lebih diunggulkan dalam laga pekan ke-29 pada 13 Maret 2027 karena memiliki rating Elo 1672 yang jauh lebih tinggi dibandingkan Coventry. Model memprediksi kemenangan tamu sebesar 59 persen dengan skor akhir 1-1 sebagai hasil yang paling mungkin terjadi. Statistik pertandingan diperkirakan mencatat penguasaan bola 32 persen untuk tuan rumah berbanding 68 persen bagi tamu. Selain itu, laga ini diprediksi menghasilkan 10 tembakan dari Coventry dan 15 tembakan dari Man City.",
+  "sidik": "35a4ac35cb05"
  },
  "2026/27|Crystal Palace|Fulham": {
   "status": "mendatang",
-  "sumber": "gemini",
-  "teks": "Fulham lebih diunggulkan dalam laga pekan ke-29 pada 13 Maret 2027 karena memiliki rating Elo 1504 dan performa lebih stabil dibandingkan Crystal Palace yang kalah empat kali dalam lima laga terakhir. Model memprediksi Fulham menang dengan peluang 47 persen, sementara tuan rumah hanya 27 persen dan peluang seri 26 persen. Pertandingan ini diperkirakan berakhir dengan skor 1-1 melalui penguasaan bola 40 persen berbanding 60 persen. Kedua tim diprediksi mencatatkan statistik yang cukup berimbang dengan 13 berbanding 15 tembakan serta masing-masing dua kartu kuning."
+  "sumber": "template",
+  "teks": "Model mengunggulkan Fulham pada laga Crystal Palace melawan Fulham, dengan peluang menang tuan rumah 29%, seri 26%, dan tamu 45%. Skor yang paling mungkin 1-1.",
+  "sidik": "364842c307cb"
  },
  "2026/27|Chelsea|Arsenal": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Arsenal lebih diunggulkan dalam laga pekan ke-29 pada 13 Maret 2027 karena memiliki catatan lima kemenangan beruntun dan rating Elo lebih tinggi yakni 1724. Model memprediksi Arsenal memiliki peluang menang 45 persen dibandingkan Chelsea yang hanya 29 persen. Pertandingan ini diperkirakan berakhir dengan skor 1-1 dengan statistik penguasaan bola 47 persen untuk Chelsea dan 53 persen untuk Arsenal. Kedua tim diprediksi mencatatkan 12 dan 13 tembakan dengan masing-masing 4 dan 5 tembakan tepat sasaran."
+  "teks": "Arsenal lebih diunggulkan dalam laga pekan ke-29 pada 13 Maret 2027 karena memiliki rating Elo 1720 dan catatan empat kemenangan dalam lima laga terakhir. Model memprediksi Arsenal memiliki peluang menang 50 persen, sementara Chelsea hanya 25 persen dengan kemungkinan seri 25 persen. Pertandingan ini diprediksi berakhir dengan skor 1-1 melalui statistik 12 tembakan bagi Chelsea dan 13 tembakan bagi Arsenal. Kedua tim juga diperkirakan mencatatkan lima sepak pojok dengan penguasaan bola 43 persen untuk Chelsea dan 57 persen untuk Arsenal.",
+  "sidik": "91285ee6c395"
  },
  "2026/27|Bournemouth|Newcastle": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Bournemouth lebih diunggulkan dalam laga pekan ke-29 pada 13 Maret 2027 karena memiliki rating Elo 1588 dan catatan empat kemenangan dalam lima laga terakhir. Model memprediksi tuan rumah memiliki peluang menang 57 persen dengan perkiraan skor akhir 1-1. Dalam laga ini, Bournemouth diproyeksikan menguasai bola sebesar 53 persen dengan 17 tembakan, sementara Newcastle diperkirakan mencatat 47 persen penguasaan bola dan 10 tembakan."
+  "teks": "Bournemouth diunggulkan memenangkan laga pekan ke-29 pada 13 Maret 2027 karena performa lima laga terakhir yang sempurna dibandingkan Newcastle yang belum stabil. Model memprediksi Bournemouth memiliki peluang menang sebesar 58 persen dengan penguasaan bola 53 persen dan 17 tembakan. Meskipun demikian, skor 1-1 menjadi hasil yang paling mungkin terjadi dengan statistik kedua tim yang diperkirakan mencatat masing-masing 12 pelanggaran dan 2 kartu kuning.",
+  "sidik": "6b215ec83f81"
  },
  "2026/27|Aston Villa|Hull": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Aston Villa lebih diunggulkan dalam laga pekan ke-29 pada 13 Maret 2027 karena memiliki rating Elo 1557 dan catatan lima laga terakhir yang lebih konsisten dibandingkan Hull. Model memprediksi Aston Villa memiliki peluang menang 54 persen dengan skor akhir yang paling mungkin adalah 1-1. Dalam pertandingan ini, tuan rumah diperkirakan mendominasi penguasaan bola sebesar 62 persen dengan 16 tembakan, sementara Hull diprediksi mencatatkan 11 tembakan dan 38 persen penguasaan bola."
+  "teks": "Aston Villa lebih diunggulkan dalam laga pekan ke-29 pada 13 Maret 2027 karena memiliki rating Elo 1553 serta catatan tiga seri dan dua kemenangan beruntun. Model memprediksi tuan rumah memiliki peluang menang 54 persen dengan skor akhir 1-1. Dalam laga ini, Aston Villa diperkirakan mendominasi penguasaan bola sebesar 63 persen dengan 16 tembakan, sementara Hull diprediksi mencatatkan 11 tembakan dan 37 persen penguasaan bola.",
+  "sidik": "18ab9163baca"
  },
  "2026/27|Newcastle|Leeds": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Newcastle lebih diunggulkan dalam laga pekan ke-30 ini dengan peluang menang sebesar 40 persen karena memiliki catatan performa yang sedikit lebih baik daripada Leeds. Model memprediksi pertandingan akan berakhir imbang dengan skor 1-1. Kedua tim diperkirakan akan mencatatkan statistik yang cukup seimbang, termasuk perolehan 4 tembakan tepat sasaran serta 5 sepak pojok bagi masing-masing pihak."
+  "teks": "Leeds lebih diunggulkan dalam laga pekan ke-30 ini karena memiliki rating Elo 1552 dan performa yang lebih stabil dengan catatan dua kemenangan beruntun. Model memprediksi peluang menang kedua tim sama kuat di angka 37 persen dengan skor akhir paling mungkin 1-1. Pertandingan ini diperkirakan berjalan sengit dengan statistik penguasaan bola yang seimbang di angka 50 persen bagi kedua tim. Kedua kesebelasan juga diprediksi mencatatkan jumlah tembakan tepat sasaran yang sama yaitu empat kali.",
+  "sidik": "dadca71c0600"
  },
  "2026/27|Man City|Man United": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Man City lebih diunggulkan dalam laga pekan ke-30 pada 20-03-2027 karena memiliki rating Elo 1678 yang lebih tinggi dibandingkan Man United. Model memprediksi kemenangan tuan rumah sebesar 63 persen dengan skor akhir paling mungkin 2-1. Pertandingan ini diperkirakan akan didominasi Man City dengan penguasaan bola 59 persen dan 17 tembakan. Sementara itu, Man United diprediksi melakukan 10 tembakan dengan akurasi umpan 82 persen."
+  "teks": "Man City lebih diunggulkan dalam laga pekan ke-30 pada 20 Maret 2027 karena memiliki rating Elo 1672 yang jauh lebih tinggi dibandingkan Man United dengan 1523. Model memprediksi Man City menang dengan peluang 68 persen dan skor akhir 2-0. Tuan rumah diperkirakan mendominasi pertandingan lewat penguasaan bola 62 persen, 18 tembakan, serta 620 umpan dengan akurasi 89 persen. Sebaliknya, Man United diprediksi hanya mencatatkan 38 persen penguasaan bola dan 10 tembakan sepanjang laga.",
+  "sidik": "ffccfebb524c"
  },
  "2026/27|Ipswich|Crystal Palace": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Ipswich diunggulkan dalam laga pekan ke-30 pada 20-03-2027 karena performa lima laga terakhir yang lebih stabil dibandingkan Crystal Palace. Model memprediksi Ipswich memiliki peluang menang sebesar 43 persen, sementara Crystal Palace hanya 31 persen dengan kemungkinan seri 26 persen. Pertandingan ini diperkirakan berakhir dengan skor 1-1 melalui dominasi penguasaan bola 54 persen bagi tuan rumah. Statistik laga diprediksi mencatatkan 15 tembakan untuk Ipswich dan 12 tembakan untuk Crystal Palace."
+  "teks": "Ipswich lebih diunggulkan dengan peluang menang 41 persen karena performa Crystal Palace yang menelan lima kekalahan beruntun. Pertandingan pekan ke-30 ini diprediksi berakhir imbang dengan skor 1-1. Model statistik memperkirakan Ipswich akan mendominasi penguasaan bola sebesar 54 persen dengan 15 tembakan, sementara Crystal Palace mencatatkan 46 persen penguasaan bola dan 12 tembakan.",
+  "sidik": "27ee6e799e75"
  },
  "2026/27|Hull|Chelsea": {
   "status": "mendatang",
-  "sumber": "gemini",
-  "teks": "Chelsea lebih diunggulkan dalam laga pekan ke-30 pada 20 Maret 2027 karena memiliki rating Elo 1544 yang lebih tinggi dibandingkan Hull dengan 1498. Model memprediksi Chelsea meraih 44 persen peluang menang dengan penguasaan bola 61 persen dan 550 umpan. Meskipun demikian, skor 1-1 menjadi hasil yang paling mungkin terjadi dalam pertandingan ini. Kedua tim diperkirakan akan mencatatkan statistik yang cukup berimbang dengan masing-masing melakukan 5 sepak pojok."
+  "sumber": "template",
+  "teks": "Model mengunggulkan Chelsea pada laga Hull melawan Chelsea, dengan peluang menang tuan rumah 34%, seri 27%, dan tamu 39%. Skor yang paling mungkin 1-1.",
+  "sidik": "156545dd4f9a"
  },
  "2026/27|Nott'm Forest|Aston Villa": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Nott'm Forest lebih diunggulkan dengan peluang menang 45 persen karena model memproyeksikan keunggulan statistik meski performa lima laga terakhir mereka lebih buruk dibanding Aston Villa. Laga pekan ke-30 pada 20 Maret 2027 ini diprediksi berakhir imbang 1-1. Tuan rumah diperkirakan mencatat 17 tembakan dan 5 tembakan tepat sasaran, sementara Aston Villa diprediksi mendominasi penguasaan bola sebesar 55 persen dengan 481 umpan."
+  "teks": "Nott'm Forest akan menjamu Aston Villa pada pekan ke-30 tanggal 20-03-2027 dengan tantangan performa yang kurang stabil. Meski Aston Villa lebih konsisten dalam lima laga terakhir, model justru mengunggulkan Nott'm Forest dengan peluang menang 41 persen karena keunggulan sebagai tuan rumah. Pertandingan ini diprediksi berakhir imbang 1-1 dengan statistik penguasaan bola 45 persen berbanding 55 persen untuk tim tamu. Kedua tim diperkirakan mencatatkan masing-masing 4 tembakan tepat sasaran dalam laga tersebut.",
+  "sidik": "351ab657389c"
  },
  "2026/27|Everton|Tottenham": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Everton lebih diunggulkan dengan peluang menang 38 persen berkat catatan tiga kemenangan dalam lima laga terakhir serta rating Elo 1529 yang lebih tinggi dari Tottenham. Laga pekan ke-30 ini diprediksi berakhir imbang 1-1 dengan dominasi penguasaan bola 54 persen bagi tim tamu. Pertandingan diperkirakan berjalan ketat dengan catatan 14 tembakan untuk tuan rumah dan 13 tembakan untuk tim tamu. Kedua tim juga diprediksi sama-sama mencatatkan 4 tembakan tepat sasaran serta 5 sepak pojok."
+  "teks": "Tottenham lebih diunggulkan dengan peluang menang 40 persen karena performa mereka yang lebih konsisten melalui empat kemenangan dalam lima laga terakhir. Model memprediksi laga pekan ke-30 ini akan berakhir imbang dengan skor 1-1. Statistik pertandingan diperkirakan mencakup penguasaan bola 41 persen bagi Everton dan 59 persen bagi Tottenham. Kedua tim juga diprediksi mencatatkan jumlah tembakan yang cukup seimbang, yaitu 13 tembakan untuk Everton dan 14 tembakan untuk Tottenham.",
+  "sidik": "15586f3bdfe1"
  },
  "2026/27|Brighton|Coventry": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Brighton lebih diunggulkan dalam laga pekan ke-30 ini karena memiliki catatan empat kemenangan dalam lima laga terakhir serta rating Elo yang lebih tinggi yaitu 1640. Model memprediksi tuan rumah akan menang dengan skor 2-0 dan mendominasi pertandingan lewat penguasaan bola 66 persen. Brighton diperkirakan melepaskan 19 tembakan dengan 6 di antaranya tepat sasaran, sementara Coventry hanya mampu mencatatkan 9 tembakan dengan 3 tepat sasaran."
+  "teks": "Brighton lebih diunggulkan dalam laga pekan ke-30 ini karena memiliki rating Elo 1619 yang jauh lebih tinggi dibandingkan Coventry dengan 1469. Model memprediksi tuan rumah meraih kemenangan dengan peluang 65 persen berkat performa yang lebih stabil dalam lima laga terakhir. Pertandingan ini diperkirakan berakhir dengan skor 2-0 untuk keunggulan Brighton. Statistik menunjukkan tuan rumah akan mendominasi dengan 66 persen penguasaan bola, 18 tembakan, dan 594 umpan akurat sepanjang laga.",
+  "sidik": "e4c9f84f26b9"
  },
  "2026/27|Brentford|Bournemouth": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Bournemouth lebih diunggulkan dalam laga pekan ke-30 ini karena mencatatkan empat kemenangan beruntun dalam lima laga terakhir, sementara Brentford hanya meraih satu kemenangan. Model memprediksi Bournemouth memiliki peluang menang sebesar 42 persen dibandingkan 32 persen untuk tuan rumah. Pertandingan ini diperkirakan berakhir dengan skor 1-1 dengan statistik yang cukup berimbang, termasuk catatan 4 tembakan tepat sasaran dan 5 sepak pojok bagi masing-masing tim."
+  "teks": "Bournemouth lebih diunggulkan dalam laga pekan ke-30 ini karena mencatatkan lima kemenangan beruntun dan memiliki rating Elo 1599. Model memprediksi Bournemouth memiliki peluang menang 39 persen dibandingkan Brentford yang hanya 35 persen. Pertandingan ini diperkirakan berakhir dengan skor 1-1 dengan statistik yang cukup berimbang, termasuk catatan 13 tembakan bagi kedua tim.",
+  "sidik": "c4db2f4d64ca"
  },
  "2026/27|Arsenal|Sunderland": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Arsenal sangat diunggulkan dalam laga pekan ke-30 ini karena mencatatkan lima kemenangan beruntun dibandingkan Sunderland yang hanya menang sekali dalam lima laga terakhir. Model memprediksi Arsenal menang dengan peluang 72 persen dan skor akhir 2-0. Pertandingan ini diperkirakan akan didominasi tuan rumah dengan penguasaan bola 64 persen serta 18 tembakan berbanding 9 tembakan milik tim tamu."
+  "teks": "Arsenal lebih diunggulkan dalam laga pekan ke-30 ini karena performa yang lebih konsisten dengan empat kemenangan dan satu hasil seri dalam lima laga terakhir. Model memprediksi Arsenal menang dengan peluang 73 persen dan skor akhir 2-0. Pertandingan ini diperkirakan akan didominasi tuan rumah dengan penguasaan bola 64 persen berbanding 36 persen serta catatan 18 tembakan. Selain itu, Arsenal diproyeksikan unggul dalam akurasi umpan sebesar 87 persen dibandingkan 77 persen milik Sunderland.",
+  "sidik": "a3983765f899"
  },
  "2026/27|Fulham|Liverpool": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Liverpool lebih diunggulkan dalam laga pekan ke-30 ini karena memiliki rating Elo yang lebih tinggi yaitu 1613 dibandingkan Fulham dengan 1504. Model memprediksi tim tamu memiliki peluang menang 43 persen dengan skor paling mungkin adalah 1-1. Pertandingan ini diperkirakan akan berjalan cukup ketat dengan statistik kedua tim yang hampir seimbang, termasuk catatan 4 tembakan tepat sasaran dan 5 sepak pojok bagi masing-masing pihak."
+  "teks": "Liverpool lebih diunggulkan dengan peluang menang 48 persen karena memiliki rating Elo 1628 dan catatan empat kemenangan dari lima laga terakhir. Meskipun Fulham tampil cukup stabil dengan tiga hasil seri beruntun, model memprediksi skor paling mungkin adalah 1-1. Laga pekan ke-30 ini diperkirakan akan diwarnai oleh 15 tembakan dari Liverpool dan 13 tembakan dari Fulham. Selain itu, kedua tim diprediksi akan mencatatkan masing-masing dua kartu kuning sepanjang pertandingan.",
+  "sidik": "fbd9c18e81ab"
  },
  "2026/27|Tottenham|Brentford": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Tottenham lebih diunggulkan dengan peluang menang 48 persen karena performa mereka dalam lima laga terakhir sedikit lebih stabil dibandingkan Brentford. Model memprediksi laga pekan ke-31 ini akan berakhir imbang dengan skor 1-1. Tottenham diperkirakan mendominasi penguasaan bola sebesar 58 persen dengan 17 tembakan, sementara Brentford diprediksi mencatatkan 10 tembakan. Kedua tim kemungkinan akan bermain cukup seimbang dengan catatan masing-masing 12 pelanggaran dan 2 kartu kuning."
+  "teks": "Tottenham lebih diunggulkan dengan peluang menang 44 persen karena performa empat kemenangan dalam lima laga terakhir dibandingkan Brentford yang hanya meraih satu kemenangan. Model memprediksi laga ini akan berakhir imbang dengan skor 1-1. Tottenham diperkirakan mendominasi penguasaan bola sebesar 56 persen dengan 16 tembakan, sementara Brentford diprediksi mencatatkan 11 tembakan sepanjang pertandingan.",
+  "sidik": "64d261f13f2d"
  },
  "2026/27|Sunderland|Ipswich": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Sunderland lebih diunggulkan dalam laga pekan ke-31 melawan Ipswich karena memiliki rating Elo lebih tinggi sebesar 1460 berbanding 1412. Model memprediksi tuan rumah memiliki peluang menang 47 persen, namun skor paling mungkin adalah hasil imbang 1-1. Pertandingan ini diperkirakan akan diwarnai oleh 15 tembakan dari Sunderland dan 11 tembakan dari Ipswich. Kedua tim diprediksi mencatatkan penguasaan bola yang cukup seimbang dengan 51 persen untuk tuan rumah dan 49 persen untuk tim tamu."
+  "teks": "Sunderland lebih diunggulkan dalam laga pekan ke-31 melawan Ipswich karena memiliki rating Elo 1464 yang lebih tinggi dan performa lima laga terakhir yang lebih baik. Model memprediksi tuan rumah memiliki peluang menang sebesar 48 persen dengan skor akhir paling mungkin 1-1. Pertandingan ini diperkirakan akan diwarnai oleh 15 tembakan dari Sunderland dan 11 tembakan dari Ipswich dengan penguasaan bola yang cukup berimbang di angka 51 persen berbanding 49 persen.",
+  "sidik": "1d1c89e03860"
  },
  "2026/27|Man United|Hull": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Man United lebih diunggulkan dengan peluang menang 59 persen karena memiliki rating Elo 1539 yang lebih tinggi dibandingkan 1498 milik Hull. Meski performa lima laga terakhir kedua tim cenderung kurang konsisten, model memprediksi skor akhir 1-1 dalam pertandingan pekan ke-31 ini. Man United diperkirakan mendominasi penguasaan bola sebesar 64 persen dengan 19 tembakan, sementara Hull diprediksi melepaskan 10 tembakan serta mencatatkan 335 umpan sepanjang laga."
+  "teks": "Man United lebih diunggulkan dengan peluang menang 53 persen karena memiliki rating Elo 1523 yang sedikit lebih tinggi dibandingkan Hull. Meski performa lima laga terakhir Man United kurang stabil dengan catatan SKKSK, mereka diprediksi mendominasi penguasaan bola sebesar 61 persen. Pertandingan pekan ke-31 pada 10-04-2027 ini diperkirakan berakhir dengan skor 1-1. Model statistik memproyeksikan Man United mencatatkan 18 tembakan dan 545 umpan, sementara Hull diperkirakan melakukan 11 tembakan dan 346 umpan.",
+  "sidik": "cba577a8795a"
  },
  "2026/27|Liverpool|Newcastle": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Liverpool lebih diunggulkan dalam laga pekan ke-31 ini karena memiliki rating Elo 1613 dan performa lebih stabil dibandingkan Newcastle yang meraih rating 1508. Model memprediksi peluang menang tuan rumah sebesar 60 persen dengan skor akhir paling mungkin 1-1. Statistik pertandingan diperkirakan mencatat penguasaan bola 56 persen bagi Liverpool serta 18 tembakan berbanding 11 tembakan dari Newcastle."
+  "teks": "Liverpool lebih diunggulkan dalam laga pekan ke-31 nanti berkat catatan empat kemenangan dari lima laga terakhir dibandingkan Newcastle yang belum pernah menang dalam periode yang sama. Model memprediksi Liverpool memiliki peluang menang sebesar 64 persen dengan skor akhir 2-0. Pertandingan ini diperkirakan akan didominasi tuan rumah melalui penguasaan bola 56 persen serta catatan 19 tembakan berbanding 10 tembakan milik tim tamu.",
+  "sidik": "90c24ab831d6"
  },
  "2026/27|Leeds|Nott'm Forest": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Leeds lebih diunggulkan dalam laga pekan ke-31 melawan Nott'm Forest karena memiliki rating Elo 1526 yang sedikit lebih tinggi dibandingkan 1512. Model memprediksi Leeds memiliki peluang menang 39 persen dengan skor akhir yang paling mungkin adalah 1-1. Dalam laga ini, tuan rumah diperkirakan mendominasi penguasaan bola sebesar 53 persen dengan catatan 13 tembakan. Statistik lainnya mencakup 4 tembakan tepat sasaran, 5 sepak pojok, serta akurasi umpan mencapai 78 persen bagi Leeds."
+  "teks": "Leeds lebih diunggulkan dalam laga pekan ke-31 melawan Nott'm Forest berkat catatan dua kemenangan beruntun di lima laga terakhir serta rating Elo yang lebih tinggi. Model memprediksi peluang menang tuan rumah sebesar 45 persen, sedangkan tim tamu hanya memiliki peluang 29 persen. Pertandingan ini diperkirakan berakhir imbang dengan skor 1-1 melalui statistik 14 tembakan untuk Leeds dan 12 tembakan bagi Nott'm Forest. Leeds diproyeksikan mendominasi penguasaan bola sebesar 54 persen dengan akurasi umpan mencapai 79 persen.",
+  "sidik": "5c7b7b517a76"
  },
  "2026/27|Coventry|Arsenal": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Arsenal diunggulkan menang dengan peluang 61 persen karena performa impresif mereka yang meraih lima kemenangan beruntun, sementara Coventry hanya mampu mencatat satu kemenangan dalam lima laga terakhir. Model memprediksi skor akhir 0-1 untuk keunggulan tim tamu dalam pertandingan pekan ke-31 ini. Arsenal diperkirakan mendominasi dengan 66 persen penguasaan bola dan 15 tembakan, berbanding 34 persen penguasaan bola serta 10 tembakan milik Coventry."
+  "teks": "Arsenal lebih diunggulkan dalam laga pekan ke-31 karena memiliki rating Elo 1720 dan rekor empat kemenangan dalam lima laga terakhir. Model memprediksi Arsenal menang dengan peluang 60 persen dan skor 0-1. Pertandingan ini diperkirakan akan didominasi tim tamu dengan 66 persen penguasaan bola serta 15 tembakan, sementara Coventry diprediksi hanya mencatatkan 34 persen penguasaan bola dan 10 tembakan.",
+  "sidik": "0d4704e3dfb8"
  },
  "2026/27|Chelsea|Fulham": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Chelsea lebih diunggulkan dalam laga pekan ke-31 ini dengan peluang menang 48 persen karena memiliki rating Elo 1544 yang lebih tinggi dibandingkan Fulham. Model memprediksi hasil imbang 1-1 dengan dominasi penguasaan bola 52 persen bagi tuan rumah. Pertandingan ini diperkirakan akan diwarnai oleh 15 tembakan dari Chelsea dan 11 tembakan dari Fulham. Kedua tim diprediksi melakukan masing-masing 2 kartu kuning selama laga berlangsung."
+  "teks": "Chelsea lebih diunggulkan dengan peluang menang 44 persen berkat rating Elo 1518 yang sedikit lebih tinggi dibandingkan Fulham. Meskipun performa lima laga terakhir Fulham lebih stabil dengan catatan dua kemenangan dan tiga hasil seri, model memprediksi skor akhir 1-1. Pertandingan ini diperkirakan berlangsung sengit dengan statistik penguasaan bola yang seimbang di angka 50 persen bagi kedua tim. Chelsea diproyeksikan melepaskan 14 tembakan, sementara Fulham diperkirakan mencatatkan 12 tembakan sepanjang laga.",
+  "sidik": "1d0f4b78fba2"
  },
  "2026/27|Bournemouth|Man City": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Bournemouth akan menjamu Man City pada pekan ke-31 tanggal 10 April 2027 dengan modal empat kemenangan beruntun. Meski Man City lebih diunggulkan oleh model dengan peluang menang 43 persen karena memiliki rating Elo 1678, tren performa lima laga terakhir menunjukkan keunggulan tuan rumah. Pertandingan ini diprediksi berakhir imbang 1-1 dengan statistik kedua tim yang cukup berimbang, termasuk catatan 12 tembakan dan 4 tembakan tepat sasaran bagi masing-masing pihak."
+  "teks": "Bournemouth yang sedang dalam tren lima kemenangan beruntun akan menjamu Man City pada pekan ke-31 tanggal 10-04-2027. Meskipun Man City lebih diunggulkan dengan peluang menang 40 persen karena memiliki rating Elo lebih tinggi, performa mereka yang belum menang dalam empat laga terakhir membuat model memprediksi skor imbang 1-1. Pertandingan ini diperkirakan akan berlangsung cukup ketat dengan statistik 12 tembakan bagi tuan rumah dan 13 tembakan bagi tim tamu. Selain itu, Man City diprediksi mendominasi penguasaan bola sebesar 60 persen dibandingkan 40 persen milik Bournemouth.",
+  "sidik": "9c1f13223f2a"
  },
  "2026/27|Aston Villa|Brighton": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Brighton lebih diunggulkan dalam laga pekan ke-31 pada 10 April 2027 karena memiliki rating Elo 1640 dan catatan empat kemenangan dari lima laga terakhir. Model memprediksi tim tamu memiliki peluang menang sebesar 47 persen dengan skor akhir 1-1. Dalam pertandingan ini, Brighton diperkirakan mendominasi penguasaan bola sebesar 57 persen serta melepaskan 15 tembakan dibandingkan 12 tembakan milik Aston Villa."
+  "teks": "Brighton lebih diunggulkan dalam laga pekan ke-31 ini karena memiliki rating Elo 1619 yang lebih tinggi dibandingkan Aston Villa. Model memprediksi tim tamu memiliki peluang menang sebesar 41 persen dengan skor akhir yang paling mungkin adalah 1-1. Dalam pertandingan ini, Brighton diperkirakan mendominasi penguasaan bola sebesar 59 persen dan melepaskan 15 tembakan. Sementara itu, Aston Villa diprediksi mencatatkan 41 persen penguasaan bola dengan 13 total tembakan.",
+  "sidik": "af636b98b2ed"
  },
  "2026/27|Crystal Palace|Everton": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Everton lebih diunggulkan untuk memenangkan laga pekan ke-31 ini dengan peluang 47 persen karena performa mereka yang lebih stabil dibandingkan Crystal Palace. Model memprediksi skor akhir 1-1 dengan dominasi tipis Everton lewat penguasaan bola 53 persen dan 15 tembakan. Statistik lainnya diperkirakan cukup berimbang dengan masing-masing tim mencatatkan 5 sepak pojok serta 11 pelanggaran."
+  "teks": "Everton lebih diunggulkan dengan peluang menang 42 persen karena memiliki rating Elo 1511 serta catatan dua kemenangan dalam lima laga terakhir. Sebaliknya, Crystal Palace sedang dalam tren negatif setelah menelan lima kekalahan beruntun. Model memprediksi laga ini akan berakhir imbang dengan skor 1-1. Pertandingan ini diperkirakan berjalan cukup berimbang dengan statistik tembakan masing-masing tim sebanyak 14 kali dan penguasaan bola 47 persen berbanding 53 persen.",
+  "sidik": "2b527fcad390"
  },
  "2026/27|Ipswich|Man United": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Ipswich akan menjamu Man United pada pekan ke-32 tanggal 17-04-2027 dengan tim tamu lebih diunggulkan karena memiliki rating Elo 1539 dibanding tuan rumah yang hanya 1412. Model memprediksi Man United memiliki peluang menang 57% dengan skor paling mungkin 1-1. Dalam laga ini, Man United diperkirakan mendominasi penguasaan bola sebesar 55% serta mencatatkan 16 tembakan dan 5 tembakan tepat sasaran."
+  "teks": "Man United lebih diunggulkan dengan peluang menang 50% karena memiliki rating Elo 1523 yang lebih tinggi dibandingkan Ipswich. Meskipun performa kedua tim dalam lima laga terakhir kurang konsisten, model memprediksi skor akhir 1-1. Laga pekan ke-32 ini diperkirakan diwarnai dengan 12 tembakan dari tuan rumah dan 16 tembakan dari tim tamu. Man United juga diprediksi sedikit lebih unggul dalam penguasaan bola sebesar 52% dengan akurasi umpan mencapai 83%.",
+  "sidik": "618ddf817d3c"
  },
  "2026/27|Newcastle|Tottenham": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Tottenham lebih diunggulkan dalam laga pekan ke-32 ini karena mencatatkan empat kemenangan dalam lima laga terakhir dibandingkan Newcastle yang hanya meraih satu kemenangan. Model memprediksi Tottenham memiliki peluang menang sebesar 38 persen, sedikit lebih tinggi dari Newcastle yang berada di angka 36 persen. Pertandingan ini diperkirakan berakhir dengan skor 1-1 dengan statistik kedua tim yang cukup berimbang, termasuk jumlah tembakan sebanyak 13 kali serta 4 tembakan tepat sasaran bagi masing-masing pihak."
+  "teks": "Tottenham lebih diunggulkan dalam laga pekan ke-32 pada 17 April 2027 karena memiliki catatan performa lebih baik dengan tiga kemenangan dalam lima laga terakhir dibandingkan Newcastle yang belum pernah menang. Model memprediksi kemenangan tim tamu dengan peluang 38 persen, sementara tuan rumah memiliki peluang 36 persen dan hasil seri 26 persen. Pertandingan ini diperkirakan berakhir dengan skor 1-1 dengan statistik kedua tim yang cukup berimbang, termasuk catatan 13 tembakan dan 4 tembakan tepat sasaran untuk masing-masing pihak.",
+  "sidik": "fadb78fb6f9e"
  },
  "2026/27|Man City|Crystal Palace": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Man City lebih diunggulkan dengan peluang menang 80 persen karena memiliki rating Elo 1678 yang jauh lebih tinggi dibandingkan Crystal Palace. Model memprediksi laga pekan ke-32 pada 17 April 2027 ini berakhir dengan skor 2-0 untuk kemenangan tuan rumah. Man City diperkirakan mendominasi pertandingan dengan penguasaan bola 68 persen, 21 tembakan, dan 9 sepak pojok. Sementara itu, Crystal Palace diprediksi hanya mencatatkan 32 persen penguasaan bola dengan 8 tembakan sepanjang laga."
+  "teks": "Man City lebih diunggulkan dalam laga pekan ke-32 ini karena memiliki rating Elo 1672 dan performa yang lebih baik dibandingkan Crystal Palace yang kalah dalam lima laga terakhir. Model memprediksi Man City menang dengan peluang 79 persen dan skor akhir 2-0. Pertandingan ini diperkirakan akan didominasi tuan rumah dengan penguasaan bola 67 persen, 21 tembakan, serta 660 umpan akurat. Sementara itu, Crystal Palace diprediksi hanya mencatatkan 33 persen penguasaan bola, 8 tembakan, dan 313 umpan sepanjang laga.",
+  "sidik": "7728f692ba3a"
  },
  "2026/27|Hull|Coventry": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Hull lebih diunggulkan dalam laga pekan ke-32 ini karena memiliki rating Elo 1498 yang lebih tinggi dibandingkan Coventry dengan 1462. Model memprediksi Hull memiliki peluang menang sebesar 41 persen, sedangkan Coventry berada di angka 32 persen dengan kemungkinan hasil imbang 27 persen. Pertandingan ini diperkirakan berakhir dengan skor 1-1 melalui penguasaan bola 51 persen bagi tuan rumah. Kedua tim diprediksi mencatatkan statistik serupa dengan 4 tembakan tepat sasaran dan masing-masing menerima 2 kartu kuning sepanjang laga."
+  "teks": "Hull lebih diunggulkan dalam laga pekan ke-32 ini berkat keunggulan rating Elo 1519 dibandingkan Coventry yang memiliki 1469. Model memprediksi peluang menang tuan rumah sebesar 42 persen dengan skor akhir yang paling mungkin adalah 1-1. Pertandingan ini diperkirakan berlangsung ketat dengan statistik penguasaan bola yang seimbang di angka 50 persen untuk kedua tim. Selain itu, kedua kesebelasan diprediksi mencatatkan jumlah tembakan tepat sasaran yang sama, yakni sebanyak 4 kali.",
+  "sidik": "38ffbf17600a"
  },
  "2026/27|Nott'm Forest|Liverpool": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Liverpool lebih diunggulkan dengan peluang menang 41 persen karena memiliki rating Elo 1613 dan performa lebih baik dibandingkan Nott'm Forest. Model memprediksi skor akhir 1-1 dengan statistik penguasaan bola 43 persen berbanding 57 persen untuk keunggulan tim tamu. Pertandingan ini diperkirakan akan berjalan cukup seimbang dengan catatan masing-masing empat tembakan tepat sasaran dan lima sepak pojok."
+  "teks": "Liverpool diunggulkan memenangkan laga pekan ke-32 pada 17 April 2027 karena memiliki rating Elo 1628 dan catatan empat kemenangan dalam lima laga terakhir. Model memprediksi tim tamu memiliki peluang menang 49 persen dibandingkan 27 persen untuk Nott'm Forest. Meski skor 1-1 menjadi hasil yang paling mungkin, statistik diperkirakan menunjukkan Liverpool mendominasi penguasaan bola sebesar 60 persen dengan 526 umpan sukses. Kedua tim diprediksi mencatatkan jumlah tembakan yang sama, yakni sebanyak 14 kali sepanjang pertandingan.",
+  "sidik": "864c8d8fe02d"
  },
  "2026/27|Everton|Bournemouth": {
   "status": "mendatang",
-  "sumber": "gemini",
-  "teks": "Bournemouth lebih diunggulkan dengan peluang menang 41 persen karena performa empat kemenangan beruntun dalam lima laga terakhir. Everton yang memiliki rating Elo lebih rendah diprediksi akan menahan imbang tamunya dengan skor 1-1. Pertandingan pekan ke-32 ini diperkirakan berjalan cukup berimbang dengan penguasaan bola masing-masing 50 persen. Kedua tim diprediksi mencatatkan jumlah tembakan tepat sasaran yang sama yaitu empat kali."
+  "sumber": "template",
+  "teks": "Model mengunggulkan Bournemouth pada laga Everton melawan Bournemouth, dengan peluang menang tuan rumah 27%, seri 25%, dan tamu 48%. Skor yang paling mungkin 1-1.",
+  "sidik": "8805b67ad427"
  },
  "2026/27|Brighton|Chelsea": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Brighton lebih diunggulkan dalam laga pekan ke-32 ini karena memiliki rating Elo 1640 dan catatan empat kemenangan dari lima laga terakhir. Model memprediksi peluang menang tuan rumah sebesar 57 persen dengan skor akhir 1-1. Pertandingan ini diperkirakan akan diwarnai oleh 15 tembakan dari Brighton dan 10 tembakan dari Chelsea. Selain itu, Brighton diprediksi mendominasi penguasaan bola sebesar 55 persen dengan akurasi umpan mencapai 84 persen."
+  "teks": "Brighton lebih diunggulkan dalam laga pekan ke-32 ini karena memiliki rating Elo 1619 yang lebih tinggi dibandingkan Chelsea dengan 1518. Model memberikan peluang menang sebesar 59 persen bagi tuan rumah, meski skor yang paling mungkin diprediksi adalah 1-1. Pertandingan ini diperkirakan akan diwarnai 16 tembakan dari Brighton dan 10 tembakan dari Chelsea. Selain itu, Brighton diproyeksikan unggul dalam penguasaan bola sebesar 55 persen berbanding 45 persen milik tim tamu.",
+  "sidik": "017888d190be"
  },
  "2026/27|Brentford|Leeds": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Brentford lebih diunggulkan dalam laga pekan ke-32 ini karena memiliki rating Elo 1558 yang lebih tinggi dibandingkan Leeds dengan 1526. Model memprediksi tuan rumah memiliki peluang menang 44 persen, meski hasil imbang 1-1 menjadi skor yang paling mungkin terjadi. Kedua tim diperkirakan akan tampil berimbang dengan catatan statistik serupa, termasuk masing-masing mencatatkan 13 tembakan dan 4 tembakan tepat sasaran. Pertandingan ini akan berlangsung sengit dengan penguasaan bola yang diprediksi mencapai 49 persen untuk Brentford dan 51 persen untuk Leeds."
+  "teks": "Brentford lebih diunggulkan dalam laga pekan ke-32 ini karena memiliki rating Elo 1576 yang lebih tinggi dibandingkan Leeds dengan 1552. Meski Leeds tampil cukup solid dalam lima laga terakhir, model memprediksi Brentford memiliki peluang menang sebesar 44 persen. Pertandingan ini diperkirakan berakhir imbang dengan skor 1-1. Statistik laga diprediksi cukup ketat dengan penguasaan bola 51 persen bagi tuan rumah serta masing-masing empat tembakan tepat sasaran bagi kedua tim.",
+  "sidik": "b534537d30b9"
  },
  "2026/27|Arsenal|Aston Villa": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Arsenal lebih diunggulkan dengan peluang menang 68 persen berkat performa lima laga terakhir yang sempurna dan rating Elo lebih tinggi sebesar 1724. Model memprediksi skor akhir 2-0 untuk kemenangan tuan rumah dengan penguasaan bola 58 persen berbanding 42 persen. Arsenal diperkirakan melepaskan 18 tembakan dan 6 di antaranya tepat sasaran, sementara Aston Villa diprediksi mencatatkan 9 tembakan dengan 3 tepat sasaran."
+  "teks": "Arsenal lebih diunggulkan dalam laga pekan ke-32 pada 17 April 2027 karena performa lebih impresif dengan empat kemenangan dalam lima laga terakhir serta rating Elo yang lebih tinggi yaitu 1720. Model memprediksi tuan rumah memiliki peluang menang sebesar 65 persen dengan skor akhir 2-0. Pertandingan ini diperkirakan akan didominasi Arsenal melalui penguasaan bola 58 persen serta catatan 18 tembakan berbanding 9 tembakan milik Aston Villa.",
+  "sidik": "a3213ac88f54"
  },
  "2026/27|Fulham|Sunderland": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Fulham lebih diunggulkan dalam laga pekan ke-32 ini karena memiliki rating Elo 1504 yang lebih tinggi dibandingkan Sunderland dengan 1460. Model memprediksi Fulham memiliki peluang menang sebesar 50 persen berkat performa yang lebih stabil di lima laga terakhir. Pertandingan ini diprediksi berakhir dengan skor 1-1, di mana Fulham diperkirakan mendominasi penguasaan bola sebesar 61 persen dan melepaskan 15 tembakan sepanjang laga."
+  "teks": "Fulham lebih diunggulkan dalam laga pekan ke-32 ini karena memiliki rating Elo 1510 dan performa lebih stabil dengan catatan dua kemenangan serta tiga seri di lima laga terakhir. Model memprediksi Fulham memiliki peluang menang sebesar 52 persen dengan skor akhir yang paling mungkin terjadi adalah 1-1. Dalam laga ini, Fulham diperkirakan mendominasi penguasaan bola hingga 61 persen dan melepaskan 16 tembakan, sedangkan Sunderland diprediksi mencatatkan 39 persen penguasaan bola dengan 10 tembakan.",
+  "sidik": "1cbd1f5047db"
  },
  "2026/27|Tottenham|Hull": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Tottenham diunggulkan menang dengan peluang 57 persen dalam laga pekan ke-33 melawan Hull pada 24 April 2027. Meskipun Hull memiliki rating Elo lebih tinggi, performa Tottenham dalam lima laga terakhir lebih konsisten dengan raihan tiga kemenangan. Model memprediksi skor akhir 1-0 dengan dominasi penguasaan bola 65 persen bagi tuan rumah. Selain itu, pertandingan ini diperkirakan akan diwarnai oleh 17 tembakan dari Tottenham dan 9 tembakan dari Hull."
+  "teks": "Tottenham lebih diunggulkan dengan peluang menang 55% karena memiliki catatan empat kemenangan dalam lima laga terakhir dibandingkan Hull yang belum pernah menang. Model memprediksi laga pekan ke-33 ini berakhir dengan skor 1-1. Tottenham diperkirakan mendominasi penguasaan bola sebesar 67% dengan melepaskan 17 tembakan, sementara Hull diprediksi membuat 9 tembakan sepanjang pertandingan.",
+  "sidik": "e870d7055104"
  },
  "2026/27|Nott'm Forest|Sunderland": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Nott'm Forest lebih diunggulkan dengan peluang menang 51 persen karena memiliki rating Elo 1512 yang lebih tinggi dibandingkan Sunderland. Meskipun kedua tim sama-sama mencatatkan hasil KKSKM dalam lima laga terakhir, model memprediksi skor imbang 1-1. Laga pekan ke-33 ini diperkirakan akan diwarnai oleh 16 tembakan dari tuan rumah dan 10 tembakan dari tim tamu. Selain itu, Nott'm Forest diprediksi unggul dalam penguasaan bola sebesar 53 persen berbanding 47 persen milik Sunderland."
+  "teks": "Nott'm Forest lebih diunggulkan dengan peluang menang 51 persen karena memiliki rating Elo 1501 yang lebih tinggi dibandingkan Sunderland. Meski performa lima laga terakhir Nott'm Forest kurang konsisten, model memprediksi laga ini akan berakhir imbang 1-1. Statistik pertandingan diperkirakan mencatat 17 tembakan untuk tuan rumah dan 10 tembakan untuk tim tamu. Selain itu, penguasaan bola diprediksi berpihak pada Nott'm Forest dengan angka 52 persen berbanding 48 persen.",
+  "sidik": "388c856e7350"
  },
  "2026/27|Newcastle|Ipswich": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Newcastle lebih diunggulkan dalam laga pekan ke-33 ini karena memiliki rating Elo 1508 yang lebih tinggi dibandingkan Ipswich dengan 1412. Model memprediksi tuan rumah memiliki peluang menang 51 persen dengan skor akhir paling mungkin adalah 1-1. Dalam pertandingan ini, Newcastle diperkirakan akan mendominasi dengan 56 persen penguasaan bola serta melepaskan 16 tembakan ke arah gawang lawan."
+  "teks": "Newcastle lebih diunggulkan dalam laga pekan ke-33 ini karena memiliki rating Elo 1513 dibandingkan Ipswich yang hanya 1401. Model memprediksi tuan rumah memiliki peluang menang 54 persen dengan skor akhir yang paling mungkin adalah 1-1. Dalam laga ini, Newcastle diperkirakan akan mendominasi dengan 55 persen penguasaan bola dan mencatatkan 16 tembakan. Kedua tim diprediksi akan bermain cukup disiplin dengan masing-masing mencatatkan 2 kartu kuning.",
+  "sidik": "f39774717b9f"
  },
  "2026/27|Man United|Crystal Palace": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Man United lebih diunggulkan dalam laga pekan ke-33 pada 24 April 2027 karena memiliki rating Elo 1539 dibandingkan Crystal Palace yang hanya 1431. Model memprediksi kemenangan tuan rumah sebesar 66 persen dengan skor akhir 2-0. Pertandingan ini diperkirakan akan didominasi Man United lewat penguasaan bola 61 persen serta 21 total tembakan berbanding 10 milik tamu."
+  "teks": "Man United lebih diunggulkan dalam laga pekan ke-33 pada 24 April 2027 karena memiliki rating Elo 1523 yang lebih tinggi serta performa lawan yang kalah dalam lima laga terakhir. Model memprediksi tuan rumah memiliki peluang menang 61 persen dengan skor paling mungkin 1-1. Dalam pertandingan ini, Man United diperkirakan mendominasi penguasaan bola sebesar 58 persen dengan catatan 20 tembakan. Selain itu, statistik pertandingan diprediksi mencakup 7 tembakan tepat sasaran dan 7 sepak pojok bagi tuan rumah.",
+  "sidik": "e30859dd5d9b"
  },
  "2026/27|Leeds|Liverpool": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Liverpool lebih diunggulkan dengan peluang menang 43 persen karena memiliki rating Elo 1613 dibandingkan Leeds yang hanya 1526. Meskipun model memprediksi skor akhir 1-1, Liverpool diperkirakan mendominasi penguasaan bola sebesar 56 persen dengan 14 tembakan. Kedua tim diprediksi mencatatkan 4 tembakan tepat sasaran dan 5 sepak pojok dalam laga pekan ke-33 ini."
+  "teks": "Liverpool lebih diunggulkan untuk memenangkan laga pekan ke-33 pada 24 April 2027 karena memiliki rating Elo lebih tinggi sebesar 1628 dan catatan empat kemenangan dalam lima laga terakhir. Model memprediksi Liverpool meraih 43 persen peluang menang dengan skor akhir 1-1. Dalam pertandingan ini, Liverpool diperkirakan menguasai 57 persen bola dengan 14 tembakan, sementara Leeds mencatatkan 43 persen penguasaan bola dan 13 tembakan. Kedua tim diprediksi melakukan jumlah sepak pojok yang sama yaitu 5 kali.",
+  "sidik": "6204d019c843"
  },
  "2026/27|Chelsea|Man City": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Man City lebih diunggulkan dengan peluang menang 45 persen karena memiliki rating Elo yang lebih tinggi yaitu 1678 dibandingkan 1544 milik Chelsea. Meskipun performa lima laga terakhir kedua tim cenderung tidak konsisten, model memprediksi skor akhir 1-1. Laga pekan ke-33 ini diperkirakan akan diwarnai oleh 12 tembakan dari tuan rumah dan 13 tembakan dari tim tamu. Man City diprediksi mendominasi penguasaan bola sebesar 58 persen dengan akurasi umpan mencapai 88 persen sepanjang pertandingan."
+  "teks": "Man City lebih diunggulkan dalam laga pekan ke-33 pada 24 April 2027 karena memiliki rating Elo 1672 yang lebih tinggi dibandingkan Chelsea dengan 1518. Model memprediksi Man City memiliki peluang menang sebesar 49 persen, sementara Chelsea hanya 26 persen dengan kemungkinan seri 24 persen. Pertandingan ini diprediksi berakhir dengan skor 1-1 dengan statistik Man City unggul dalam penguasaan bola 59 persen dan 14 tembakan dibandingkan 41 persen penguasaan bola dan 11 tembakan dari Chelsea.",
+  "sidik": "09c527bfbbf4"
  },
  "2026/27|Brentford|Fulham": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Brentford lebih diunggulkan dengan peluang menang 41 persen karena memiliki rating Elo 1558 yang lebih tinggi daripada Fulham. Meski performa lima laga terakhir Brentford kurang stabil, model memprediksi skor akhir 1-1 dengan kedua tim diperkirakan mencatat 13 tembakan. Fulham diproyeksikan mendominasi penguasaan bola sebesar 57 persen dan mencatat 497 umpan selama pertandingan pekan ke-33 ini. Kedua tim juga diperkirakan memiliki statistik yang setara dengan 4 tembakan tepat sasaran dan 5 sepak pojok."
+  "teks": "Brentford lebih diunggulkan dalam laga pekan ke-33 ini karena memiliki rating Elo 1576 yang lebih tinggi dibandingkan Fulham dengan 1510. Model memprediksi peluang menang tuan rumah sebesar 46 persen dengan skor akhir yang paling mungkin adalah 1-1. Pertandingan ini diperkirakan akan diwarnai oleh 14 tembakan dari Brentford dan 12 tembakan dari Fulham. Selain itu, kedua tim diprediksi mencatatkan jumlah tembakan tepat sasaran yang sama, yaitu sebanyak 4 kali.",
+  "sidik": "bb3fe8d3ae4e"
  },
  "2026/27|Bournemouth|Arsenal": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Arsenal lebih diunggulkan dengan peluang menang 42 persen karena performa impresif lima laga terakhir yang selalu berakhir dengan kemenangan. Bournemouth memiliki peluang menang 31 persen dan seri 27 persen setelah mencatatkan empat kemenangan dari lima pertandingan terakhir. Laga pekan ke-33 ini diprediksi berakhir dengan skor 1-1 dengan statistik penguasaan bola 44 persen bagi tuan rumah dan 56 persen bagi tim tamu. Kedua tim diperkirakan mencatatkan jumlah tembakan, tembakan tepat sasaran, serta sepak pojok yang sama yaitu 12 tembakan, 4 tembakan tepat sasaran, dan 5 sepak pojok."
+  "teks": "Arsenal diunggulkan untuk menang dengan peluang 40 persen karena memiliki rating Elo lebih tinggi sebesar 1720 dibandingkan Bournemouth. Meski tuan rumah mencatatkan lima kemenangan beruntun, model memprediksi laga ini akan berakhir imbang dengan skor 1-1. Statistik pertandingan diperkirakan menunjukkan Arsenal mendominasi penguasaan bola sebesar 56 persen dengan 476 umpan. Kedua tim diprediksi mencatatkan jumlah tembakan tepat sasaran yang sama yaitu 4 kali sepanjang laga.",
+  "sidik": "daa7fa0af1b0"
  },
  "2026/27|Aston Villa|Coventry": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Aston Villa lebih diunggulkan dalam laga pekan ke-33 pada 24 April 2027 karena memiliki rating Elo 1557 dan catatan lima laga terakhir yang lebih stabil dibandingkan Coventry. Model memprediksi peluang menang tuan rumah sebesar 52 persen dengan skor akhir paling mungkin 1-1. Dalam pertandingan ini, Aston Villa diperkirakan mendominasi penguasaan bola sebesar 61 persen dengan 16 tembakan, sementara Coventry diprediksi melepaskan 12 tembakan dengan penguasaan bola 39 persen."
+  "teks": "Aston Villa lebih diunggulkan dalam laga pekan ke-33 pada 24 April 2027 karena memiliki rating Elo 1553 serta catatan tiga seri dan dua menang di lima laga terakhir. Model memprediksi peluang tuan rumah menang sebesar 54 persen dengan skor akhir yang paling mungkin adalah 1-1. Laga ini diperkirakan akan diwarnai oleh 16 tembakan dari Aston Villa dan 11 tembakan dari Coventry. Selain itu, tuan rumah diprediksi mendominasi penguasaan bola sebesar 60 persen dengan total 532 umpan akurat sepanjang pertandingan.",
+  "sidik": "e0e8ebb99ca9"
  },
  "2026/27|Everton|Brighton": {
   "status": "mendatang",
-  "sumber": "gemini",
-  "teks": "Brighton lebih diunggulkan dalam laga pekan ke-33 pada 24 April 2027 karena memiliki rating Elo 1640 dan catatan empat kemenangan dari lima laga terakhir. Model memprediksi kemenangan tamu sebesar 48 persen dibandingkan 27 persen untuk tuan rumah. Skor paling mungkin adalah 1-1 dengan statistik Brighton diperkirakan menguasai bola sebesar 58 persen dan melepaskan 15 tembakan. Everton diprediksi hanya mencatatkan 42 persen penguasaan bola serta 12 tembakan dalam pertandingan ini."
+  "sumber": "template",
+  "teks": "Model mengunggulkan Brighton pada laga Everton melawan Brighton, dengan peluang menang tuan rumah 26%, seri 25%, dan tamu 49%. Skor yang paling mungkin 1-1.",
+  "sidik": "d8d0a467aaf8"
  },
  "2026/27|Man City|Brentford": {
   "status": "mendatang",
-  "sumber": "gemini",
-  "teks": "Man City lebih diunggulkan dalam laga pekan ke-34 pada 1 Mei 2027 karena memiliki rating Elo lebih tinggi sebesar 1678 dibandingkan Brentford dengan 1558. Model memprediksi Man City menang dengan peluang 70 persen dan skor akhir 2-0. Pertandingan ini diperkirakan akan didominasi tuan rumah lewat penguasaan bola 64 persen serta catatan 19 tembakan berbanding 9 tembakan milik tim tamu."
+  "sumber": "template",
+  "teks": "Model mengunggulkan Man City pada laga Man City melawan Brentford, dengan peluang menang tuan rumah 66%, seri 20%, dan tamu 14%. Skor yang paling mungkin 2-0.",
+  "sidik": "ea0357fbba19"
  },
  "2026/27|Liverpool|Chelsea": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Liverpool lebih diunggulkan dalam laga pekan ke-34 ini karena memiliki rating Elo 1613 yang lebih tinggi dibandingkan Chelsea dengan 1544. Model memprediksi peluang kemenangan tuan rumah sebesar 54 persen, meski skor paling mungkin berakhir imbang 1-1. Pertandingan ini diperkirakan akan berjalan cukup ketat dengan statistik penguasaan bola 52 persen bagi Liverpool dan 48 persen untuk Chelsea. Selain itu, Liverpool diprediksi mencatatkan 16 tembakan dengan 5 di antaranya tepat sasaran, sementara Chelsea mencatatkan 11 tembakan dengan 4 tepat sasaran."
+  "teks": "Liverpool lebih diunggulkan dalam laga pekan ke-34 ini karena memiliki catatan empat kemenangan dalam lima laga terakhir serta rating Elo yang lebih tinggi yaitu 1628. Model memprediksi tuan rumah memenangkan pertandingan dengan skor 2-1 dan peluang sebesar 61 persen. Liverpool diperkirakan mendominasi penguasaan bola sebanyak 54 persen dengan melepaskan 17 tembakan dan 6 di antaranya tepat sasaran. Sementara itu, Chelsea diprediksi mencatatkan 10 tembakan dengan 4 tembakan tepat sasaran serta penguasaan bola sebesar 46 persen.",
+  "sidik": "b6a4f1125d17"
  },
  "2026/27|Ipswich|Leeds": {
   "status": "mendatang",
-  "sumber": "gemini",
-  "teks": "Leeds lebih diunggulkan dengan peluang menang 43 persen karena memiliki rating Elo 1526 dan kemenangan pada laga terakhir dibandingkan Ipswich yang belum menang dalam empat pertandingan beruntun. Model memprediksi skor akhir 1-1 dengan penguasaan bola yang cukup berimbang yaitu 49 persen untuk Ipswich dan 51 persen untuk Leeds. Kedua tim diperkirakan akan mencatatkan masing-masing 4 tembakan tepat sasaran serta 5 sepak pojok dalam pertandingan pekan ke-34 ini."
+  "sumber": "template",
+  "teks": "Model mengunggulkan Leeds pada laga Ipswich melawan Leeds, dengan peluang menang tuan rumah 25%, seri 26%, dan tamu 49%. Skor yang paling mungkin 1-1.",
+  "sidik": "a1e153839dc4"
  },
  "2026/27|Hull|Bournemouth": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Bournemouth diunggulkan menang dengan peluang 50 persen karena performa impresif empat kemenangan beruntun dibandingkan Hull yang tanpa kemenangan dalam lima laga terakhir. Model memprediksi skor akhir 1-1 dengan dominasi penguasaan bola 58 persen dan 14 tembakan bagi tim tamu. Hull diprediksi hanya mencatatkan 42 persen penguasaan bola serta 11 tembakan dalam laga pekan ke-34 ini. Kedua tim diperkirakan akan bermain disiplin dengan masing-masing mencatatkan 11 pelanggaran dan 2 kartu kuning sepanjang pertandingan."
+  "teks": "Bournemouth lebih diunggulkan dalam laga pekan ke-34 ini karena mencatatkan lima kemenangan beruntun dibandingkan Hull yang tidak pernah menang dalam lima laga terakhir. Model memprediksi Bournemouth memiliki peluang menang sebesar 48 persen dengan skor akhir yang paling mungkin terjadi adalah 1-1. Dalam pertandingan ini, Bournemouth diperkirakan mendominasi penguasaan bola sebesar 59 persen dengan 15 tembakan, sementara Hull diprediksi mencatatkan 41 persen penguasaan bola dan 11 tembakan.",
+  "sidik": "965b64964c23"
  },
  "2026/27|Sunderland|Newcastle": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Sunderland diunggulkan oleh model dengan peluang menang 40 persen karena performa terbaru yang lebih konsisten dibandingkan Newcastle. Pertandingan pekan ke-34 pada 01-05-2027 ini diprediksi berakhir dengan skor 1-1. Statistik menunjukkan Sunderland akan mencatatkan 14 tembakan dan 45 persen penguasaan bola, sementara Newcastle diperkirakan menguasai 55 persen bola dengan 12 tembakan. Kedua tim diprediksi akan sama-sama mencatatkan 4 tembakan tepat sasaran dan 5 sepak pojok dalam laga ini."
+  "teks": "Sunderland lebih diunggulkan dengan peluang menang 38 persen karena memiliki rating Elo 1464 dan performa yang sedikit lebih stabil dibandingkan Newcastle. Pertandingan pekan ke-34 ini diprediksi berakhir imbang dengan skor 1-1. Model statistik memperkirakan Sunderland akan mencatatkan 14 tembakan dan 45 persen penguasaan bola, sementara Newcastle diproyeksikan menguasai bola sebesar 55 persen dengan 12 tembakan.",
+  "sidik": "eadd527b181e"
  },
  "2026/27|Crystal Palace|Aston Villa": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Aston Villa lebih diunggulkan dalam laga pekan ke-34 karena memiliki rating Elo 1557 dan catatan lima laga terakhir yang lebih stabil dibandingkan Crystal Palace. Model memprediksi Aston Villa memiliki peluang menang sebesar 47 persen, meski skor paling mungkin diperkirakan berakhir imbang 1-1. Dalam laga ini, Aston Villa diprediksi mencatatkan 55 persen penguasaan bola dengan 5 tembakan tepat sasaran. Sementara itu, Crystal Palace diperkirakan melakukan 14 tembakan dan 4 tembakan tepat sasaran dengan penguasaan bola sebesar 45 persen."
+  "teks": "Aston Villa lebih diunggulkan dalam laga pekan ke-34 ini karena memiliki rating Elo 1553 dan catatan lima laga terakhir yang lebih baik dibandingkan tuan rumah. Model memprediksi Aston Villa memiliki peluang menang 49 persen dengan penguasaan bola 56 persen dan 14 tembakan. Pertandingan ini diperkirakan berakhir dengan skor 1-1, di mana Crystal Palace diprediksi hanya mencatatkan 44 persen penguasaan bola dan 13 tembakan.",
+  "sidik": "741a8a37b8a7"
  },
  "2026/27|Coventry|Man United": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Man United lebih diunggulkan dengan peluang menang 49 persen karena memiliki rating Elo 1539 yang lebih tinggi dibandingkan Coventry. Meski demikian, model memprediksi skor imbang 1-1 dengan catatan Coventry hanya mencatat satu kemenangan dalam lima laga terakhir. Pertandingan ini diperkirakan akan diwarnai oleh 12 tembakan dari tuan rumah dan 15 tembakan dari tim tamu. Man United diprediksi mendominasi penguasaan bola sebesar 60 persen dengan akurasi umpan mencapai 85 persen sepanjang laga."
+  "teks": "Man United lebih diunggulkan dengan peluang menang 40 persen karena memiliki rating Elo 1523 yang lebih tinggi dibandingkan Coventry. Meski demikian, model memprediksi skor akhir 1-1 dengan Coventry mencatatkan 44 persen penguasaan bola dan 13 tembakan. Man United diperkirakan mendominasi lewat 56 persen penguasaan bola dan 14 tembakan dalam laga pekan ke-34 ini. Kedua tim diprediksi akan mencatatkan statistik yang cukup berimbang, termasuk jumlah sepak pojok dan pelanggaran yang sama.",
+  "sidik": "903fdcd4b784"
  },
  "2026/27|Brighton|Nott'm Forest": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Brighton lebih diunggulkan dalam laga pekan ke-34 ini karena memiliki rating Elo 1640 dan catatan empat kemenangan dari lima laga terakhir. Model memprediksi skor akhir 1-1 dengan peluang kemenangan tuan rumah sebesar 57 persen. Pertandingan ini diperkirakan akan didominasi Brighton lewat penguasaan bola 63 persen serta 16 tembakan ke arah gawang lawan."
+  "teks": "Brighton lebih diunggulkan dalam laga pekan ke-34 ini karena memiliki rating Elo lebih tinggi sebesar 1619 dibandingkan 1501 milik Nott'm Forest. Model memprediksi Brighton memiliki peluang menang 58 persen berkat performa yang lebih stabil dalam lima laga terakhir. Pertandingan ini diperkirakan berakhir dengan skor 1-1 dengan dominasi penguasaan bola 63 persen bagi tuan rumah. Brighton juga diprediksi mencatatkan 16 tembakan dan 578 umpan sepanjang laga.",
+  "sidik": "eb0a24411c2a"
  },
  "2026/27|Arsenal|Tottenham": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Arsenal lebih diunggulkan dalam laga pekan ke-34 pada 1 Mei 2027 karena memiliki catatan lima kemenangan beruntun serta rating Elo yang lebih tinggi yaitu 1724. Model memprediksi Arsenal menang dengan peluang 64 persen dan skor akhir 2-0. Pertandingan ini diperkirakan akan diwarnai dengan 16 tembakan dari tuan rumah serta penguasaan bola sebesar 52 persen bagi Arsenal dan 48 persen bagi Tottenham."
+  "teks": "Arsenal lebih diunggulkan dalam laga pekan ke-34 pada 1 Mei 2027 karena memiliki rating Elo 1720 dan performa empat kemenangan dalam lima laga terakhir. Model memprediksi Arsenal menang dengan peluang 62 persen, sementara Tottenham hanya memiliki peluang 17 persen. Skor 2-1 menjadi hasil yang paling mungkin terjadi dengan perkiraan 16 tembakan dari tuan rumah dan 10 tembakan dari tim tamu. Pertandingan ini juga diprediksi menghasilkan 6 sepak pojok bagi Arsenal dan 4 sepak pojok untuk Tottenham.",
+  "sidik": "8fc14cf3a1ee"
  },
  "2026/27|Fulham|Everton": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Fulham lebih diunggulkan dengan peluang menang 43 persen karena performa mereka yang lebih stabil dalam lima laga terakhir dibandingkan Everton. Model memprediksi laga ini akan berakhir imbang dengan skor 1-1. Tuan rumah diperkirakan mendominasi penguasaan bola sebesar 57 persen dengan 16 tembakan, sementara tim tamu diprediksi melepaskan 11 tembakan dan 405 umpan sepanjang pertandingan."
+  "teks": "Fulham lebih diunggulkan dengan peluang menang 46 persen karena performa mereka yang lebih stabil dalam lima laga terakhir dibandingkan Everton. Pertandingan pekan ke-34 ini diprediksi berakhir imbang dengan skor 1-1. Fulham diperkirakan mendominasi penguasaan bola sebesar 59 persen dengan 16 tembakan, sementara Everton mencatatkan 11 tembakan sepanjang laga. Kedua tim diprediksi melakukan jumlah pelanggaran yang hampir serupa, yakni 11 untuk tuan rumah dan 10 untuk tim tamu.",
+  "sidik": "686d8bf65107"
  },
  "2026/27|Tottenham|Chelsea": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Tottenham lebih diunggulkan dalam laga pekan ke-35 ini dengan peluang menang sebesar 45 persen karena performa lima laga terakhir yang lebih stabil dibanding Chelsea. Model memprediksi pertandingan akan berakhir imbang dengan skor 1-1. Secara statistik, tuan rumah diproyeksikan unggul tipis dengan 52 persen penguasaan bola, 14 tembakan, serta 6 sepak pojok dibandingkan Chelsea yang mencatatkan 48 persen penguasaan bola dan 10 tembakan."
+  "teks": "Tottenham lebih diunggulkan dalam laga pekan ke-35 ini karena performa empat kemenangan dari lima pertandingan terakhir dibandingkan Chelsea yang menelan tiga kekalahan. Model memprediksi Tottenham memiliki peluang menang sebesar 47 persen dengan skor akhir yang paling mungkin adalah 1-1. Dalam laga ini, tuan rumah diperkirakan mendominasi dengan 55 persen penguasaan bola serta mencatatkan 15 tembakan berbanding 10 tembakan dari tim tamu.",
+  "sidik": "887724bd53a5"
  },
  "2026/27|Nott'm Forest|Crystal Palace": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Nott'm Forest lebih diunggulkan dalam laga pekan ke-35 ini karena memiliki rating Elo 1512 yang lebih tinggi serta catatan performa yang sedikit lebih baik dibandingkan Crystal Palace. Model memprediksi kemenangan tuan rumah dengan peluang 59 persen dan skor akhir 1-0. Pertandingan ini diperkirakan akan didominasi Nott'm Forest dengan 54 persen penguasaan bola serta catatan 19 tembakan berbanding 9 tembakan milik Crystal Palace."
+  "teks": "Nott'm Forest lebih diunggulkan dalam laga pekan ke-35 ini karena memiliki rating Elo 1501 dan performa yang lebih baik dibandingkan Crystal Palace yang kalah dalam lima laga terakhir. Model memprediksi tuan rumah memiliki peluang menang sebesar 56 persen dengan skor akhir yang paling mungkin adalah 1-1. Dalam pertandingan ini, Nott'm Forest diperkirakan mendominasi dengan 53 persen penguasaan bola serta mencatatkan 19 tembakan berbanding 10 tembakan milik Crystal Palace.",
+  "sidik": "59a57c4c7dff"
  },
  "2026/27|Newcastle|Coventry": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Newcastle lebih diunggulkan dalam laga pekan ke-35 ini dengan rating Elo 1508 berbanding 1462 milik Coventry. Berdasarkan performa lima laga terakhir, model memprediksi tuan rumah memiliki peluang menang sebesar 46 persen meski skor paling mungkin adalah imbang 1-1. Pertandingan ini diperkirakan akan berjalan dengan penguasaan bola 59 persen untuk Newcastle dan total 16 tembakan yang mereka lepaskan. Kedua tim diprediksi melakukan jumlah pelanggaran yang hampir seimbang dengan catatan 11 untuk Newcastle dan 12 untuk Coventry."
+  "teks": "Newcastle diunggulkan oleh model untuk menang dengan peluang 46% karena memiliki rating Elo lebih tinggi sebesar 1513 dibandingkan Coventry. Meski performa lima laga terakhir Newcastle cenderung menurun, mereka diprediksi mendominasi penguasaan bola sebesar 58% dengan 16 tembakan. Pertandingan pekan ke-35 ini diperkirakan berakhir dengan skor 1-1, di mana tim tamu memiliki peluang menang sebesar 28%.",
+  "sidik": "904841f1e796"
  },
  "2026/27|Man City|Liverpool": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Man City lebih diunggulkan dengan peluang menang 59 persen karena memiliki rating Elo 1678 yang lebih tinggi dibandingkan Liverpool. Meski performa lima laga terakhir Man City kurang stabil, model memprediksi laga pekan ke-35 ini berakhir imbang 1-1. Statistik pertandingan diperkirakan mencatat penguasaan bola 58 persen untuk tuan rumah dengan 17 tembakan, sementara tim tamu diprediksi melakukan 10 tembakan."
+  "teks": "Man City lebih diunggulkan dengan peluang menang 55 persen karena memiliki rating Elo 1672 yang lebih tinggi dibandingkan Liverpool. Meski Liverpool memiliki catatan performa lebih konsisten dengan empat kemenangan dalam lima laga terakhir, model memprediksi skor akhir 1-1. Laga pekan ke-35 ini diperkirakan akan diwarnai oleh 17 tembakan dari tuan rumah dan 11 tembakan dari tim tamu. Man City juga diprediksi mendominasi penguasaan bola sebesar 57 persen dengan total 523 umpan sepanjang pertandingan.",
+  "sidik": "3f9b9f225d73"
  },
  "2026/27|Leeds|Arsenal": {
   "status": "mendatang",
-  "sumber": "gemini",
-  "teks": "Arsenal jauh lebih diunggulkan dengan peluang menang 52 persen karena sedang dalam tren lima kemenangan beruntun, sementara Leeds hanya meraih satu kemenangan dalam lima laga terakhir. Model memprediksi skor akhir 1-1 dengan Arsenal mendominasi penguasaan bola sebesar 61 persen dan 13 tembakan. Leeds diperkirakan akan mencatatkan 39 persen penguasaan bola dengan 11 tembakan serta 3 tembakan tepat sasaran. Pertandingan pekan ke-35 ini dijadwalkan berlangsung pada 08-05-2027 dengan selisih rating Elo yang cukup signifikan antara kedua tim."
+  "sumber": "template",
+  "teks": "Model mengunggulkan Arsenal pada laga Leeds melawan Arsenal, dengan peluang menang tuan rumah 27%, seri 26%, dan tamu 47%. Skor yang paling mungkin 1-1.",
+  "sidik": "b2582ce64e20"
  },
  "2026/27|Fulham|Ipswich": {
   "status": "mendatang",
   "sumber": "template",
-  "teks": "Model mengunggulkan Fulham pada laga Fulham melawan Ipswich, dengan peluang menang tuan rumah 57%, seri 24%, dan tamu 19%. Skor yang paling mungkin 1-1."
+  "teks": "Model mengunggulkan Fulham pada laga Fulham melawan Ipswich, dengan peluang menang tuan rumah 57%, seri 24%, dan tamu 19%. Skor yang paling mungkin 1-1.",
+  "sidik": "30e905fc09d9"
  },
  "2026/27|Brighton|Sunderland": {
   "status": "mendatang",
-  "sumber": "gemini",
-  "teks": "Brighton lebih diunggulkan dalam laga pekan ke-35 ini karena memiliki catatan empat kemenangan dalam lima laga terakhir serta rating Elo yang lebih tinggi yaitu 1640. Model memprediksi tuan rumah meraih kemenangan dengan peluang 65 persen dan skor akhir 2-0. Pertandingan ini diperkirakan akan didominasi Brighton lewat penguasaan bola 63 persen serta 18 total tembakan. Sementara itu, Sunderland diprediksi mencatatkan 37 persen penguasaan bola dan 9 tembakan sepanjang laga."
+  "sumber": "template",
+  "teks": "Model mengunggulkan Brighton pada laga Brighton melawan Sunderland, dengan peluang menang tuan rumah 66%, seri 20%, dan tamu 14%. Skor yang paling mungkin 2-0.",
+  "sidik": "bfd2f4ad0c2b"
  },
  "2026/27|Brentford|Aston Villa": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Brentford lebih diunggulkan dengan peluang menang 43 persen karena memiliki rating Elo 1558 yang sedikit lebih tinggi dibandingkan Aston Villa. Meski begitu, Aston Villa mencatatkan performa lebih stabil dengan catatan tiga seri dan dua menang dalam lima laga terakhir. Model memprediksi skor akhir 1-1 dengan statistik yang cukup berimbang, termasuk jumlah tembakan tepat sasaran sebanyak 4 kali untuk kedua tim. Laga pekan ke-35 ini diperkirakan akan berlangsung sengit dengan penguasaan bola 46 persen bagi tuan rumah dan 54 persen untuk tim tamu."
+  "teks": "Brentford lebih diunggulkan dengan peluang menang 46 persen karena memiliki rating Elo 1576 yang lebih tinggi dibandingkan Aston Villa. Model memprediksi laga ini akan berakhir imbang dengan skor 1-1. Kedua tim diperkirakan mencatat statistik yang cukup berimbang, termasuk masing-masing empat tembakan tepat sasaran dan akurasi umpan sebesar 81 persen.",
+  "sidik": "6e757b86e27e"
  },
  "2026/27|Bournemouth|Man United": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Bournemouth lebih diunggulkan dalam laga pekan ke-35 ini karena memiliki rating Elo 1588 dan catatan empat kemenangan beruntun, sementara Man United belum pernah menang dalam lima laga terakhir. Model memprediksi Bournemouth memiliki peluang menang 47 persen dengan skor akhir yang paling mungkin adalah 1-1. Pertandingan ini diperkirakan akan berjalan seimbang dengan statistik penguasaan bola 50 persen bagi kedua tim serta total 15 tembakan dari tuan rumah dan 11 tembakan dari tim tamu."
+  "teks": "Bournemouth lebih diunggulkan dalam laga pekan ke-35 ini karena mencatatkan lima kemenangan beruntun, sementara Man United sedang kesulitan dengan rekor satu seri dan empat kalah dalam lima laga terakhir. Model memprediksi Bournemouth memiliki peluang menang sebesar 55 persen dibandingkan 22 persen untuk tim tamu. Pertandingan ini diperkirakan berakhir dengan skor 1-1, dengan statistik tuan rumah diprediksi unggul dalam penguasaan bola 54 persen serta mencatatkan 16 tembakan ke gawang.",
+  "sidik": "101df9ccb502"
  },
  "2026/27|Everton|Hull": {
   "status": "mendatang",
-  "sumber": "gemini",
-  "teks": "Everton lebih diunggulkan dalam laga pekan ke-35 ini karena memiliki performa lebih baik dengan catatan dua kemenangan beruntun serta rating Elo 1529. Model memprediksi Everton memiliki peluang menang 51 persen dengan skor akhir yang paling mungkin adalah 1-1. Dalam laga ini, tuan rumah diperkirakan mendominasi penguasaan bola sebesar 61 persen dengan 16 tembakan, sementara Hull diprediksi mencatatkan 11 tembakan dan 39 persen penguasaan bola."
+  "sumber": "template",
+  "teks": "Model mengunggulkan Everton pada laga Everton melawan Hull, dengan peluang menang tuan rumah 45%, seri 27%, dan tamu 28%. Skor yang paling mungkin 1-1.",
+  "sidik": "3f11a994a484"
  },
  "2026/27|Ipswich|Man City": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Man City diunggulkan menang dengan peluang 66 persen karena memiliki rating Elo lebih tinggi sebesar 1678 dibandingkan Ipswich yang hanya 1412. Model memprediksi laga pekan ke-36 pada 15-05-2027 ini akan berakhir dengan skor 0-2 untuk keunggulan tim tamu. Man City diperkirakan akan mendominasi penguasaan bola sebesar 65 persen dengan 16 tembakan, sementara Ipswich diprediksi hanya mencatatkan 35 persen penguasaan bola dan 10 tembakan sepanjang pertandingan."
+  "teks": "Man City lebih diunggulkan dalam laga pekan ke-36 pada 15 Mei 2027 karena memiliki rating Elo 1672 yang jauh lebih tinggi daripada Ipswich dengan 1401. Berdasarkan performa lima laga terakhir, model memprediksi Man City memiliki peluang menang sebesar 66 persen dibandingkan Ipswich yang hanya 14 persen. Pertandingan ini diperkirakan berakhir dengan skor 0-2 untuk kemenangan tim tamu. Man City diprediksi mendominasi penguasaan bola sebesar 65 persen dengan 17 tembakan dan 6 tembakan tepat sasaran sepanjang laga.",
+  "sidik": "fb76ba67640a"
  },
  "2026/27|Man United|Leeds": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Man United lebih diunggulkan dalam laga pekan ke-36 pada 15 Mei 2027 karena memiliki rating Elo 1539 yang lebih tinggi dibandingkan 1526 milik Leeds. Model memprediksi peluang menang tuan rumah sebesar 53 persen dengan skor akhir yang paling mungkin adalah 1-1. Dalam laga ini, Man United diperkirakan mendominasi penguasaan bola sebesar 55 persen dengan total 17 tembakan, sementara Leeds diprediksi mencatatkan 11 tembakan. Pertandingan ini juga diantisipasi menghasilkan masing-masing 6 sepak pojok, 12 pelanggaran, dan 2 kartu kuning untuk kedua tim."
+  "teks": "Man United diunggulkan menang dengan peluang 42 persen karena faktor tuan rumah, meskipun Leeds sedang dalam tren performa lebih baik dengan dua kemenangan beruntun. Model memprediksi laga pekan ke-36 pada 15-05-2027 ini berakhir imbang dengan skor 1-1. Pertandingan diperkirakan berjalan cukup ketat dengan Man United mencatatkan 16 tembakan dan 53 persen penguasaan bola, sementara Leeds diprediksi melepaskan 12 tembakan. Kedua tim masing-masing diperkirakan mengoleksi 2 kartu kuning dalam laga tersebut.",
+  "sidik": "4c4e6b8e8756"
  },
  "2026/27|Liverpool|Brentford": {
   "status": "mendatang",
-  "sumber": "gemini",
-  "teks": "Liverpool lebih diunggulkan dalam laga pekan ke-36 ini karena memiliki rating Elo 1613 yang lebih tinggi dibanding 1558 milik Brentford. Model memprediksi peluang kemenangan tuan rumah sebesar 59 persen, meski skor paling mungkin adalah imbang 1-1. Dalam pertandingan ini, Liverpool diperkirakan menguasai 59 persen bola dengan 19 tembakan, sementara Brentford diprediksi melakukan 10 tembakan dan 344 umpan."
+  "sumber": "template",
+  "teks": "Model mengunggulkan Liverpool pada laga Liverpool melawan Brentford, dengan peluang menang tuan rumah 59%, seri 22%, dan tamu 19%. Skor yang paling mungkin 1-1.",
+  "sidik": "de733329c9c3"
  },
  "2026/27|Hull|Fulham": {
   "status": "mendatang",
-  "sumber": "gemini",
-  "teks": "Fulham lebih diunggulkan dengan peluang menang 41 persen karena performa lima laga terakhir yang lebih stabil dibandingkan Hull. Model memprediksi skor akhir 1-1 dengan statistik penguasaan bola 38 persen untuk Hull dan 62 persen untuk Fulham. Kedua tim diperkirakan akan mencatatkan masing-masing 5 sepak pojok serta 10 pelanggaran dalam laga ini."
+  "sumber": "template",
+  "teks": "Model mengunggulkan Fulham pada laga Hull melawan Fulham, dengan peluang menang tuan rumah 35%, seri 27%, dan tamu 37%. Skor yang paling mungkin 1-1.",
+  "sidik": "273f27917532"
  },
  "2026/27|Sunderland|Bournemouth": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Bournemouth lebih diunggulkan dalam laga pekan ke-36 pada 15 Mei 2027 karena memiliki rating Elo 1588 dan catatan empat kemenangan beruntun. Model memprediksi Bournemouth memiliki peluang menang 47 persen dibandingkan Sunderland yang hanya 27 persen. Meski begitu, skor akhir yang paling mungkin terjadi adalah imbang 1-1. Dalam laga ini, Bournemouth diperkirakan mencatat 55 persen penguasaan bola dengan 13 tembakan, sementara Sunderland diprediksi mencatatkan 12 tembakan."
+  "teks": "Bournemouth lebih diunggulkan dalam laga pekan ke-36 pada 15 Mei 2027 karena memiliki rating Elo 1599 dan catatan lima laga terakhir yang sempurna. Model memprediksi Bournemouth memiliki peluang menang 49 persen dibandingkan Sunderland yang hanya 25 persen. Pertandingan ini diperkirakan berakhir dengan skor 1-1 dengan statistik seperti 12 tembakan bagi tuan rumah dan 14 tembakan bagi tim tamu. Selain itu, tim tamu diprediksi unggul dalam penguasaan bola sebesar 55 persen dan akurasi umpan mencapai 80 persen.",
+  "sidik": "556f9a320cc1"
  },
  "2026/27|Coventry|Tottenham": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Tottenham lebih diunggulkan dengan peluang menang 43 persen karena memiliki rating Elo 1483 dan performa yang lebih stabil dalam lima laga terakhir dibandingkan Coventry. Model memprediksi skor akhir 1-1 dengan Tottenham mendominasi penguasaan bola sebesar 64 persen berbanding 36 persen milik tuan rumah. Kedua tim diperkirakan mencatatkan statistik yang cukup berimbang dengan masing-masing melepaskan 4 tembakan tepat sasaran dan 5 sepak pojok."
+  "teks": "Tottenham diunggulkan memenangkan laga pekan ke-36 pada 15 Mei 2027 dengan peluang 43 persen karena memiliki rating Elo 1494 dan performa lebih stabil dibanding Coventry. Model memprediksi skor imbang 1-1 dengan dominasi penguasaan bola 63 persen bagi tim tamu. Pertandingan ini diperkirakan akan berjalan ketat dengan statistik serupa seperti 4 tembakan tepat sasaran, 5 sepak pojok, serta masing-masing 2 kartu kuning untuk kedua tim.",
+  "sidik": "41c69f84d417"
  },
  "2026/27|Chelsea|Everton": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Chelsea diunggulkan oleh model dengan peluang menang 51 persen karena memiliki rating Elo yang lebih tinggi dibandingkan Everton. Meskipun performa lima laga terakhir kedua tim cukup berimbang, model memprediksi skor akhir 1-1. Chelsea diperkirakan akan mendominasi penguasaan bola sebesar 59 persen dengan 16 tembakan, sementara Everton diprediksi mencatatkan 11 tembakan. Pertandingan pekan ke-36 ini akan berlangsung pada 15-05-2027 dengan statistik umpan yang lebih unggul bagi tuan rumah."
+  "teks": "Chelsea diunggulkan dalam laga pekan ke-36 pada 15 Mei 2027 dengan peluang menang 49 persen karena memiliki rating Elo 1518 yang sedikit lebih tinggi dibanding Everton. Model memprediksi skor akhir 1-1 dengan dominasi penguasaan bola 58 persen bagi tuan rumah. Pertandingan ini diperkirakan akan diwarnai oleh 16 tembakan dari Chelsea dan 11 tembakan dari Everton. Kedua tim diprediksi mencatatkan masing-masing dua kartu kuning sepanjang laga.",
+  "sidik": "9afada8708f1"
  },
  "2026/27|Aston Villa|Newcastle": {
   "status": "mendatang",
-  "sumber": "gemini",
-  "teks": "Aston Villa lebih diunggulkan dalam laga pekan ke-36 ini karena memiliki rating Elo 1557 dan catatan lima laga terakhir yang lebih stabil dibandingkan Newcastle. Model memprediksi kemenangan tuan rumah sebesar 49 persen dengan skor akhir 1-1 sebagai hasil yang paling mungkin terjadi. Pertandingan ini diperkirakan akan diwarnai oleh 15 tembakan dari Aston Villa serta 13 tembakan dari Newcastle. Kedua tim diprediksi mencatatkan penguasaan bola masing-masing sebesar 53 persen dan 47 persen hingga akhir laga."
+  "sumber": "template",
+  "teks": "Model mengunggulkan Aston Villa pada laga Aston Villa melawan Newcastle, dengan peluang menang tuan rumah 50%, seri 24%, dan tamu 26%. Skor yang paling mungkin 1-1.",
+  "sidik": "b6b1e4fa2723"
  },
  "2026/27|Arsenal|Nott'm Forest": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Arsenal lebih diunggulkan dalam laga pekan ke-36 ini karena performa sempurna dengan lima kemenangan beruntun serta rating Elo yang lebih tinggi yaitu 1724. Model memprediksi kemenangan Arsenal sebesar 65 persen dengan skor akhir 2-0. Pertandingan ini diperkirakan akan didominasi tuan rumah lewat penguasaan bola 64 persen dan 16 tembakan, sementara Nott'm Forest diprediksi hanya mencatatkan 10 tembakan dengan 36 persen penguasaan bola."
+  "teks": "Arsenal lebih diunggulkan untuk memenangkan laga pekan ke-36 pada 15 Mei 2027 karena memiliki rating Elo 1720 dan performa empat kemenangan dalam lima laga terakhir. Model memprediksi kemenangan Arsenal dengan peluang 65 persen dan skor akhir 2-0. Pertandingan ini diperkirakan akan didominasi tuan rumah dengan penguasaan bola 64 persen serta catatan 16 tembakan berbanding 10 milik Nott'm Forest.",
+  "sidik": "8ef234f8f98d"
  },
  "2026/27|Crystal Palace|Brighton": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Brighton lebih diunggulkan dalam laga pekan ke-36 ini berkat catatan empat kemenangan dari lima laga terakhir serta rating Elo yang lebih tinggi. Model memprediksi Brighton memiliki peluang menang sebesar 61 persen dibandingkan Crystal Palace yang hanya 17 persen. Skor 0-2 menjadi hasil yang paling mungkin terjadi dengan Brighton diperkirakan mendominasi penguasaan bola hingga 63 persen. Statistik menunjukkan Brighton akan mencatatkan 16 tembakan dan 6 tembakan tepat sasaran untuk mengamankan keunggulan atas tuan rumah."
+  "teks": "Brighton lebih diunggulkan dalam laga pekan ke-36 pada 15 Mei 2027 karena memiliki rating Elo 1619 serta catatan performa yang lebih baik dibanding Crystal Palace. Model memprediksi kemenangan tamu sebesar 59 persen dengan skor akhir paling mungkin 1-1. Dalam pertandingan ini, Brighton diperkirakan mendominasi penguasaan bola hingga 65 persen dengan 16 tembakan, sementara tuan rumah diprediksi mencatatkan 11 tembakan dan 35 persen penguasaan bola.",
+  "sidik": "3ca689b33a10"
  },
  "2026/27|Newcastle|Crystal Palace": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Newcastle lebih diunggulkan dalam laga pekan ke-37 ini karena memiliki rating Elo 1508 dan performa yang relatif lebih stabil dibandingkan Crystal Palace yang kalah empat kali dalam lima laga terakhir. Model memprediksi tuan rumah memiliki peluang menang 54 persen dengan skor akhir yang paling mungkin adalah 1-1. Statistik pertandingan diperkirakan akan didominasi Newcastle dengan 57 persen penguasaan bola serta 17 tembakan berbanding 12 tembakan milik tamu."
+  "teks": "Newcastle lebih diunggulkan untuk memenangkan laga pekan ke-37 ini karena memiliki rating Elo 1513 yang lebih tinggi dibanding Crystal Palace dengan 1424. Meskipun Crystal Palace menelan lima kekalahan beruntun, model memprediksi skor imbang 1-1 dengan peluang kemenangan tuan rumah sebesar 53 persen. Pertandingan ini diperkirakan akan diwarnai dengan 17 tembakan dari Newcastle dan 11 tembakan dari Crystal Palace. Newcastle juga diprediksi mendominasi penguasaan bola sebesar 56 persen dengan akurasi umpan mencapai 83 persen.",
+  "sidik": "a5c56a5d8d05"
  },
  "2026/27|Man City|Aston Villa": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Man City lebih diunggulkan dengan peluang menang 70 persen karena memiliki rating Elo 1678 dibandingkan Aston Villa yang hanya 1557. Meski Man City mencatatkan tiga kekalahan beruntun, performa stabil Aston Villa dalam lima laga terakhir belum cukup menggeser dominasi tuan rumah di mata model. Pertandingan pekan ke-37 ini diprediksi berakhir dengan skor 2-0 untuk kemenangan Man City. Statistik laga diperkirakan mencatat penguasaan bola 61 persen bagi tuan rumah dengan 19 tembakan dan 7 di antaranya tepat sasaran."
+  "teks": "Man City lebih diunggulkan dalam laga pekan ke-37 karena memiliki rating Elo 1672 yang lebih tinggi dibandingkan 1553 milik Aston Villa. Model memprediksi Man City menang dengan peluang 67 persen berkat keunggulan performa meski catatan lima laga terakhir kedua tim cukup berimbang. Pertandingan ini diperkirakan berakhir dengan skor 2-0 dengan dominasi Man City yang diproyeksikan menguasai bola sebesar 61 persen dan melepaskan 19 tembakan.",
+  "sidik": "e438ca4cc819"
  },
  "2026/27|Nott'm Forest|Ipswich": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Nott'm Forest lebih diunggulkan dalam laga pekan ke-37 karena memiliki rating Elo 1512 yang lebih tinggi dibandingkan 1412 milik Ipswich. Model memprediksi tuan rumah memiliki peluang menang sebesar 57 persen dengan skor akhir paling mungkin 1-0. Statistik pertandingan diperkirakan akan didominasi Nott'm Forest dengan 18 tembakan dan 52 persen penguasaan bola, sementara Ipswich diprediksi mencatatkan 9 tembakan dan 48 persen penguasaan bola."
+  "teks": "Nott'm Forest lebih diunggulkan dalam laga pekan ke-37 ini karena memiliki rating Elo 1501 dibandingkan Ipswich yang hanya 1401. Model memprediksi tuan rumah memiliki peluang menang 56 persen, meskipun skor yang paling mungkin terjadi adalah 1-1. Pertandingan ini diperkirakan akan diwarnai oleh 18 tembakan dari Nott'm Forest dan 10 tembakan dari Ipswich. Selain itu, kedua tim diprediksi mencatatkan penguasaan bola sebesar 52 persen untuk tuan rumah dan 48 persen untuk tamu.",
+  "sidik": "dd414842f6aa"
  },
  "2026/27|Leeds|Sunderland": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Leeds lebih diunggulkan dalam laga pekan ke-37 ini karena memiliki rating Elo yang lebih tinggi dibandingkan Sunderland. Model memprediksi Leeds memiliki peluang menang sebesar 48 persen dengan skor akhir yang paling mungkin adalah 1-1. Dalam pertandingan ini, tuan rumah diperkirakan mendominasi dengan 54 persen penguasaan bola serta melepaskan 15 tembakan. Secara statistik, laga ini juga diprediksi menghasilkan 6 sepak pojok bagi Leeds dan 4 sepak pojok untuk Sunderland."
+  "teks": "Leeds lebih diunggulkan dalam laga pekan ke-37 ini karena memiliki rating Elo 1552 dan catatan dua kemenangan beruntun dalam lima laga terakhir. Model memprediksi Leeds memiliki peluang menang 55 persen dengan skor akhir yang paling mungkin adalah 1-1. Statistik pertandingan diperkirakan akan diwarnai oleh 16 tembakan dari tuan rumah berbanding 10 tembakan dari tim tamu. Leeds juga diproyeksikan mendominasi penguasaan bola sebesar 55 persen dengan akurasi umpan mencapai 80 persen.",
+  "sidik": "868f35bf8905"
  },
  "2026/27|Tottenham|Man United": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Tottenham lebih diunggulkan dalam laga pekan ke-37 ini dengan peluang menang 41 persen karena performa mereka yang lebih stabil dibandingkan Man United dalam lima laga terakhir. Model memprediksi pertandingan akan berakhir imbang dengan skor 1-1. Secara statistik, Tottenham diperkirakan mencatat 53 persen penguasaan bola, 14 tembakan, serta 6 sepak pojok, sementara Man United diprediksi melakukan 47 persen penguasaan bola, 12 tembakan, dan 5 sepak pojok."
+  "teks": "Tottenham lebih diunggulkan dengan peluang menang 47 persen karena mencatatkan empat kemenangan dalam lima laga terakhir dibandingkan Man United yang tanpa kemenangan. Model memprediksi skor akhir 1-1 dengan Tottenham mendominasi penguasaan bola sebesar 58 persen serta mencatatkan 16 tembakan. Pertandingan pekan ke-37 ini juga diperkirakan menghasilkan 7 sepak pojok bagi tuan rumah dan 5 untuk tim tamu.",
+  "sidik": "cce6e6ef8b19"
  },
  "2026/27|Everton|Arsenal": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Arsenal lebih diunggulkan dalam laga pekan ke-37 pada 23 Mei 2027 ini karena memiliki rating Elo 1724 serta catatan lima laga terakhir yang sempurna. Model memprediksi Arsenal menang dengan peluang 54 persen, meski skor paling mungkin adalah imbang 1-1. Arsenal diperkirakan mendominasi dengan penguasaan bola 58 persen, 15 tembakan, dan 490 umpan. Sementara itu, Everton hanya memiliki peluang menang 22 persen dengan penguasaan bola 42 persen dan 11 tembakan."
+  "teks": "Arsenal lebih diunggulkan dalam laga pekan ke-37 pada 23 Mei 2027 karena memiliki rating Elo 1720 dan catatan empat kemenangan dalam lima laga terakhir. Model memprediksi Arsenal menang dengan peluang 57 persen, meski skor paling mungkin adalah 1-1. Arsenal diperkirakan mendominasi dengan 61 persen penguasaan bola, 15 tembakan, dan 531 umpan, sementara Everton diprediksi hanya mencatatkan 39 persen penguasaan bola dengan 11 tembakan.",
+  "sidik": "7bff6fef7e56"
  },
  "2026/27|Brighton|Liverpool": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Brighton lebih diunggulkan dalam laga pekan ke-37 ini karena memiliki rating Elo 1640 yang lebih tinggi dibanding Liverpool serta catatan empat kemenangan dari lima laga terakhir. Model memprediksi Brighton memiliki peluang menang sebesar 49 persen, dengan skor akhir yang paling mungkin adalah 1-1. Dalam laga ini, Brighton diperkirakan akan mendominasi dengan 54 persen penguasaan bola, 15 tembakan, dan 460 umpan. Sementara itu, Liverpool diprediksi mencatatkan 12 tembakan dan 403 umpan dengan akurasi 79 persen."
+  "teks": "Brighton lebih diunggulkan dengan peluang menang 42 persen karena performa terbaru yang lebih stabil dibandingkan Liverpool. Model memprediksi laga ini akan berakhir imbang dengan skor 1-1. Tuan rumah diperkirakan mendominasi penguasaan bola sebesar 53 persen dengan catatan 15 tembakan. Statistik lainnya menunjukkan kedua tim akan mencatatkan jumlah sepak pojok dan pelanggaran yang sama, yakni 5 sepak pojok serta 11 pelanggaran bagi masing-masing pihak.",
+  "sidik": "9fd5a29ccd2d"
  },
  "2026/27|Brentford|Hull": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Brentford lebih diunggulkan dengan peluang menang 52 persen karena memiliki rating Elo 1558 yang lebih tinggi dibandingkan Hull. Meski performa lima laga terakhir kedua tim cukup berimbang, model memprediksi skor akhir 1-1. Pertandingan ini diperkirakan akan diwarnai oleh 15 tembakan dari tuan rumah dan 11 tembakan dari tim tamu. Brentford diproyeksikan mendominasi penguasaan bola sebesar 57 persen dengan total 478 umpan sepanjang laga."
+  "teks": "Brentford lebih diunggulkan dengan peluang menang 54 persen karena memiliki rating Elo 1576 serta catatan performa yang lebih baik daripada Hull. Laga pekan ke-37 ini diprediksi berakhir imbang dengan skor 1-1. Model statistik memperkirakan Brentford akan mendominasi dengan 60 persen penguasaan bola dan 16 tembakan, sementara Hull diproyeksikan melakukan 10 tembakan. Pertandingan ini juga diperkirakan menghasilkan 10 pelanggaran untuk tuan rumah dan 11 pelanggaran bagi tim tamu.",
+  "sidik": "9caab17ff9b3"
  },
  "2026/27|Bournemouth|Chelsea": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Bournemouth lebih diunggulkan dalam laga pekan ke-37 ini karena memiliki rating Elo 1588 dan catatan empat kemenangan dalam lima laga terakhir. Model memprediksi Bournemouth memiliki peluang menang 50 persen, sementara Chelsea hanya 25 persen dengan kemungkinan hasil akhir 1-1. Pertandingan ini diperkirakan akan diwarnai dengan 15 tembakan dari tuan rumah dan 10 tembakan dari tim tamu. Kedua tim diprediksi mencatatkan statistik yang cukup berimbang dengan penguasaan bola masing-masing 49 persen dan 51 persen."
+  "teks": "Bournemouth lebih diunggulkan dalam laga pekan ke-37 ini berkat catatan lima kemenangan beruntun dan rating Elo 1599 yang lebih tinggi dibandingkan Chelsea. Model memprediksi Bournemouth memiliki peluang menang sebesar 55 persen dengan skor akhir yang paling mungkin adalah 1-1. Pertandingan ini diperkirakan akan berjalan cukup seimbang dengan statistik penguasaan bola yang sama besar di angka 50 persen bagi kedua tim. Bournemouth diproyeksikan tampil lebih agresif dengan catatan 16 tembakan, sementara Chelsea diperkirakan melepaskan 10 tembakan sepanjang laga.",
+  "sidik": "63fadc79bc78"
  },
  "2026/27|Fulham|Coventry": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Fulham lebih diunggulkan dalam laga pekan ke-37 ini karena memiliki rating Elo 1504 yang lebih tinggi dibandingkan Coventry dengan 1462 serta catatan performa yang lebih stabil. Model memprediksi Fulham memiliki peluang menang sebesar 51 persen dengan skor akhir yang paling mungkin adalah 1-1. Dalam laga ini, Fulham diperkirakan mendominasi penguasaan bola hingga 64 persen dengan 16 tembakan, sementara Coventry diprediksi melakukan 10 tembakan dengan akurasi umpan 75 persen."
+  "teks": "Fulham lebih diunggulkan dalam laga pekan ke-37 karena memiliki rating Elo lebih tinggi sebesar 1510 dan catatan lima laga terakhir yang lebih stabil dengan dua kemenangan serta tiga seri. Model memprediksi peluang menang tuan rumah sebesar 50 persen dengan hasil akhir paling mungkin adalah skor 1-1. Dalam laga ini, Fulham diperkirakan mendominasi penguasaan bola hingga 63 persen dengan 16 total tembakan. Sementara itu, Coventry diprediksi melakukan 10 tembakan dengan akurasi umpan mencapai 77 persen.",
+  "sidik": "44bee4ae128c"
  },
  "2026/27|Ipswich|Everton": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Everton lebih diunggulkan dalam laga pekan ke-38 pada 30 Mei 2027 karena memiliki rating Elo lebih tinggi sebesar 1529 dan catatan dua kemenangan beruntun. Model memprediksi Everton memiliki peluang menang 46 persen, sementara Ipswich hanya 28 persen dengan kemungkinan skor berakhir imbang 1-1. Pertandingan ini diperkirakan berjalan ketat dengan statistik penguasaan bola 49 persen berbanding 51 persen serta masing-masing mencatatkan 4 tembakan tepat sasaran."
+  "teks": "Everton lebih diunggulkan oleh model dengan peluang menang 42 persen berkat rating Elo yang lebih tinggi yaitu 1511 dibandingkan Ipswich. Meskipun Ipswich mencatatkan performa lima laga terakhir yang buruk, mereka diprediksi mampu mengimbangi permainan dengan skor akhir 1-1. Statistik pertandingan diperkirakan cukup berimbang dengan penguasaan bola 51 persen bagi Ipswich dan 49 persen untuk Everton. Kedua tim diprediksi mencatatkan jumlah tembakan tepat sasaran serta sepak pojok yang sama yakni 4 dan 5.",
+  "sidik": "c13a53247d49"
  },
  "2026/27|Hull|Newcastle": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Hull akan menjamu Newcastle pada pekan ke-38 tanggal 30 Mei 2027 dengan sedikit keunggulan bagi tuan rumah yang memiliki peluang menang 37 persen. Model memprediksi laga ini akan berakhir imbang 1-1 karena kedua tim menunjukkan performa yang kurang konsisten dalam lima laga terakhir. Pertandingan ini diperkirakan berlangsung cukup seimbang dengan catatan masing-masing 13 tembakan, 4 tembakan tepat sasaran, dan 5 sepak pojok bagi kedua kesebelasan. Newcastle diprediksi lebih dominan dalam penguasaan bola sebesar 57 persen dibandingkan Hull yang hanya 43 persen."
+  "teks": "Hull diunggulkan tipis oleh model dengan peluang menang 38 persen karena memiliki rating Elo 1519 yang lebih tinggi dibanding Newcastle. Pertandingan pekan ke-38 ini diprediksi berakhir imbang dengan skor 1-1. Statistik menunjukkan kedua tim akan mencatatkan 13 tembakan, 4 tembakan tepat sasaran, 5 sepak pojok, 11 pelanggaran, serta 2 kartu kuning. Meskipun Hull unggul secara model, Newcastle diproyeksikan mendominasi penguasaan bola sebesar 57 persen dengan 490 umpan dan akurasi 81 persen.",
+  "sidik": "37a9521843e6"
  },
  "2026/27|Liverpool|Bournemouth": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Liverpool lebih diunggulkan dalam laga pekan ke-38 ini berkat rating Elo 1613 yang lebih tinggi dibandingkan 1588 milik Bournemouth. Meskipun tim tamu sedang dalam tren empat kemenangan beruntun, model memprediksi peluang menang tuan rumah sebesar 49 persen. Pertandingan ini diperkirakan berakhir imbang dengan skor 1-1. Statistik menunjukkan Liverpool diprediksi menguasai 55 persen bola dengan 15 tembakan, sementara Bournemouth diperkirakan mencatat 12 tembakan."
+  "teks": "Liverpool diunggulkan untuk memenangkan laga pekan ke-38 ini dengan peluang 52 persen karena memiliki rating Elo yang lebih tinggi yaitu 1628 dibandingkan 1599 milik Bournemouth. Meskipun Bournemouth sedang dalam tren lima kemenangan beruntun, model memprediksi hasil imbang 1-1 sebagai skor paling mungkin. Pertandingan ini diperkirakan akan diwarnai oleh 16 tembakan dari tuan rumah dan 12 tembakan dari tim tamu. Liverpool diprediksi mendominasi penguasaan bola sebesar 57 persen dengan akurasi umpan mencapai 82 persen.",
+  "sidik": "415aa39d4b9d"
  },
  "2026/27|Crystal Palace|Leeds": {
   "status": "mendatang",
-  "sumber": "gemini",
-  "teks": "Leeds lebih diunggulkan dalam laga pekan ke-38 ini karena memiliki rating Elo 1526 serta performa yang lebih stabil dibandingkan Crystal Palace dengan rating 1431. Model memprediksi Leeds meraih 43 persen peluang menang dengan skor akhir paling mungkin adalah 1-1. Dalam laga ini, Leeds diperkirakan unggul tipis dengan 53 persen penguasaan bola, 14 tembakan, dan 5 tembakan tepat sasaran."
+  "sumber": "template",
+  "teks": "Model mengunggulkan Leeds pada laga Crystal Palace melawan Leeds, dengan peluang menang tuan rumah 26%, seri 25%, dan tamu 49%. Skor yang paling mungkin 1-1.",
+  "sidik": "dea9ec018b86"
  },
  "2026/27|Man United|Fulham": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Man United lebih diunggulkan dengan peluang menang 50 persen karena memiliki rating Elo 1539 yang lebih tinggi dibandingkan Fulham. Meskipun performa lima laga terakhir Man United kurang stabil, model memprediksi skor akhir 1-1 dengan dominasi tuan rumah dalam jumlah tembakan sebanyak 17 berbanding 11. Pertandingan ini diperkirakan berlangsung ketat dengan catatan 11 pelanggaran bagi masing-masing tim. Secara keseluruhan, Man United diprediksi unggul tipis dalam akurasi umpan sebesar 84 persen di laga pekan ke-38 ini."
+  "teks": "Man United diunggulkan menang dengan peluang 46 persen karena memiliki rating Elo 1523 yang lebih tinggi dibanding Fulham. Meskipun performa lima laga terakhir Fulham lebih stabil dengan catatan MMSSS, model memprediksi laga ini berakhir imbang dengan skor 1-1. Pertandingan ini diperkirakan akan diwarnai dengan 16 tembakan dari tuan rumah dan 12 tembakan dari tim tamu. Secara keseluruhan, Fulham diproyeksikan sedikit lebih unggul dalam penguasaan bola dengan angka 52 persen.",
+  "sidik": "1569058c9bb9"
  },
  "2026/27|Chelsea|Brentford": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Chelsea diunggulkan oleh model dengan peluang menang 51 persen karena memiliki keunggulan statistik meski performa lima laga terakhir lebih tidak stabil dibandingkan Brentford. Pertandingan pekan ke-38 ini diprediksi berakhir dengan skor 1-1. Model memperkirakan Chelsea akan mendominasi dengan 59 persen penguasaan bola dan 16 tembakan, sementara Brentford diproyeksikan mencatat 10 tembakan dengan 41 persen penguasaan bola."
+  "teks": "Chelsea diunggulkan oleh model dengan peluang menang 43 persen karena performa terbaru mereka yang lebih stabil dibandingkan Brentford. Pertandingan pekan ke-38 ini diprediksi berakhir imbang dengan skor 1-1. Chelsea diperkirakan mendominasi penguasaan bola sebesar 53 persen dengan catatan 15 tembakan, sementara Brentford diprediksi melakukan 12 tembakan.",
+  "sidik": "b65419da7126"
  },
  "2026/27|Aston Villa|Tottenham": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Aston Villa lebih diunggulkan dalam laga pekan ke-38 pada 30 Mei 2027 karena memiliki rating Elo 1557 yang lebih tinggi dibandingkan 1483 milik Tottenham. Berdasarkan performa lima laga terakhir, Aston Villa tampil lebih stabil tanpa kekalahan, sementara Tottenham baru saja menelan satu kekalahan. Model memprediksi skor akhir 1-1 dengan statistik yang cukup ketat, termasuk masing-masing empat tembakan tepat sasaran. Peluang kemenangan tuan rumah diprediksi sebesar 42 persen, sedangkan peluang seri dan kemenangan tamu masing-masing berada di angka 25 persen dan 32 persen."
+  "teks": "Aston Villa lebih diunggulkan dalam laga pekan ke-38 ini karena memiliki rating Elo 1553 yang lebih tinggi dibandingkan Tottenham. Meski performa lima laga terakhir Aston Villa hanya mencatat dua kemenangan dan tiga hasil seri, model memprediksi mereka memiliki peluang menang sebesar 42 persen. Pertandingan ini diperkirakan berakhir dengan skor 1-1 dengan statistik penguasaan bola 46 persen bagi tuan rumah dan 54 persen untuk tim tamu. Kedua tim diprediksi mencatatkan jumlah tembakan tepat sasaran yang sama yaitu empat kali.",
+  "sidik": "5384add6c28c"
  },
  "2026/27|Arsenal|Brighton": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Arsenal lebih diunggulkan dalam laga pekan ke-38 ini berkat catatan lima kemenangan beruntun serta rating Elo yang lebih tinggi yaitu 1724. Model memprediksi tuan rumah memiliki peluang menang 54 persen, meski skor 1-1 menjadi hasil yang paling mungkin terjadi. Pertandingan ini diperkirakan akan diwarnai dengan 15 tembakan dari Arsenal dan 10 tembakan dari Brighton. Selain itu, Arsenal diproyeksikan menguasai bola sebesar 51 persen dengan catatan 6 sepak pojok sepanjang laga."
+  "teks": "Arsenal lebih diunggulkan dalam laga pekan ke-38 ini karena memiliki performa yang lebih stabil dengan catatan empat kemenangan dan satu seri dalam lima laga terakhir. Model memprediksi Arsenal memiliki peluang menang sebesar 56 persen dengan skor akhir yang paling mungkin adalah 1-1. Pertandingan ini diperkirakan akan berjalan cukup seimbang dengan statistik penguasaan bola yang sama kuat di angka 50 persen bagi kedua tim. Arsenal diprediksi mencatatkan 15 tembakan, sementara Brighton diperkirakan melepaskan 11 tembakan sepanjang laga.",
+  "sidik": "ce19ab9c57af"
  },
  "2026/27|Coventry|Nott'm Forest": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Nott'm Forest diunggulkan untuk memenangkan laga pekan ke-38 pada 30 Mei 2027 karena memiliki rating ELO yang lebih tinggi yaitu 1512 dibandingkan 1462 milik Coventry. Model memprediksi peluang kemenangan tamu sebesar 41 persen dengan skor akhir yang paling mungkin adalah 1-1. Pertandingan ini diperkirakan akan berlangsung cukup berimbang dengan statistik penguasaan bola 48 persen bagi tuan rumah dan 52 persen untuk tim tamu. Kedua tim diprediksi akan mencatatkan jumlah tembakan tepat sasaran yang sama yaitu sebanyak 4 kali."
+  "teks": "Nott'm Forest sedikit lebih diunggulkan dengan peluang menang 39 persen karena memiliki rating Elo 1501 yang lebih tinggi dibandingkan Coventry. Meski demikian, model memprediksi hasil imbang 1-1 sebagai skor paling mungkin untuk laga pekan ke-38 ini. Statistik pertandingan diperkirakan cukup ketat dengan penguasaan bola 49 persen berbanding 51 persen serta masing-masing mencatatkan 4 tembakan tepat sasaran.",
+  "sidik": "ebd1f171be15"
  },
  "2026/27|Sunderland|Man City": {
   "status": "mendatang",
   "sumber": "gemini",
-  "teks": "Man City diunggulkan menang dengan peluang 58 persen karena memiliki rating Elo 1678 yang jauh lebih tinggi daripada Sunderland. Meskipun Man City mencatatkan tiga kekalahan beruntun dalam lima laga terakhir, mereka tetap diprediksi mendominasi dengan 68 persen penguasaan bola. Pertandingan pekan ke-38 pada 30 Mei 2027 ini diprediksi berakhir dengan skor 1-1. Statistik menunjukkan Man City bakal melepaskan 15 tembakan dengan akurasi umpan mencapai 89 persen, sementara Sunderland diperkirakan hanya mampu menguasai bola sebesar 32 persen."
+  "teks": "Man City lebih diunggulkan dalam laga pekan ke-38 ini karena memiliki rating Elo 1672 yang jauh lebih tinggi dibandingkan Sunderland dengan 1464. Meskipun performa lima laga terakhir kedua tim cenderung tidak konsisten, model memprediksi Man City memiliki peluang menang sebesar 58 persen. Pertandingan ini diperkirakan berakhir dengan skor 1-1, di mana Man City diprediksi mendominasi penguasaan bola hingga 67 persen dengan 15 total tembakan.",
+  "sidik": "c6f79c46424c"
  }
 }
