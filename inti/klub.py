@@ -103,13 +103,37 @@ LOGO = {
 }
 FOLDER_LOGO = Path(__file__).resolve().parent.parent / "data" / "logo_pl"
 
+# Klub yang tidak main di musim berjalan; logonya disimpan terpisah di data/logo.
+LOGO_LAMA = {
+    "Birmingham": "BirminghamCity_ClubLogo.png",
+    "Blackburn": "BlackburnRovers_ClubLogo.png",
+    "Blackpool": "Blackpool_ClubLogo.png",
+    "Bolton": "BoltonWanderers_ClubLogo.png",
+    "Bradford": "BradfordCity_ClubLogo.png",
+    "Cardiff": "CardiffCity_ClubLogo.png",
+    "Charlton": "CharltonAthletic_ClubLogo.png",
+    "Derby": "DerbyCounty_ClubLogo.png",
+    "Huddersfield": "HuddersfieldTown_ClubLogo.png",
+    "Middlesbrough": "Middlesbrough_ClubLogo.png",
+    "Portsmouth": "Portsmouth_ClubLogo.png",
+    "QPR": "QueensParkRangers_ClubLogo.png",
+    "Reading": "Reading_ClubLogo.png",
+    "Stoke": "StokeCity_ClubLogo.png",
+    "Swansea": "SwanseaCity_ClubLogo.png",
+    "West Brom": "WestBromwichAlbion_ClubLogo.png",
+    "Wigan": "WiganAthletic_ClubLogo.png",
+}
+FOLDER_LOGO_LAMA = Path(__file__).resolve().parent.parent / "data" / "logo"
+
 
 def logo_klub(nama: str) -> Path | None:
-    """Berkas logo klub, atau None bila tidak ada (klub lama). Pemanggil memakai singkatan()."""
-    berkas = LOGO.get(nama)
-    if berkas is None:
+    """Berkas logo klub, atau None bila tidak ada. Pemanggil memakai singkatan() sebagai cadangan."""
+    if nama in LOGO:
+        jalur = FOLDER_LOGO / LOGO[nama]
+    elif nama in LOGO_LAMA:
+        jalur = FOLDER_LOGO_LAMA / LOGO_LAMA[nama]
+    else:
         return None
-    jalur = FOLDER_LOGO / berkas
     return jalur if jalur.is_file() else None
 
 

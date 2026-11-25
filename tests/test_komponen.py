@@ -434,15 +434,24 @@ def test_logo_pemetaan_nama_dataset_ke_manifest():
 
 
 def test_logo_klub_tanpa_logo_mengembalikan_none():
-    assert logo_klub("Bolton") is None
     assert logo_klub("Klub Antah Berantah") is None
 
 
+def test_logo_ada_untuk_semua_klub_di_data():
+    df = muat_pertandingan()
+    klub = sorted(set(df["tim_kandang"]) | set(df["tim_tandang"]))
+    tanpa = [k for k in klub if logo_klub(k) is None]
+    assert tanpa == [], tanpa
+    # klub lama memakai folder data/logo
+    assert logo_klub("Bolton").parent.name == "logo"
+    assert logo_klub("West Brom").name == "WestBromwichAlbion_ClubLogo.png"
+
+
 def test_papan_skor_memuat_logo_kecil_atau_singkatan_sebagai_cadangan():
-    h = papan_skor("Arsenal", "Bolton", (1, 0), PELUANG, ARSENAL)
+    h = papan_skor("Arsenal", "Klub Antah Berantah", (1, 0), PELUANG, ARSENAL)
     assert h.count("<img") == 1 and "data:image/png;base64," in h
     assert "alt=\"\"" in h
-    assert singkatan("Bolton") in h
+    assert singkatan("Klub Antah Berantah") in h
     assert "width=\"24\"" in h  # tidak lebih besar dari nama klub (24 px)
 
 

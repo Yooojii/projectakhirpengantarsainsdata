@@ -252,7 +252,7 @@ def tampil() -> None:
         bawaan = st.session_state.get("klub", "Arsenal")
         st.session_state["hist_klub"] = bawaan if bawaan in semua_klub else semua_klub[0]
 
-    kol_judul, kol_klub, kol_lawan = st.columns([3, 1.3, 1.3], vertical_alignment="bottom")
+    kol_judul, kol_klub, kol_lawan = st.columns([3, 1.3, 1.3], vertical_alignment="top")
     with kol_judul:
         st.markdown(
             '<div class="kepala-hal"><div><h2>History</h2>'

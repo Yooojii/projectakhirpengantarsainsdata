@@ -58,17 +58,20 @@ def ringkas_kpi(df: pd.DataFrame, musim: str | None, klub: str | None = None) ->
     }
 
 
-KOLOM_TREN = ["musim", "laga", "gol", "kandang", "tembakan", "kartu", "konversi"]
+KOLOM_TREN = ["musim", "laga", "gol", "kandang", "tembakan", "kartu", "konversi",
+              "poin", "pelanggaran", "pojok"]
 
 
 @_cache
 def tren_musim(df: pd.DataFrame, klub: str | None = None) -> pd.DataFrame:
-    """Lima ukuran per musim, semuanya per laga supaya musim tak utuh tidak membuat cekungan palsu.
+    """Ukuran per musim, semuanya per laga supaya musim tak utuh tidak membuat cekungan palsu.
 
     Tanpa klub: angka liga (gol kedua tim per laga, persen laga dimenangi tuan rumah,
-    tembakan dan kartu rata-rata per tim). Dengan klub: angka sisi klub itu saja
-    (gol yang ia cetak, persen menang di kandangnya sendiri, tembakan dan kartunya),
-    bukan campuran klub dan lawannya.
+    tembakan, kartu, poin, pelanggaran, dan sepak pojok rata-rata per tim). Dengan klub:
+    angka sisi klub itu saja (gol yang ia cetak, persen menang di kandangnya sendiri,
+    tembakan, kartu, poin, pelanggaran, dan pojoknya), bukan campuran klub dan lawannya.
+    Poin liga per tim hanya bergantung pada porsi laga seri: 3 poin dibagi dua tim bila
+    ada pemenang, 2 poin bila seri.
     """
     baris = []
     for musim, g in df.groupby("musim", sort=True):
@@ -78,7 +81,10 @@ def tren_musim(df: pd.DataFrame, klub: str | None = None) -> pd.DataFrame:
             gol = int(g["gol_kandang"].sum() + g["gol_tandang"].sum())
             kartu = float(g["kartu_kuning_kandang"].sum() + g["kartu_kuning_tandang"].sum())
             kandang = 100 * float((g["hasil"] == "H").mean())
-            pembagi = 2 * n  # tembakan dan kartu dirata-rata per tim
+            poin = float(3 * (g["hasil"] != "D").sum() + 2 * (g["hasil"] == "D").sum())
+            pelanggaran = float(g["pelanggaran_kandang"].sum() + g["pelanggaran_tandang"].sum())
+            pojok = float(g["sepak_pojok_kandang"].sum() + g["sepak_pojok_tandang"].sum())
+            pembagi = 2 * n  # tembakan, kartu, poin, pelanggaran, pojok dirata-rata per tim
         else:
             k, t = _sisi(g, klub)
             n = len(k) + len(t)
@@ -88,6 +94,11 @@ def tren_musim(df: pd.DataFrame, klub: str | None = None) -> pd.DataFrame:
             gol = int(k["gol_kandang"].sum() + t["gol_tandang"].sum())
             kartu = float(k["kartu_kuning_kandang"].sum() + t["kartu_kuning_tandang"].sum())
             kandang = 100 * float((k["hasil"] == "H").mean()) if len(k) else float("nan")
+            menang = int((k["hasil"] == "H").sum() + (t["hasil"] == "A").sum())
+            seri = int((k["hasil"] == "D").sum() + (t["hasil"] == "D").sum())
+            poin = float(3 * menang + seri)
+            pelanggaran = float(k["pelanggaran_kandang"].sum() + t["pelanggaran_tandang"].sum())
+            pojok = float(k["sepak_pojok_kandang"].sum() + t["sepak_pojok_tandang"].sum())
             pembagi = n
         baris.append({
             "musim": musim,
@@ -97,6 +108,9 @@ def tren_musim(df: pd.DataFrame, klub: str | None = None) -> pd.DataFrame:
             "tembakan": round(tembakan / pembagi, 2),
             "kartu": round(kartu / pembagi, 3),
             "konversi": round(100 * gol / tembakan, 2) if tembakan else 0.0,
+            "poin": round(poin / pembagi, 3),
+            "pelanggaran": round(pelanggaran / pembagi, 2),
+            "pojok": round(pojok / pembagi, 2),
         })
     return pd.DataFrame(baris, columns=KOLOM_TREN)
 
@@ -218,7 +232,10 @@ def radar(df: pd.DataFrame, musim: str | None, klub: str | None = None) -> list[
 
     Tanpa klub, yang dikembalikan adalah rata-rata semua klub di rentang itu.
     Klub yang tidak bermain di rentang itu menghasilkan daftar kosong.
+    Tiap deret juga membawa `mentah`: angka per laga sebelum dinormalkan (kebobolan dan
+    kartu ditulis positif), untuk ditampilkan saat sumbu disorot.
     """
+    mentah = lambda p: [abs(p[s]) for s in SUMBU_RADAR]
     sub = df if musim is None else df[df["musim"] == musim]
     klub_musim = sorted(set(sub["tim_kandang"]) | set(sub["tim_tandang"]))
     profil = {k: _profil(sub, k) for k in klub_musim}
@@ -236,12 +253,15 @@ def radar(df: pd.DataFrame, musim: str | None, klub: str | None = None) -> list[
             return []
         return [
             {"nama": klub, "sorot": True,
-             "nilai": [skala(s, profil[klub][s]) for s in SUMBU_RADAR]},
-            {"nama": "Rata-rata liga", "sorot": False,
-             "nilai": [skala(s, rata[s]) for s in SUMBU_RADAR]},
+             "nilai": [skala(s, profil[klub][s]) for s in SUMBU_RADAR],
+             "mentah": mentah(profil[klub])},
+            {"nama": "Premier League", "sorot": False,
+             "nilai": [skala(s, rata[s]) for s in SUMBU_RADAR],
+             "mentah": mentah(rata)},
         ]
-    return [{"nama": "Rata-rata liga", "sorot": True,
-             "nilai": [skala(s, rata[s]) for s in SUMBU_RADAR]}]
+    return [{"nama": "Premier League", "sorot": True,
+             "nilai": [skala(s, rata[s]) for s in SUMBU_RADAR],
+             "mentah": mentah(rata)}]
 
 
 @_cache
@@ -273,25 +293,40 @@ def kpi_tren_per_musim(df: pd.DataFrame, klub: str | None = None) -> dict[str, l
     return seri
 
 
-@_cache
-def gol_vs_xg(df: pd.DataFrame) -> pd.DataFrame:
-    """Gol aktual terhadap gol harapan per klub, dari kolom xG BBC yang cakupannya terluas.
+# label, kolom dasar, jumlah desimal; poin dihitung dari kolom hasil
+# sama dengan pilihan metrik di grafik Tren Overview
+UKURAN_KANDANG_TANDANG = [
+    ("Tembakan per laga", "tembakan", 1),
+    ("Poin per laga", "poin", 2),
+    ("Pelanggaran per laga", "pelanggaran", 1),
+    ("Sepak pojok per laga", "sepak_pojok", 1),
+]
+# ukuran yang membaik saat angkanya turun
+LEBIH_BAIK_TURUN_KT = {"pelanggaran"}
 
-    Hanya laga yang punya xG di kedua sisi yang dipakai, supaya kedua sumbu diukur
-    pada kumpulan laga yang sama persis.
+
+@_cache
+def kandang_tandang(df: pd.DataFrame, klub: str | None = None) -> list[dict]:
+    """Empat ukuran per laga di kandang dan di tandang: tembakan, poin, pelanggaran, sepak pojok.
+
+    Tanpa klub: tuan rumah dibanding tamu di seluruh laga rentang itu. Dengan klub: laga
+    kandang klub itu dibanding laga tandangnya, dari sisi klub saja. Mengembalikan daftar
+    kosong bila klub tidak punya laga kandang atau tandang di rentang itu.
     """
-    sub = df[df["xg_bbc_kandang"].notna() & df["xg_bbc_tandang"].notna()]
+    # liga: semua laga dari sisi tuan rumah dan sisi tamu; klub: laga kandang dan tandangnya
+    k, t = (df, df) if klub is None else _sisi(df, klub)
+    if k.empty or t.empty:
+        return []
+
+    def poin(g: pd.DataFrame, menang: str) -> float:
+        return float((3 * (g["hasil"] == menang) + (g["hasil"] == "D")).mean())
+
     baris = []
-    for klub in sorted(set(sub["tim_kandang"]) | set(sub["tim_tandang"])):
-        k, t = _sisi(sub, klub)
-        n = len(k) + len(t)
-        if n < 10:  # terlalu sedikit untuk ditempatkan di sebaran
-            continue
-        gol = float(k["gol_kandang"].sum() + t["gol_tandang"].sum())
-        xg = float(k["xg_bbc_kandang"].sum() + t["xg_bbc_tandang"].sum())
-        baris.append({"klub": klub, "laga": n,
-                      "gol": round(gol / n, 3), "xg": round(xg / n, 3),
-                      "selisih": round((gol - xg) / n, 3)})
-    if not baris:
-        return pd.DataFrame(columns=["klub", "laga", "gol", "xg", "selisih"])
-    return pd.DataFrame(baris).sort_values("selisih", ascending=False).reset_index(drop=True)
+    for label, kol, desimal in UKURAN_KANDANG_TANDANG:
+        if kol == "poin":
+            nk, nt = poin(k, "H"), poin(t, "A")
+        else:
+            nk, nt = float(k[f"{kol}_kandang"].mean()), float(t[f"{kol}_tandang"].mean())
+        baris.append({"label": label, "kandang": nk, "tandang": nt, "desimal": desimal,
+                      "lebih_baik_naik": kol not in LEBIH_BAIK_TURUN_KT})
+    return baris

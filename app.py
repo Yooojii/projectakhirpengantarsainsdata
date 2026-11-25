@@ -1,4 +1,6 @@
 """Titik masuk: konfigurasi halaman, sidebar, tema, dan rute halaman."""
+from html import escape
+
 import streamlit as st
 
 from gaya.komponen import _uri_logo, pasang_tema, warna_aksen
@@ -13,6 +15,16 @@ from inti.sesi import JALUR_DATA, JALUR_METRIK, JALUR_MODEL, keterangan_cakupan
 MUSIM_BERJALAN = "2026/27"
 # kunci widget yang pilihannya harus bertahan saat pindah halaman
 KUNCI_DIJAGA = ("fokus", "tren_metrik")  # rentang musim dijaga di halaman Overview
+
+# nama dan NIM ditulis persis seperti yang diberikan kelompok
+ANGGOTA = [
+    ("Nadine Kinanti Azzahra", "M0401241025"),
+    ("Yasmin Aufaahani Abdullah", "M0401241129"),
+    ("Rizky Arif Wicaksono", "M0401241054"),
+    ("Abdullah' ammar rabbaniyyin", "M0401241066"),
+    ("Muhammad Shira Pramudita", "M0401241094"),
+    ("Muhammad Alvaro Satria Priyambada", "M0401241100"),
+]
 
 HALAMAN = {
     "Overview": overview.tampil,
@@ -45,25 +57,37 @@ def _sidebar(df, klub_daftar: list[str]) -> None:
         st.caption(keterangan_cakupan(df))
 
 
+def _kaki_kelompok() -> str:
+    """"© Kelompok 8"; arahkan kursor (atau fokus dengan Tab) untuk melihat anggota."""
+    daftar = "".join(f"<li><b>{escape(nama)}</b><span>{escape(nim)}</span></li>" for nama, nim in ANGGOTA)
+    return (
+        '<div class="nav-kaki">&copy; '
+        '<span class="kelompok" tabindex="0" aria-describedby="anggota-kelompok">Kelompok 8'
+        f'<span class="anggota" id="anggota-kelompok" role="tooltip"><small>Anggota kelompok</small>'
+        f'<ul>{daftar}</ul></span></span></div>'
+    )
+
+
 def _navigasi(df) -> None:
     """Rel navigasi navy di kolom kiri, menempel saat halaman digulir."""
     if st.session_state.get("halaman") not in HALAMAN:
         st.session_state["halaman"] = "Overview"
-    logo = JALUR_DATA.parent / "premier league logo.png"
-    gambar = f'<img src="{_uri_logo(str(logo))}" alt="">' if logo.is_file() else ""
+    # lambang BallBoard tanpa tulisan (256 px, 10 KB), dipotong dari logo transparan buatan tim
+    # "BallBoard Soccer Analytics Logo Transparan.png" (1,2 MB, terlalu berat untuk tiap halaman)
+    logo = JALUR_DATA.parent / "ballboard_logo.png"
+    gambar = f'<img src="{_uri_logo(str(logo))}" alt="BallBoard">' if logo.is_file() else ""
     with st.container(key="navigasi-kiri"):
         st.markdown(
-            f'<div class="nav-merek">{gambar}<div><b>Premier League</b>'
-            f'<span>Dashboard analisis</span></div></div>',
+            f'<div class="nav-merek">{gambar}<span>Premier League: Dashboard Analysis</span></div>',
             unsafe_allow_html=True,
         )
         st.radio("Halaman", list(HALAMAN), key="halaman", label_visibility="collapsed")
-        st.markdown(f'<div class="nav-kaki">{keterangan_cakupan(df)}</div>', unsafe_allow_html=True)
+        st.markdown(_kaki_kelompok(), unsafe_allow_html=True)
 
 
 def main() -> None:
     st.set_page_config(
-        page_title="Dashboard Premier League",
+        page_title="BallBoard: Premier League Dashboard Analysis",
         layout="wide",
         initial_sidebar_state="collapsed",
     )

@@ -11,8 +11,8 @@ from inti.data import KELOMPOK_KOLOM, muat_pertandingan
 from inti.klub import logo_klub, singkatan, warna_klub
 from inti.liga import (
     distribusi_gol,
-    gol_vs_xg,
     juara,
+    kandang_tandang,
     kpi_tren_per_musim,
     laga_klub,
     proporsi_hasil,
@@ -38,13 +38,16 @@ def _koma(v: float, desimal: int = 1) -> str:
 
 # nama kolom di tren_musim -> label pilihan, satuan untuk liga, satuan untuk satu klub
 METRIK = [
-    ("gol", "Gol", "gol per laga (dua tim)", "gol dicetak per laga"),
-    ("kandang", "Menang kandang", "persen laga dimenangi tuan rumah", "persen menang di kandang"),
-    ("tembakan", "Tembakan", "tembakan per tim per laga", "tembakan per laga"),
-    ("kartu", "Kartu", "kartu kuning per tim per laga", "kartu kuning per laga"),
-    ("konversi", "Konversi", "persen tembakan jadi gol", "persen tembakan jadi gol"),
+    ("tembakan", "Tembakan", "tembakan di liga per laga", "tembakan per laga"),
+    ("poin", "Poin per Laga", "poin di liga per laga", "poin per laga"),
+    ("pelanggaran", "Pelanggaran", "pelanggaran di liga per laga", "pelanggaran per laga"),
+    ("pojok", "Sepak Pojok", "sepak pojok di liga per laga", "sepak pojok per laga"),
 ]
-FORMAT_METRIK = {"gol": ".2f", "kandang": ".1f", "tembakan": ".1f", "kartu": ".2f", "konversi": ".1f"}
+# metrik yang membaik saat angkanya turun; warnanya dibalik seperti kartu kuning di KPI
+LEBIH_BAIK_TURUN = {"pelanggaran"}
+MERAH_TURUN = "#B91C1C"  # sama dengan delta turun di kartu KPI
+FORMAT_METRIK = {"tembakan": ".1f", "poin": ".2f",
+                 "pelanggaran": ".1f", "pojok": ".1f"}
 # angka di grafik Altair memakai koma desimal, sama seperti KPI
 LOKAL_ID = {"number": {"decimal": ",", "thousands": ".", "grouping": [3], "currency": ["Rp", ""]}}
 
@@ -186,20 +189,20 @@ def _kartu(judul: str, ket: str, isi: str) -> str:
 def _panel_radar(df: pd.DataFrame, klub: str | None, musim: str | None, aksen: str) -> str:
     seri = radar(df, musim, klub)
     if not seri:
-        return _kartu("Performa", "", _kosong(PESAN_KOSONG))
+        return _kartu("Profil Performa", "", _kosong(PESAN_KOSONG))
     grafik = panel.radar(seri, SUMBU_RADAR, aksen)
     if klub is None:
-        ket_html = '<div class="ket">Rata-rata liga</div>'
+        ket_html = '<div class="ket">Premier League</div>'
         kaki = (f'<div class="radar-kaki">'
-                f'<span><i style="background:{aksen}"></i>Rata-rata liga</span></div>')
+                f'<span><i style="background:{aksen}"></i>Premier League</span></div>')
     else:
-        ket_html = f'<div class="ket">{escape(klub)} dibanding rata-rata liga</div>'
+        ket_html = f'<div class="ket">{escape(klub)} dibanding Premier League</div>'
         kaki = (f'<div class="radar-kaki">'
                 f'<span><i style="background:{aksen}"></i>{escape(klub)}</span>'
-                f'<span><i style="background:{panel.KABUT}"></i>Rata-rata liga</span></div>')
+                f'<span><i style="background:{panel.KABUT}"></i>Premier League</span></div>')
     isi = (f'<div class="radar-isi">{_lencana_besar(klub, aksen)}'
            f'<div class="radar-grafik">{grafik}</div></div>')
-    return (f'<div class="kartu"><div class="judul">Performa</div>'
+    return (f'<div class="kartu"><div class="judul">Profil Performa</div>'
             f'{ket_html}'
             f'<div class="isi">{isi}</div>{kaki}</div>')
 
@@ -221,15 +224,13 @@ def _isi_panel_tren(df: pd.DataFrame, klub: str | None) -> None:
     n_musim = tren["musim"].nunique()
 
     kolom_judul, kolom_metrik = st.columns([2, 1], vertical_alignment="top")
-    with kolom_judul:
-        st.markdown(
-            f'<div class="judul-tren">{judul_tren}'
-            f'<span class="sub-tren">{n_musim} musim</span></div>',
-            unsafe_allow_html=True,
-        )
+    label_metrik = [m[1] for m in METRIK]
+    # pilihan lama dari sesi (mis. "Gol" sebelum daftar diganti) kembali ke metrik pertama
+    if st.session_state.get("tren_metrik") not in label_metrik:
+        st.session_state["tren_metrik"] = label_metrik[0]
     with kolom_metrik:
         label_terpilih = st.selectbox(
-            "Metrik", [m[1] for m in METRIK], key="tren_metrik",
+            "Metrik", label_metrik, key="tren_metrik",
             label_visibility="collapsed",
         )
     metrik = next(item for item in METRIK if item[1] == label_terpilih)
@@ -240,72 +241,115 @@ def _isi_panel_tren(df: pd.DataFrame, klub: str | None) -> None:
     pilihan = tren.dropna(subset=[kolom]).copy()
     pilihan["musim"] = pilihan["musim"].astype(str)
     pilihan["tahun"] = pilihan["musim"].str.slice(0, 4)
-    tahun = pilihan["tahun"].tolist()
-    if not tahun:
+    # aturan sama dengan KPI: musim terakhir dibanding musim sebelumnya
+    lencana, membaik = _delta_badge(pilihan[kolom].tolist(), kolom not in LEBIH_BAIK_TURUN)
+    warna = MERAH_TURUN if membaik is False else panel.TEAL
+    with kolom_judul:
+        # satuan pindah ke subjudul, jadi sumbu Y tidak perlu judul miring
+        st.markdown(
+            f'<div class="judul-tren"><span class="judul-baris">{judul_tren}{lencana}</span>'
+            f'<span class="sub-tren" title="{n_musim} musim, {escape(satuan)}">'
+            f'{n_musim} musim, {escape(satuan)}</span></div>',
+            unsafe_allow_html=True,
+        )
+    if pilihan.empty:
         st.info("Tidak ada musim pada rentang yang dipilih.")
         return
 
-    jarak_tanda = max(1, (len(tahun) - 1) // 7)
-    tanda = tahun[::jarak_tanda]
+    st.altair_chart(grafik_tren(pilihan, kolom, satuan, format_angka, warna),
+                    width="stretch", theme=None)
+
+
+def grafik_tren(data: pd.DataFrame, kolom: str, satuan: str, format_angka: str,
+                warna: str = panel.TEAL) -> alt.LayerChart:
+    """Garis tren halus dengan area memudar, garis bidik saat kursor bergerak, dan label nilai terakhir.
+
+    `data` berisi kolom `tahun` (string awal musim), `musim`, `laga`, dan `kolom`.
+    `warna` dipakai garis, area, dan titik; merah bila tren memburuk.
+    """
+    r, g_, b = (int(warna[i:i + 2], 16) for i in (1, 3, 5))
+    tahun = data["tahun"].tolist()
+    jarak = max(1, -(-(len(tahun) - 1) // 5))  # paling banyak sekitar enam label tahun
+    tanda = tahun[::jarak]
     if tanda[-1] != tahun[-1]:
-        tanda.append(tahun[-1])
-    chart = (
-        alt.Chart(pilihan)
-        .mark_line(color=panel.TEAL, strokeWidth=3, point=alt.OverlayMarkDef(filled=True, size=52))
-        .encode(
-            x=alt.X(
-                "tahun:O", title="Tahun", sort=tahun,
-                scale=alt.Scale(domain=tahun),
-                axis=alt.Axis(values=tanda, labelAngle=-45, labelAlign="right",
-                              labelBaseline="middle", labelOverlap=False,
-                              domain=True, domainColor=panel.GARIS, domainWidth=1.5,
-                              tickColor=panel.GARIS, tickSize=6, tickWidth=1.5,
-                              labelPadding=7, grid=False),
-            ),
-            y=alt.Y(
-                f"{kolom}:Q", title=satuan, scale=alt.Scale(zero=False, nice=True),
-                axis=alt.Axis(format=format_angka, domain=True, domainColor=panel.GARIS, domainWidth=1.5,
-                              tickColor=panel.GARIS, tickSize=5, tickWidth=1.2,
-                              grid=True, gridColor=panel.PUDAR, gridWidth=1,
-                              titlePadding=10),
-            ),
-            tooltip=[alt.Tooltip("musim:N", title="Musim"),
-                     alt.Tooltip(f"{kolom}:Q", title=satuan, format=format_angka),
-                     alt.Tooltip("laga:Q", title="Laga")],
-        )
-        .properties(height=208, background="transparent",
-                    padding={"left": 8, "right": 8, "top": 4, "bottom": 20})
+        if len(tanda) > 1 and tahun.index(tahun[-1]) - tahun.index(tanda[-1]) < jarak / 2:
+            tanda[-1] = tahun[-1]  # label terakhir terlalu dekat: ganti, jangan bertumpuk
+        else:
+            tanda.append(tahun[-1])
+
+    x = alt.X("tahun:O", title=None, sort=tahun, scale=alt.Scale(domain=tahun, paddingOuter=0.1),
+              # tinggi area label X dikunci supaya sumbu X selalu di posisi yang sama
+              axis=alt.Axis(values=tanda, labelAngle=0, domain=False, ticks=False,
+                            labelPadding=8, grid=False, minExtent=24, maxExtent=24))
+    # sumbu Y selalu mulai dari 0 supaya besar perubahan tidak terlihat berlebihan
+    y = alt.Y(f"{kolom}:Q", title=None, stack=None, scale=alt.Scale(zero=True, nice=True),
+              # lebar area label Y dikunci: "0,0", "10,0", dan "0,00" tidak lagi menggeser sumbu
+              axis=alt.Axis(format=format_angka, domain=False, ticks=False, tickCount=4,
+                            minExtent=40, maxExtent=40,
+                            labelPadding=8, grid=True, gridColor="#E1E6DF", gridDash=[3, 4]))
+    dasar = alt.Chart(data).encode(x=x, y=y)
+    bidik = alt.selection_point(fields=["tahun"], nearest=True, on="pointerover",
+                                clear="pointerout", empty=False)
+
+    area = dasar.mark_area(
+        interpolate="monotone", clip=True,
+        color=alt.Gradient(gradient="linear", x1=1, x2=1, y1=1, y2=0, stops=[
+            alt.GradientStop(color=f"rgba({r},{g_},{b},0)", offset=0),
+            alt.GradientStop(color=f"rgba({r},{g_},{b},0.24)", offset=1),
+        ]),
+    )
+    garis = dasar.mark_line(interpolate="monotone", color=warna, strokeWidth=2.5,
+                            strokeCap="round", strokeJoin="round")
+    # titik tak terlihat selebar kolom: penangkap kursor dan pembawa tooltip
+    penangkap = dasar.mark_point(size=400, opacity=0).encode(
+        tooltip=[alt.Tooltip("musim:N", title="Musim"),
+                 alt.Tooltip(f"{kolom}:Q", title=satuan, format=format_angka),
+                 alt.Tooltip("laga:Q", title="Laga")],
+    ).add_params(bidik)
+    garis_bidik = alt.Chart(data).mark_rule(color=panel.KABUT, strokeWidth=1, strokeDash=[4, 4]).encode(
+        x=x).transform_filter(bidik)
+    titik_bidik = dasar.mark_point(filled=True, fill="#FFFFFF", stroke=warna, strokeWidth=2.5,
+                                   size=90, opacity=1).transform_filter(bidik)
+
+    akhir = data.tail(1)
+    halo = alt.Chart(akhir).mark_point(filled=True, color=warna, size=320, opacity=0.15).encode(x=x, y=y)
+    titik_akhir = alt.Chart(akhir).mark_point(filled=True, color=warna, size=64, opacity=1).encode(x=x, y=y)
+    label_akhir = alt.Chart(akhir).mark_text(
+        # di bawah titik: garis datang dari kiri atas, jadi label di atas tertimpa garis
+        align="right", baseline="top", dx=-8, dy=8, font="IBM Plex Sans Condensed", fontSize=13,
+        fontWeight=600, color=panel.NAVY,
+    ).encode(x=x, y=y, text=alt.Text(f"{kolom}:Q", format=format_angka))
+
+    return (
+        alt.layer(area, garis, garis_bidik, halo, titik_akhir, label_akhir, titik_bidik, penangkap)
+        .properties(height=208, background="transparent",  # mengisi kotak 290px sampai jarak tepi bawah
+                    padding={"left": 4, "right": 12, "top": 12, "bottom": 4})
         .configure(background="transparent", locale=LOKAL_ID)
         .configure_view(fill="transparent", stroke=None)
-        .configure_axis(labelColor=panel.KABUT, titleColor=panel.KABUT,
-                        labelFont="IBM Plex Sans Condensed", titleFont="IBM Plex Sans",
-                        labelFontSize=12, titleFontSize=12)
+        .configure_axis(labelColor=panel.KABUT, labelFont="IBM Plex Sans Condensed",
+                        labelFontSize=12)
     )
-    st.altair_chart(chart, width="stretch", theme=None)
 
 
-def _panel_xg(df: pd.DataFrame, klub: str | None, aksen: str) -> str:
-    if klub is not None and laga_klub(df, klub).empty:
-        return _kartu("Gol dibanding gol harapan", "", _kosong(PESAN_KOSONG))
-    data = gol_vs_xg(df)
-    titik = data.to_dict("records")
-    # dihitung langsung dari baris, bukan dari jumlah laga per klub dibagi dua,
-    # karena klub dengan kurang dari 10 laga ber-xG tidak masuk sebaran
-    laga = int((df["xg_bbc_kandang"].notna() & df["xg_bbc_tandang"].notna()).sum())
-    if not titik:
-        return _kartu("Gol dibanding gol harapan", "Data xG BBC baru ada sejak 2024/25",
-                      _kosong("Belum ada laga ber-xG di rentang musim ini."))
-    isi = panel.sebar_xg(titik, klub, aksen)
-    ket = f"Di atas garis berarti klinis. {_angka(laga)} laga ber-xG pada rentang terpilih"
-    if klub is not None and klub not in data["klub"].tolist():
-        ket = f"{klub} belum punya cukup laga ber-xG di rentang ini (xG baru ada sejak 2024/25)"
-    return _kartu("Gol dibanding gol harapan", ket, isi)
+def _panel_kandang(df: pd.DataFrame, klub: str | None, aksen: str) -> str:
+    """Kandang dibanding tandang: liga dari sisi tuan rumah dan tamu, klub dari sisinya sendiri."""
+    judul = "Kandang vs Tandang"
+    baris = kandang_tandang(df, klub)
+    if not baris:
+        return _kartu(judul, "", _kosong(PESAN_KOSONG))
+    poin = next(b for b in baris if b["label"] == "Poin per laga")
+    pk, pt = _koma(poin["kandang"], 2), _koma(poin["tandang"], 2)
+    if klub is None:
+        ket = f"Tuan rumah meraih {pk} poin per laga, tamu {pt}"
+    else:
+        ket = f"{klub} meraih {pk} poin per laga di kandang, {pt} di tandang"
+    return _kartu(judul, ket, panel.kandang_tandang(baris, aksen))
 
 
 def _panel_hasil(df: pd.DataFrame, klub: str | None, musim: str | None, aksen: str) -> str:
     laga = laga_klub(df if musim is None else df[df["musim"] == musim], klub)
     if laga.empty:
-        return _kartu("Proporsi hasil", "", _kosong(PESAN_KOSONG))
+        return _kartu("Proporsi Hasil", "", _kosong(PESAN_KOSONG))
     irisan = proporsi_hasil(df, musim, klub)
     warna = [aksen, "#5A8FA3", panel.PUDAR]
     legenda = "".join(
@@ -318,14 +362,14 @@ def _panel_hasil(df: pd.DataFrame, klub: str | None, musim: str | None, aksen: s
     jumlah_musim = laga["musim"].nunique()  # musim yang benar-benar dimainkan klub
     rentang = f"{jumlah_musim} musim, {_angka(len(laga))} laga" if musim is None else f"musim {musim}"
     ket = f"Liga, {rentang}" if klub is None else f"Hasil {klub}, {rentang}"
-    return _kartu("Proporsi hasil", ket, isi)
+    return _kartu("Proporsi Hasil", ket, isi)
 
 
 def _panel_juara(df: pd.DataFrame, klub: str | None, aksen: str) -> str:
     """Lima gelar terbanyak. Klub terfilter di luar lima besar ditambahkan di bawah garis."""
     data = juara(df)
     if data.empty:
-        return _kartu("Paling sering juara", "0 musim penuh",
+        return _kartu("Gelar Terbanyak", "0 musim penuh",
                       _kosong("Belum ada musim yang selesai di rentang ini."))
     lima = [{"klub": r["klub"], "nilai": int(r["gelar"])} for r in data.head(5).to_dict("records")]
     tambahan = None
@@ -335,11 +379,11 @@ def _panel_juara(df: pd.DataFrame, klub: str | None, aksen: str) -> str:
                     "nilai": int(punya.iloc[0]["gelar"]) if not punya.empty else 0}
     html = panel.batang_mendatar(lima, aksen, sorot=klub, tambahan=tambahan)
     ket = f"{int(data['gelar'].sum())} musim penuh"
-    return _kartu("Paling sering juara", ket, html)
+    return _kartu("Gelar Terbanyak", ket, html)
 
 
 def _panel_gol(df: pd.DataFrame, klub: str | None, musim: str | None, aksen: str) -> str:
-    judul = "Berapa gol yang wajar" if klub is None else f"Gol per laga {klub}"
+    judul = "Presentase Gol" if klub is None else f"Gol per laga {klub}"
     if laga_klub(df if musim is None else df[df["musim"] == musim], klub).empty:
         return _kartu(judul, "", _kosong(PESAN_KOSONG))
     data = distribusi_gol(df, klub, musim)
@@ -444,7 +488,7 @@ def _kepala(df: pd.DataFrame) -> tuple[str | None, pd.DataFrame]:
     musim_daftar = sorted(df["musim"].dropna().astype(str).unique())
     klub_daftar = sorted(set(df["tim_kandang"].dropna()) | set(df["tim_tandang"].dropna()))
 
-    judul_kol, klub_kol, musim_kol = st.columns([3.7, 1.35, 2.2], vertical_alignment="center")
+    judul_kol, klub_kol, musim_kol = st.columns([3.7, 1.35, 2.2], vertical_alignment="top")
     with klub_kol:
         st.selectbox(
             "Klub", [SEMUA] + klub_daftar,
@@ -497,10 +541,10 @@ def tampil() -> None:
                 st.markdown(_panel_radar(df_aktif, klub, None, aksen), unsafe_allow_html=True)
             with tren_col:
                 _panel_tren(df_aktif, klub)
-        with st.container(key="baris-xg-hasil"):
-            xg_col, hasil_col = st.columns(2, gap="small", vertical_alignment="top")
-            with xg_col:
-                st.markdown(_panel_xg(df_aktif, klub, aksen), unsafe_allow_html=True)
+        with st.container(key="baris-kandang-hasil"):
+            kandang_col, hasil_col = st.columns(2, gap="small", vertical_alignment="top")
+            with kandang_col:
+                st.markdown(_panel_kandang(df_aktif, klub, aksen), unsafe_allow_html=True)
             with hasil_col:
                 st.markdown(_panel_hasil(df_aktif, klub, None, aksen), unsafe_allow_html=True)
         with st.container(key="baris-juara-gol"):

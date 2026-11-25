@@ -84,52 +84,45 @@ def garis_tren(nilai: list[float], label: str) -> str:
     )
 
 
-# ------------------------------------------------------------- sebaran gol/xG
+# ------------------------------------------------------- kandang vs tandang
 
-def sebar_xg(titik: list[dict], sorot: str | None, aksen: str) -> str:
-    """Gol aktual terhadap gol harapan; garis putus-putus adalah titik impas."""
-    # viewBox dibuat selebar kartu supaya sebaran mengisi ruang; rasio tetap dijaga
-    # agar titiknya bulat, bukan lonjong.
-    w, h, pad = 300, 116, 14
-    label = "Gol aktual terhadap gol harapan tiap klub"
-    if not titik:
-        return _bingkai_pas("", w, h, label)
-    semua = [t["gol"] for t in titik] + [t["xg"] for t in titik]
-    lo, hi = min(semua), max(semua)
-    marjin = (hi - lo) * 0.12 or 0.1
-    lo, hi = lo - marjin, hi + marjin
-    rentang = hi - lo
+def _koma(v: float, desimal: int) -> str:
+    return f"{v:.{desimal}f}".replace(".", ",")
 
-    def px(v: float) -> float:
-        return pad + (v - lo) / rentang * (w - 2 * pad)
 
-    def py(v: float) -> float:
-        return h - pad - (v - lo) / rentang * (h - 2 * pad)
+def kandang_tandang(baris: list[dict], aksen: str, tandang: str = "#5A8FA3") -> str:
+    """Grafik kupu-kupu: label di tengah, batang kandang tumbuh ke kiri, tandang ke kanan.
 
-    bentuk = [
-        f'<line x1="{px(lo):.1f}" y1="{py(lo):.1f}" x2="{px(hi):.1f}" y2="{py(hi):.1f}" '
-        f'stroke="{KABUT}" stroke-width="1" stroke-dasharray="4 3"/>'
+    Panjang batang dihitung terhadap nilai terbesar di barisnya sendiri, jadi sisi yang
+    lebih besar selalu penuh. Sisi yang lebih baik ditebalkan (untuk kartu kuning, yang
+    lebih sedikit). Saat baris disorot, labelnya bergeser dan memperlihatkan selisihnya.
+    """
+    from gaya.komponen import angka_hitung  # impor lokal: komponen memuat Streamlit
+
+    isi = [
+        '<div class="kt-kepala" aria-hidden="true">'
+        f'<span><i style="background:{aksen}"></i>Kandang</span>'
+        f'<span>Tandang<i style="background:{tandang}"></i></span></div>'
     ]
-    bentuk.append(
-        f'<text x="{w - pad}" y="{h - 3}" text-anchor="end" font-family="{_HURUF}" '
-        f'font-size="7.5" fill="{KABUT}">xG per laga &#8594;</text>'
-        f'<text x="{pad}" y="{pad - 3}" text-anchor="start" font-family="{_HURUF}" '
-        f'font-size="7.5" fill="{KABUT}">&#8593; gol per laga</text>'
-    )
-    # klub tersorot digambar paling akhir supaya tidak tertutup titik lain
-    for i, t in enumerate(sorted(titik, key=lambda t: sorot is not None and t["klub"] == sorot)):
-        aktif = sorot is not None and t["klub"] == sorot
-        warna = aksen if aktif else (NAVY if t["selisih"] > 0 else KABUT)
-        r = 4.6 if aktif else 3.2
-        info = (f'{t["klub"]}: {t["gol"]:.2f} gol, {t["xg"]:.2f} xG per laga '
-                f'({t["laga"]} laga)').replace(".", ",")
-        bentuk.append(
-            f'<circle class="titik-xg" style="--i:{i}" cx="{px(t["xg"]):.1f}" cy="{py(t["gol"]):.1f}" '
-            f'r="{r}" fill="{warna}"'
-            + (' stroke="#FFFFFF" stroke-width="1.4"' if aktif else "")
-            + f"><title>{escape(info)}</title></circle>"
+    for i, b in enumerate(baris):
+        k, t, d = b["kandang"], b["tandang"], b["desimal"]
+        puncak = max(k, t) or 1
+        unggul_k = (k >= t) if b["lebih_baik_naik"] else (k <= t)
+        besar = "Kandang" if k >= t else "Tandang"
+        selisih = f"{besar} +{_koma(abs(k - t), d)}"
+        teks = f'{b["label"]}: kandang {_koma(k, d)}, tandang {_koma(t, d)}'
+        isi.append(
+            f'<div class="kt-baris" style="--i:{i}" tabindex="0" aria-label="{escape(teks)}">'
+            f'<b class="kt-angka kiri{" kuat" if unggul_k else ""}">{angka_hitung(k, d, 200 + 90 * i)}</b>'
+            f'<span class="kt-lajur kiri"><span style="width:{100 * k / puncak:.1f}%;background:{aksen}"></span></span>'
+            f'<span class="kt-label"><span class="kt-geser">'
+            f'<span>{escape(b["label"])}</span><span class="kt-selisih">{escape(selisih)}</span>'
+            f'</span></span>'
+            f'<span class="kt-lajur kanan"><span style="width:{100 * t / puncak:.1f}%;background:{tandang}"></span></span>'
+            f'<b class="kt-angka kanan{"" if unggul_k else " kuat"}">{angka_hitung(t, d, 260 + 90 * i)}</b>'
+            '</div>'
         )
-    return _bingkai_pas("".join(bentuk), w, h, label)
+    return f'<div class="kt" role="group" aria-label="Kandang dibanding tandang">{"".join(isi)}</div>'
 
 
 # ------------------------------------------------------------------ donat
@@ -149,10 +142,11 @@ def donat(irisan: list[dict], aksen: str) -> str:
     for i, bagian in enumerate(irisan):
         panjang = keliling * bagian["nilai"] / 100
         bentuk.append(
-            f'<circle class="busur" style="--i:{i}" cx="{w / 2}" cy="{w / 2}" r="{r}" fill="none" '
-            f'stroke="{warna[i]}" '
-            f'stroke-width="17" stroke-dasharray="{panjang:.2f} {keliling - panjang:.2f}" '
-            f'stroke-dashoffset="{-mulai:.2f}" transform="rotate(-90 {w / 2} {w / 2})"/>'
+            # ukuran busur lewat style supaya transisi CSS ikut jalan saat filter diganti
+            f'<circle class="busur" cx="{w / 2}" cy="{w / 2}" r="{r}" fill="none" '
+            f'stroke="{warna[i]}" stroke-width="17" '
+            f'style="--i:{i};stroke-dasharray:{panjang:.2f} {keliling - panjang:.2f};'
+            f'stroke-dashoffset:{-mulai:.2f}" transform="rotate(-90 {w / 2} {w / 2})"/>'
         )
         mulai += panjang
     utama = irisan[0]
@@ -203,8 +197,28 @@ def batang_tegak(items: list[dict], aksen: str, sorot: str | None = None) -> str
 
 # -------------------------------------------------------------------- radar
 
+def skor_lima(v: float) -> float:
+    """Skor radar 0-1 (hasil normalisasi antarklub) menjadi skala 1-5."""
+    return 1 + 4 * max(0.0, min(1.0, v))
+
+
+def _koma1(v: float) -> str:
+    return f"{v:.1f}".replace(".", ",")
+
+
+def _d_radar(titik: str) -> str:
+    """Bentuk radar sebagai path. Ditulis dua kali: atribut d untuk peramban mana pun, dan
+    properti CSS d supaya bentuk bertransisi halus saat filter diganti (Chromium, Firefox)."""
+    jalur = "M" + " L".join(titik.split(" ")) + " Z"
+    return f"d=\"{jalur}\" style=\"d:path('{jalur}')\""
+
+
 def radar(seri: list[dict], sumbu: list[str], aksen: str) -> str:
-    """Segi lima; deret bertanda sorot digambar penuh warna aksen, sisanya garis tipis."""
+    """Segi lima berskala 1-5; deret bertanda sorot digambar penuh warna aksen, sisanya garis tipis.
+
+    Lima cincin kisi menandai skor 1 sampai 5, dan menyorot sumbu memunculkan kotak
+    berisi skor serta angka aslinya.
+    """
     w, h = 380, 260
     pusat_x, pusat_y, jari = w / 2, h / 2, 96
     sudut = [(-90 + i * 72) * math.pi / 180 for i in range(len(sumbu))]
@@ -216,11 +230,14 @@ def radar(seri: list[dict], sumbu: list[str], aksen: str) -> str:
             p.append(f"{pusat_x + rr * math.cos(a):.1f},{pusat_y + rr * math.sin(a):.1f}")
         return " ".join(p)
 
-    satu = [1.0] * len(sumbu)
-    bentuk = [
-        f'<polygon points="{titik(satu)}" fill="none" stroke="{GARIS}" stroke-width="1"/>',
-        f'<polygon points="{titik(satu, 0.6)}" fill="none" stroke="{PUDAR}" stroke-width="0.8"/>',
-    ]
+    bentuk = []
+    # cincin skor 1-5 tanpa angka; skornya dibaca lewat kotak saat sumbu disorot
+    for k in range(1, 6):
+        v = (k - 1) / 4
+        bentuk.append(
+            f'<polygon points="{titik([v] * len(sumbu))}" fill="none" '
+            f'stroke="{GARIS if k == 5 else PUDAR}" stroke-width="{1 if k == 5 else 0.8}"/>'
+        )
     for a in sudut:
         bentuk.append(
             f'<line x1="{pusat_x}" y1="{pusat_y}" x2="{pusat_x + jari * math.cos(a):.1f}" '
@@ -230,25 +247,101 @@ def radar(seri: list[dict], sumbu: list[str], aksen: str) -> str:
     for i, s in enumerate(seri):
         if s.get("sorot"):
             bentuk.append(
-                f'<polygon class="radar-bentuk" points="{titik(s["nilai"])}" fill="{aksen}" fill-opacity="0.16" '
+                f'<path class="radar-bentuk" {_d_radar(titik(s["nilai"]))} fill="{aksen}" fill-opacity="0.16" '
                 f'stroke="{aksen}" stroke-width="2"/>'
             )
         else:
             warna = KABUT if len(seri) == 2 else netral[i % len(netral)]
             gaya = ' stroke-dasharray="4 3"' if len(seri) == 2 else ""
             bentuk.append(
-                f'<polygon class="radar-bentuk kedua" points="{titik(s["nilai"])}" fill="none" stroke="{warna}" '
+                f'<path class="radar-bentuk kedua" {_d_radar(titik(s["nilai"]))} fill="none" stroke="{warna}" '
                 f'stroke-width="1.5"{gaya}/>'
             )
-    for a, nama in zip(sudut, sumbu):
-        lx, ly = pusat_x + (jari + 22) * math.cos(a), pusat_y + (jari + 22) * math.sin(a)
-        kos = math.cos(a)
+    warna_seri = [aksen if s.get("sorot") else (KABUT if len(seri) == 2 else netral[i % len(netral)])
+                  for i, s in enumerate(seri)]
+    ada_angka = all("mentah" in s for s in seri)
+    kotak_info = []
+    for i, (a, nama) in enumerate(zip(sudut, sumbu)):
+        kos, sin = math.cos(a), math.sin(a)
+        lx, ly = pusat_x + (jari + 22) * kos, pusat_y + (jari + 22) * sin
         anchor = "middle" if abs(kos) < 0.2 else ("start" if kos > 0 else "end")
-        bentuk.append(
-            f'<text x="{lx:.1f}" y="{ly + 5:.1f}" text-anchor="{anchor}" '
-            f'font-family="{_HURUF}" font-size="17" fill="{KABUT}">{escape(nama)}</text>'
+        label = (f'<text class="radar-label" x="{lx:.1f}" y="{ly + 5:.1f}" text-anchor="{anchor}" '
+                 f'font-family="{_HURUF}" font-size="17" fill="{KABUT}">{escape(nama)}</text>')
+        if not ada_angka:
+            bentuk.append(label)
+            continue
+        # area sorot selebar 34 unit sepanjang sumbu sampai label, plus lingkaran di label
+        penanda = "".join(
+            f'<circle class="radar-penanda" cx="{pusat_x + jari * (0.18 + 0.82 * max(0.0, min(1.0, s["nilai"][i]))) * kos:.1f}" '
+            f'cy="{pusat_y + jari * (0.18 + 0.82 * max(0.0, min(1.0, s["nilai"][i]))) * sin:.1f}" '
+            f'r="4.5" fill="{warna_seri[j]}" stroke="#FFFFFF" stroke-width="1.5"/>'
+            for j, s in enumerate(seri)
         )
-    return _bingkai_pas("".join(bentuk), w, h, "Radar lima ukuran performa")
+        bentuk.append(
+            f'<g class="radar-info" data-i="{i}" tabindex="0" role="button" '
+            f'aria-label="{escape(_teks_radar(nama, seri, i))}">'
+            f'<line x1="{pusat_x}" y1="{pusat_y}" x2="{lx:.1f}" y2="{ly:.1f}" stroke="transparent" '
+            f'stroke-width="34" stroke-linecap="round"/>'
+            f'<circle cx="{lx:.1f}" cy="{ly:.1f}" r="28" fill="transparent"/>'
+            f'{penanda}{label}</g>'
+        )
+        kotak_info.append(_kotak_radar(nama, seri, warna_seri, i, lx, ly, w, h, pusat_y))
+    # kotak angka digambar paling akhir supaya tidak tertutup label sumbu lain
+    return _bingkai_pas("".join(bentuk + kotak_info), w, h, "Radar lima ukuran performa")
+
+
+# satuan angka asli tiap sumbu radar dan jumlah desimalnya
+SATUAN_RADAR = {
+    "Serangan": ("tembakan per laga", 1, ""),
+    "Ketajaman": ("tembakan jadi gol", 1, "%"),
+    "Pertahanan": ("gol kebobolan per laga", 2, ""),
+    "Disiplin": ("kartu kuning per laga", 2, ""),
+    "Bola mati": ("sepak pojok per laga", 1, ""),
+}
+
+
+def _angka_radar(nama: str, nilai: float) -> str:
+    _, desimal, akhiran = SATUAN_RADAR.get(nama, ("", 2, ""))
+    return f"{nilai:.{desimal}f}".replace(".", ",") + akhiran
+
+
+def _teks_radar(nama: str, seri: list[dict], i: int) -> str:
+    satuan = SATUAN_RADAR.get(nama, ("",))[0]
+    isi = ", ".join(f'{s["nama"]} skor {_koma1(skor_lima(s["nilai"][i]))} dari 5 '
+                    f'({_angka_radar(nama, s["mentah"][i])} {satuan})' for s in seri)
+    return f"{nama}: {isi}"
+
+
+def _kotak_radar(nama: str, seri: list[dict], warna: list[str], i: int,
+                 lx: float, ly: float, w: int, h: int, pusat_y: float) -> str:
+    """Kotak skor 1-5 satu sumbu; muncul saat sumbunya disorot atau difokus."""
+    # huruf setara label sumbu (17 unit): radar digambar kecil, huruf lebih kecil tak terbaca
+    lebar, baris = 260, 26
+    tinggi = 34 + baris * len(seri) + 26
+    x = min(max(lx - lebar / 2, 2), w - lebar - 2)
+    # di bawah label untuk sumbu atas, di atas label untuk sumbu bawah: tetap di dalam radar
+    y = ly + 14 if ly < pusat_y else ly - tinggi - 16
+    y = min(max(y, 2), h - tinggi - 2)
+    isi = [
+        f'<rect width="{lebar}" height="{tinggi}" rx="10" fill="#FFFFFF" stroke="#E1E6DF"/>',
+        f'<text x="14" y="25" font-family="{_HURUF}" font-size="18" font-weight="600" '
+        f'fill="#0E1F18">{escape(nama)}</text>',
+    ]
+    for j, s in enumerate(seri):
+        yy = 34 + baris * j + 18
+        isi.append(
+            f'<circle cx="19" cy="{yy - 5}" r="5" fill="{warna[j]}"/>'
+            f'<text x="32" y="{yy}" font-family="{_HURUF}" font-size="16" fill="#0E1F18">'
+            f'{escape(s["nama"])}</text>'
+            f'<text x="{lebar - 14}" y="{yy}" text-anchor="end" font-family="{_HURUF}" font-size="18" '
+            f'font-weight="600" fill="#0E1F18">{_koma1(skor_lima(s["nilai"][i]))}'
+            f'<tspan font-size="13" font-weight="400" fill="{KABUT}"> / 5</tspan></text>'
+        )
+    isi.append(
+        f'<text x="14" y="{tinggi - 11}" font-family="{_HURUF}" font-size="12.5" fill="{KABUT}">'
+        'Skor 1–5 dibanding klub lain</text>'
+    )
+    return f'<g class="radar-tip" data-i="{i}" transform="translate({x:.1f},{y:.1f})">{"".join(isi)}</g>'
 
 
 # --------------------------------------------------------- batang mendatar
