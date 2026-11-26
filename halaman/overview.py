@@ -537,28 +537,40 @@ def tampil() -> None:
     klub, df_aktif = _kepala(df)
     aksen = panel.TEAL if klub is None else warna_aksen(warna_klub(klub))
 
-    ringkas = ringkas_kpi(df_aktif, None, klub)
-    tren_kpi = kpi_tren_per_musim(df_aktif, klub)
+    from halaman import overview_musim as om
+    from halaman.klasemen_liga import panel_klasemen, pilih_musim
     with st.container(key="dasbor-overview"):
-        st.markdown(_pemberitahuan_absen(df, df_aktif, klub) + _kpi(ringkas, tren_kpi), unsafe_allow_html=True)
-        with st.container(key="baris-radar-tren"):
-            radar_col, tren_col = st.columns(2, gap="small", vertical_alignment="top")
-            with radar_col:
-                st.markdown(_panel_radar(df_aktif, klub, None, aksen), unsafe_allow_html=True)
-            with tren_col:
-                _panel_tren(df_aktif, klub)
-        with st.container(key="baris-kandang-hasil"):
-            kandang_col, hasil_col = st.columns(2, gap="small", vertical_alignment="top")
-            with kandang_col:
-                st.markdown(_panel_kandang(df_aktif, klub, aksen), unsafe_allow_html=True)
-            with hasil_col:
-                st.markdown(_panel_hasil(df_aktif, klub, None, aksen), unsafe_allow_html=True)
-        with st.container(key="baris-juara-gol"):
-            juara_col, gol_col = st.columns(2, gap="small", vertical_alignment="top")
-            with juara_col:
-                st.markdown(_panel_juara(df_aktif, klub, aksen), unsafe_allow_html=True)
-            with gol_col:
-                st.markdown(_panel_gol(df_aktif, klub, None, aksen), unsafe_allow_html=True)
-        from halaman.klasemen_liga import panel_klasemen
-        st.markdown(panel_klasemen(df, klub), unsafe_allow_html=True)
+        if klub is None:
+            st.markdown(om.perburuan(), unsafe_allow_html=True)
+            with st.container(key="baris-tajam-sorot"):
+                kiri, kanan = st.columns(2, gap="small", vertical_alignment="top")
+                with kiri:
+                    st.markdown(om.tajam_boros(df), unsafe_allow_html=True)
+                with kanan:
+                    st.markdown(om.sorotan_pekan(), unsafe_allow_html=True)
+            with st.container(key="baris-tren-juara"):
+                kiri, kanan = st.columns(2, gap="small", vertical_alignment="top")
+                with kiri:
+                    _panel_tren(df_aktif, klub)
+                with kanan:
+                    st.markdown(_panel_juara(df_aktif, klub, aksen), unsafe_allow_html=True)
+        else:
+            st.markdown(_pemberitahuan_absen(df, df_aktif, klub) + om.kepala_klub(df, klub)
+                        + om.kpi_klub(df, klub), unsafe_allow_html=True)
+            with st.container(key="baris-proyeksi-xg"):
+                kiri, kanan = st.columns(2, gap="small", vertical_alignment="top")
+                with kiri:
+                    st.markdown(om.proyeksi_klub(klub), unsafe_allow_html=True)
+                with kanan:
+                    with st.container(key="panel-gol-xg"):
+                        om.gol_vs_xg(df, klub)
+            with st.container(key="baris-jadwal-tren"):
+                kiri, kanan = st.columns(2, gap="small", vertical_alignment="top")
+                with kiri:
+                    st.markdown(om.laga_berikut(klub), unsafe_allow_html=True)
+                with kanan:
+                    _panel_tren(df_aktif, klub)
+        with st.container(key="klasemen-overview"):
+            musim_kl = pilih_musim(df, "ov_musim_klasemen")
+            st.markdown(panel_klasemen(df, musim_kl, sorot=klub), unsafe_allow_html=True)
     _dokumentasi(df)

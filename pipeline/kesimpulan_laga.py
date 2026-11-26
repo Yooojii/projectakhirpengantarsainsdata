@@ -44,8 +44,9 @@ Aturan:
 - {fokus}
 Data:
 {data}"""
-FOKUS_SELESAI = ("Laga sudah selesai: jelaskan hasilnya, statistik yang paling menentukan, "
-                 "lalu bandingkan dengan prediksi model (sesuai atau meleset).")
+FOKUS_SELESAI = ("Laga sudah selesai: ceritakan jalannya laga seperti laporan pertandingan, yaitu hasil akhir, "
+                 "perubahan dari babak pertama ke babak kedua, statistik yang paling menentukan, dan konteks "
+                 "performa kedua tim sebelum laga. Jangan membahas model, prediksi, peluang, atau rating.")
 FOKUS_MENDATANG = ("Laga belum dimainkan: jelaskan siapa yang diunggulkan model dan alasannya "
                    "dari performa terbaru, lalu sebut skor dan statistik yang diperkirakan.")
 
@@ -80,7 +81,12 @@ def rangkum(r, laga: pd.DataFrame) -> dict:
                                                _bulat(getattr(r, f"duga_{k}_tandang"))]
                                         for k, nama in STAT if pd.notna(getattr(r, f"duga_{k}_kandang", None))}}}
     if r.sudah_main:
+        # laga selesai dibahas sebagai laporan pertandingan: data model tidak dikirim sama sekali
+        d.pop("prediksi_model")
+        d.pop("rating_elo")
         d["hasil_akhir"] = f"{int(r.gol_kandang)}-{int(r.gol_tandang)}"
+        if pd.notna(r.gol_kandang_babak1):
+            d["skor_babak_pertama"] = f"{int(r.gol_kandang_babak1)}-{int(r.gol_tandang_babak1)}"
         d["statistik_asli [tuan rumah, tamu]"] = {
             nama: [_bulat(getattr(r, f"{k}_kandang")), _bulat(getattr(r, f"{k}_tandang"))]
             for k, nama in STAT if pd.notna(getattr(r, f"{k}_kandang", None))}
@@ -88,8 +94,7 @@ def rangkum(r, laga: pd.DataFrame) -> dict:
 
 
 def template(d: dict) -> str:
-    k, t, p = d["tuan_rumah"], d["tamu"], d["prediksi_model"]
-    unggul = (k if p["peluang_menang_tuan_rumah_%"] >= p["peluang_menang_tamu_%"] else t)
+    k, t = d["tuan_rumah"], d["tamu"]
     if "hasil_akhir" in d:
         gk, gt = map(int, d["hasil_akhir"].split("-"))
         hasil = f"{k} menang {gk}-{gt} atas {t}" if gk > gt else (
@@ -98,9 +103,11 @@ def template(d: dict) -> str:
         teks = f"{hasil}."
         if "tembakan" in s:
             teks += f" {k} melepaskan {s['tembakan'][0]} tembakan, sedangkan {t} {s['tembakan'][1]}."
-        teks += (f" Model sebelumnya mengunggulkan {unggul} dan memperkirakan skor "
-                 f"{p['skor_paling_mungkin']}.")
+        if "skor_babak_pertama" in d:
+            teks += f" Saat jeda skor {d['skor_babak_pertama']}."
         return teks
+    p = d["prediksi_model"]
+    unggul = (k if p["peluang_menang_tuan_rumah_%"] >= p["peluang_menang_tamu_%"] else t)
     return (f"Model mengunggulkan {unggul} pada laga {k} melawan {t}, dengan peluang menang tuan rumah "
             f"{p['peluang_menang_tuan_rumah_%']}%, seri {p['peluang_seri_%']}%, dan tamu "
             f"{p['peluang_menang_tamu_%']}%. Skor yang paling mungkin {p['skor_paling_mungkin']}.")
@@ -164,7 +171,8 @@ def main(ulang: bool = False) -> None:
         try:
             teks = tanya_gemini(kunci, prompt)
             teks = teks.replace("—", ",").replace("–", "-")
-            sumber = "gemini" if angka_sah(teks, d) else "template"
+            bersih = not (r.sudah_main and re.search(r"model|prediksi|peluang|diunggulkan", teks, re.I))
+            sumber = "gemini" if angka_sah(teks, d) and bersih else "template"
         except KuotaHabis as e:
             print(f"Berhenti: {e}")
             break

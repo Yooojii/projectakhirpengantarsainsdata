@@ -1314,9 +1314,71 @@ img.logo-klasemen { width: 20px !important; min-width: 20px; height: 20px; objec
 .form-info span { display: inline-flex; align-items: center; gap: .3rem; }
 .form-kotak:hover .form-info { display: block; }
 .legenda-zona { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: .7rem; font-size: .8rem; }
-.legenda::before { content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 50%;
+.legenda-kl::before { content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 50%;
   margin-right: .35rem; background: var(--w); }
-.legenda.zona-ucl { --w: #22C55E; } .legenda.zona-uel { --w: #2563EB; }
-.legenda.zona-uecl { --w: #14B8A6; } .legenda.zona-degradasi { --w: #EF4444; }
+.legenda-kl.zona-ucl { --w: #22C55E; } .legenda-kl.zona-uel { --w: #2563EB; }
+.legenda-kl.zona-uecl { --w: #14B8A6; } .legenda-kl.zona-degradasi { --w: #EF4444; }
 .klasemen-liga td, .klasemen-liga th { white-space: nowrap; padding-left: .35rem; padding-right: .35rem; }
 .klasemen-liga { overflow-x: auto; }
+a.form-kotak, a.form-kotak:hover { color: #fff; text-decoration: none; cursor: pointer; }
+.form-info small:last-child { margin: .2rem 0 0; }
+.tanda-lawan { color: var(--teks-redup, #8FA6B0); font-weight: 400; }
+.legenda-catatan { opacity: .7; }
+.klasemen-liga .blok-judul { display: flex; justify-content: space-between; align-items: baseline; }
+.klasemen-liga .blok-judul span { font-size: .8rem; opacity: .7; }
+
+/* Match Analysis: laga mendatang dan perbandingan dengan model */
+.sub-daftar { font-size: 12px; font-weight: 700; letter-spacing: .04em;
+  color: var(--teks-2); margin: 12px 0 4px; }
+.laga.mendatang .laga-skor span { font-size: 14px; font-weight: 600; }
+.laga-seri { grid-column: 1 / -1; font-size: 12px; color: var(--teks-2); text-align: right; }
+.laga.mendatang.aktif .laga-seri { color: #A9C2CC; }
+.stat.stat-model { margin-top: -12px; opacity: .55; }
+.stat.stat-model .stat-kepala { font-size: 12px; margin-bottom: 4px; }
+.stat.stat-model .stat-kepala b { font-weight: 500; }
+.stat.stat-model .stat-kepala span { font-style: italic; }
+.stat.stat-model .stat-lajur { height: 4px; }
+.ringkas-model { padding: 16px 24px 0; }
+.ringkas-model p { margin: 8px 0 0; font-size: 14px; color: var(--teks-2); }
+.tanda-model { margin-left: 8px; padding: 0 8px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+.tanda-model.tepat { background: #DCFCE7; color: #15803D; }
+.tanda-model.meleset { background: #FEE2E2; color: #B91C1C; }
+
+/* Overview musim berjalan */
+.ov-kepala-klub { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 0 0 16px;
+  padding: 12px 16px; border-radius: var(--radius-dalam); background: var(--permukaan); box-shadow: var(--bayangan); }
+.ov-pos { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px;
+  border-radius: 50%; background: var(--navy); color: #FFFFFF; font-weight: 700; }
+.ov-chip { padding: 4px 12px; border-radius: 999px; background: var(--sumur); font-size: 13px; }
+.ov-form { margin-left: auto; display: inline-flex; }
+.kpi-peringkat { font-size: 14px; font-weight: 700; color: var(--teks-2); }
+.kpi-peringkat.atas { color: #15803D; }
+.kpi-peringkat.bawah { color: #B91C1C; }
+.kpi-peringkat small { font-weight: 400; }
+.kpi-liga { font-size: 12px; color: var(--teks-2); margin-top: 4px; }
+.ov-bar { display: grid; grid-template-columns: minmax(96px, 40%) 1fr 44px; align-items: center; gap: 8px;
+  margin: 8px 0; font-size: 14px; }
+.ov-bar span { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; overflow: hidden; }
+.ov-bar > div { height: 8px; border-radius: 999px; background: var(--lajur); overflow: hidden; }
+.ov-bar > div i { display: block; height: 100%; background: var(--teal, #0F766E); border-radius: 999px; }
+.ov-bar b { text-align: right; }
+.ov-poin { margin-top: 12px; font-size: 14px; color: var(--teks-2); }
+.ov-tiga { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 16px; }
+@media (max-width: 900px) { .ov-tiga { grid-template-columns: 1fr; } }
+.ov-jadwal { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--tepi);
+  font-size: 14px; }
+.ov-jadwal:last-child { border-bottom: 0; }
+.ov-jadwal small { width: 96px; color: var(--teks-2); flex: 0 0 96px; }
+.ov-jadwal span { display: inline-flex; align-items: center; gap: 8px; flex: 1; }
+.ov-jadwal em { font-style: normal; font-size: 12px; color: var(--teks-2); }
+.ov-mini { display: flex !important; flex: 0 0 72px !important; height: 8px; border-radius: 999px; overflow: hidden; }
+.ov-mini i.form-M { background: #16A34A; } .ov-mini i.form-S { background: #94A3B8; } .ov-mini i.form-K { background: #DC2626; }
+.ov-dua { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.ov-dua small, .ov-sorot small { display: block; font-size: 12px; color: var(--teks-2); margin-bottom: 4px; }
+.ov-sorot { padding: 12px 0; border-bottom: 1px solid var(--tepi); }
+.ov-sorot:last-child { border-bottom: 0; }
+.ov-sorot div { display: flex; align-items: center; gap: 8px; font-size: 15px; }
+.ov-sorot em { font-style: normal; font-size: 13px; color: var(--teks-2); }
+.ov-judul-grafik { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; }
+.ov-judul-grafik span { font-size: 13px; color: var(--teks-2); }
+.ov-isi { display: block; width: 100%; min-width: 0; }

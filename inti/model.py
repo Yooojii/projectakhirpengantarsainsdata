@@ -73,7 +73,8 @@ def prediksi_ensemble(tim_k: str, tim_t: str, musim: str = "2026/27",
             "p_menang_tandang": float(r["peluang_menang_tandang"]),
             "gol_harapan_kandang": float(r["duga_gol_kandang"]),
             "gol_harapan_tandang": float(r["duga_gol_tandang"]),
-            "statistik": statistik, "sumber": "ensemble"}
+            "statistik": statistik, "sumber": "ensemble",
+            "skor_dugaan": str(r.get("skor_dugaan", "")) if pd.notna(r.get("skor_dugaan")) else None}
 
 
 def muat_model(path: str = "model/model.joblib"):

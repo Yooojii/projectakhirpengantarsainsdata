@@ -16,9 +16,10 @@ from halaman.prediksi_simulasi import hitung_prediksi, siapkan_sesi
 from inti.data import klub_musim, muat_pertandingan
 from inti.klub import logo_klub, singkatan, warna_klub
 from inti.model import kesimpulan_laga, prediksi_ensemble
-from inti.sesi import BULAN, JALUR_DATA
+from inti.sesi import AKAR, BULAN, JALUR_DATA
 
 MUSIM_BERJALAN = "2026/27"
+JALUR_JADWAL = AKAR / "pipeline" / "data" / "jadwal_musim.csv"
 SEMUA_KLUB = "Semua klub"
 JUMLAH_AWAL = 12
 KABUT = "#8FA6B0"
@@ -167,6 +168,62 @@ def _kartu_laga(r, aktif: bool, i: int) -> str:
     )
 
 
+def _kartu_mendatang(r, peluang: dict | None, aktif: bool, i: int) -> str:
+    waktu = _tgl(r.tanggal, pendek=True) + (f", {r.waktu}" if isinstance(r.waktu, str) else "")
+    if peluang:
+        pk, ps, pt = peluang["p_menang_kandang"], peluang["p_seri"], peluang["p_menang_tandang"]
+        isi = [f"{round(100 * pk)}%", f"{round(100 * pt)}%"]
+        seri = f'<span class="laga-seri">seri {round(100 * ps)}%</span>'
+    else:
+        isi, seri = ["", ""], ""
+    kelas = "laga mendatang aktif" if aktif else "laga mendatang"
+    return (
+        f'<div class="{kelas}" style="--i:{min(i, 12)}">'
+        f'<div class="laga-meta"><span>{waktu}</span><span>Mendatang</span></div>'
+        f'<div class="laga-tim">'
+        f'<div>{logo_kecil(r.tim_kandang)}<span>{escape(r.tim_kandang)}</span></div>'
+        f'<div>{logo_kecil(r.tim_tandang)}<span>{escape(r.tim_tandang)}</span></div>'
+        f'</div>'
+        f'<div class="laga-skor peluang-kecil"><span>{isi[0]}</span><span>{isi[1]}</span></div>{seri}'
+        f'</div>'
+    )
+
+
+def _baris_model(vk: float, vt: float, desimal: int, wk: str, wt: str, i: int, akhiran: str = "") -> str:
+    """Baris tipis prediksi model tepat di bawah statistik aslinya."""
+    puncak = max(vk, vt)
+    lk = 100 * vk / puncak if puncak > 0 else 0
+    lt = 100 * vt / puncak if puncak > 0 else 0
+    return (
+        f'<div class="stat stat-model"><div class="stat-kepala">'
+        f'<b>{_koma(vk, desimal)}{akhiran}</b><span>model</span><b>{_koma(vt, desimal)}{akhiran}</b></div>'
+        f'<div class="stat-lajur">'
+        f'<div><span style="width:{lk:.1f}%;background:{wk};--i:{i}"></span></div>'
+        f'<div><span style="width:{lt:.1f}%;background:{wt};--i:{i}"></span></div>'
+        f'</div></div>'
+    )
+
+
+def _ringkas_model(k: str, t: str, gk: int, gt: int, ens: dict) -> str:
+    """Prediksi model sebelum laga dibandingkan hasil akhir."""
+    pk, ps, pt = ens["p_menang_kandang"], ens["p_seri"], ens["p_menang_tandang"]
+    tebak = max((pk, "k"), (ps, "s"), (pt, "t"))[1]
+    asli = "k" if gk > gt else "t" if gt > gk else "s"
+    nama = {"k": f"{escape(k)} menang", "s": "seri", "t": f"{escape(t)} menang"}
+    skor = ens.get("skor_dugaan")
+    tepat = tebak == asli
+    tanda = (f'<span class="tanda-model {"tepat" if tepat else "meleset"}">'
+             f'{"hasil tepat" if tepat else "hasil meleset"}'
+             f'{", skor tepat" if skor == f"{gk}-{gt}" else ""}</span>')
+    return (
+        f'<div class="ringkas-model"><div class="stat-judul">Prediksi model sebelum laga{tanda}</div>'
+        f'<p>{escape(k)} menang <b>{round(100 * pk)}%</b>, seri <b>{round(100 * ps)}%</b>, '
+        f'{escape(t)} menang <b>{round(100 * pt)}%</b>. Unggulan model: <b>{nama[tebak]}</b>'
+        f'{f", skor paling mungkin <b>{escape(skor)}</b>" if skor else ""}. '
+        f'Hasil akhir <b>{gk}-{gt}</b>.</p></div>'
+    )
+
+
 def _baris_stat(label: str, vk: float, vt: float, desimal: int, wk: str, wt: str, i: int,
                 akhiran: str = "") -> str:
     puncak = max(vk, vt)
@@ -311,24 +368,35 @@ def panel_laga(df: pd.DataFrame, indeks: int) -> str:
     sorotan = _sorotan(k, t, (int(r["gol_kandang"]), int(r["gol_tandang"])), "Selesai", "",
                        meta, ", ".join(kaki))
 
+    ens = prediksi_ensemble(k, t, str(r["musim"]))
+    duga = (ens or {}).get("statistik", {})
     baris = []
     xk = r.get("xg_kandang") if _ada(r.get("xg_kandang")) else r.get("xg_api_kandang")
     xt = r.get("xg_tandang") if _ada(r.get("xg_tandang")) else r.get("xg_api_tandang")
     if _ada(xk) and _ada(xt):
-        baris.append(("Gol harapan (xG)", float(xk), float(xt), 2, ""))
+        baris.append(("Gol harapan (xG)", float(xk), float(xt), 2, "", "gol"))
     if _ada(r.get("penguasaan_bola_kandang")) and _ada(r.get("penguasaan_bola_tandang")):
         baris.append(("Penguasaan bola", float(r["penguasaan_bola_kandang"]),
-                      float(r["penguasaan_bola_tandang"]), 0, "%"))
+                      float(r["penguasaan_bola_tandang"]), 0, "%", "penguasaan_bola"))
     for label, kol, desimal in STAT:
-        baris.append((label, float(r[f"{kol}_kandang"]), float(r[f"{kol}_tandang"]), desimal, ""))
+        baris.append((label, float(r[f"{kol}_kandang"]), float(r[f"{kol}_tandang"]), desimal, "", kol))
     if _ada(r.get("umpan_kandang")) and _ada(r.get("umpan_tandang")):
-        baris.append(("Jumlah umpan", float(r["umpan_kandang"]), float(r["umpan_tandang"]), 0, ""))
-    stat = "".join(_baris_stat(l, a, b, d, wk, wt, i, s) for i, (l, a, b, d, s) in enumerate(baris))
+        baris.append(("Jumlah umpan", float(r["umpan_kandang"]), float(r["umpan_tandang"]), 0, "", "umpan"))
+    if ens:
+        duga["gol"] = (ens["gol_harapan_kandang"], ens["gol_harapan_tandang"])
+    stat = ""
+    for i, (l, a, b, d, s, kunci) in enumerate(baris):
+        stat += _baris_stat(l, a, b, d, wk, wt, i, s)
+        if kunci in duga:  # gol harapan model dibandingkan dengan xG
+            stat += _baris_model(*duga[kunci], max(d, 1) if kunci == "gol" else d, wk, wt, i, s)
+    ringkas = _ringkas_model(k, t, int(r["gol_kandang"]), int(r["gol_tandang"]), ens) if ens else ""
+    ket = (f"{escape(k)} kiri, {escape(t)} kanan" + (", baris tipis = prediksi model" if ens else ""))
 
     return (
         '<div class="analisis">'
         f'{sorotan}'
-        f'<div class="bagian-stat"><div class="stat-judul">Statistik pertandingan<span>{escape(k)} kiri, {escape(t)} kanan</span></div>{stat}</div>'
+        f'{ringkas}'
+        f'<div class="bagian-stat"><div class="stat-judul">Statistik pertandingan<span>{ket}</span></div>{stat}</div>'
         f'{_kesimpulan(str(r["musim"]), k, t, "selesai")}'
         f'{_bentuk_duo(df, k, t, r["tanggal"])}'
         f'{_catatan(catatan_laga(r))}'
@@ -413,13 +481,15 @@ def _teks_skor(skor) -> str:
     return f"{int(skor[0])}-{int(skor[1])}"
 
 
-def tampil_simulasi(df: pd.DataFrame, klub_k: str, klub_t: str) -> None:
+def tampil_simulasi(df: pd.DataFrame, klub_k: str, klub_t: str, jadwal: str | None = None) -> None:
     """Panel simulasi. Chip perkiraan skor bisa diklik: papan skor dan statistik ikut berubah."""
     tanggal = df["tanggal"].max() + pd.Timedelta(days=1)
     p = _prediksi(df, klub_k, klub_t, tanggal)
     wk, wt = _warna_pasangan(klub_k, klub_t)
     sumber = "model ensemble" if p.get("sumber") == "ensemble" else "model Poisson"
     meta = f"Perkiraan {sumber}, laga di kandang {escape(klub_k)}"
+    if jadwal:
+        meta = f"{escape(jadwal)}, Premier League {MUSIM_BERJALAN}. " + meta
 
     peluang_skor = {_teks_skor(s): ps for s, ps in p["lima_teratas"]}
     utama = _teks_skor(p["skor"])
@@ -482,6 +552,35 @@ def _kartu_simulasi(klub20: list[str], klub_saya: str) -> None:
                   on_click=_pilih, args=({"mode": "sim", "k": klub_k, "t": klub_t},))
 
 
+@st.cache_data
+def _jadwal_sisa(jalur: str) -> pd.DataFrame:
+    try:
+        j = pd.read_csv(jalur, parse_dates=["tanggal"])
+    except FileNotFoundError:
+        return pd.DataFrame(columns=["tanggal", "waktu", "tim_kandang", "tim_tandang"])
+    j = j[(j.musim == MUSIM_BERJALAN) & ~j.sudah_main.astype(str).str.lower().eq("true")]
+    return j.sort_values(["tanggal", "waktu"]).reset_index(drop=True)
+
+
+def _laga_mendatang(klub: str, pilihan: dict, n: int = 5) -> None:
+    j = _jadwal_sisa(str(JALUR_JADWAL))
+    if klub != SEMUA_KLUB:
+        j = j[(j.tim_kandang == klub) | (j.tim_tandang == klub)]
+    if j.empty:
+        return
+    st.markdown('<div class="sub-daftar">Berikutnya</div>', unsafe_allow_html=True)
+    with st.container(key="daftar-mendatang"):
+        for i, r in enumerate(j.head(n).itertuples()):
+            aktif = pilihan.get("mode") == "sim" and (pilihan.get("k"), pilihan.get("t")) == (r.tim_kandang, r.tim_tandang)
+            jadwal = _tgl(r.tanggal) + (f", {r.waktu}" if isinstance(r.waktu, str) else "")
+            with st.container(key=f"kartu-laga-m{r.Index}"):
+                st.markdown(_kartu_mendatang(r, prediksi_ensemble(r.tim_kandang, r.tim_tandang), aktif, i),
+                            unsafe_allow_html=True)
+                st.button(f"Simulasikan {r.tim_kandang} lawan {r.tim_tandang}", key=f"pilih-laga-m{r.Index}",
+                          on_click=_pilih, args=({"mode": "sim", "k": r.tim_kandang, "t": r.tim_tandang,
+                                                  "jadwal": jadwal},))
+
+
 def _daftar_laga(df: pd.DataFrame, klub_saya: str) -> pd.DataFrame:
     with st.container(key="kartu-daftar"):
         st.markdown('<div class="judul-blok"><b>Jadwal & hasil terbaru</b>'
@@ -511,6 +610,9 @@ def _daftar_laga(df: pd.DataFrame, klub_saya: str) -> pd.DataFrame:
         pilihan = st.session_state["analisis"]
         aktif_id = pilihan["id"] if pilihan["mode"] == "laga" else None
 
+        if musim == MUSIM_BERJALAN:
+            _laga_mendatang(klub, pilihan)
+            st.markdown('<div class="sub-daftar">Hasil terbaru</div>', unsafe_allow_html=True)
         batas = st.session_state.get("ma_batas", JUMLAH_AWAL)
         st.caption(f"{len(laga)} pertandingan")
         with st.container(key="daftar-laga"):
@@ -530,6 +632,12 @@ def tampil() -> None:
     df = muat_pertandingan(str(JALUR_DATA))
     klub_saya = st.session_state.get("klub", "Arsenal")
     klub20 = klub_musim(df, MUSIM_BERJALAN)
+    buka = st.session_state.pop("buka_laga", None)
+    if buka is not None and buka in df.index:
+        st.session_state["ma_musim"] = df.loc[buka, "musim"]
+        st.session_state["ma_klub"] = SEMUA_KLUB
+        st.session_state["analisis"] = {"mode": "laga", "id": buka}
+        st.session_state["ma_batas"] = max(JUMLAH_AWAL, int((df.musim == df.loc[buka, "musim"]).sum()))
 
     st.markdown(
         '<div class="kepala-hal"><div><h2>Match Analysis</h2>'
@@ -548,6 +656,6 @@ def tampil() -> None:
                 st.markdown('<div class="kartu-kosong">Pilih laga di kiri atau jalankan simulasi.</div>',
                             unsafe_allow_html=True)
             elif pilihan["mode"] == "sim":
-                tampil_simulasi(df, pilihan["k"], pilihan["t"])
+                tampil_simulasi(df, pilihan["k"], pilihan["t"], pilihan.get("jadwal"))
             else:
                 st.markdown(panel_laga(df, pilihan["id"]), unsafe_allow_html=True)

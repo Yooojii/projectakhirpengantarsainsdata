@@ -56,6 +56,9 @@ def _baca_tautan() -> None:
     if tujuan in PINTU:
         st.session_state["masuk"] = True
         st.session_state["halaman"] = PINTU[tujuan]
+        laga = st.query_params.get("laga")  # kotak form klasemen: buka laga itu di Match Analysis
+        if laga and laga.isdigit():
+            st.session_state["buka_laga"] = int(laga)
         st.query_params.clear()
     elif st.query_params.get("beranda") is not None:
         st.session_state["masuk"] = False
