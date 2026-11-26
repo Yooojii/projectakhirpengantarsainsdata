@@ -21,13 +21,13 @@ JALUR = AKAR / "data" / "klaster_gaya.csv"
 
 # Warna kategori diselaraskan dengan palet dashboard; semuanya kontras >= 4,5:1 di atas putih,
 # jadi aman dipakai untuk teks maupun titik.
-WARNA = {"Elite": "#157D7B", "Seimbang": "#2F6F8A", "Menyerang": "#B4470D",
-         "Bertahan": "#6B4E9B", "Tumpul dan rapuh": "#5F7883"}
-ARTI = {"Elite": "tajam menyerang sekaligus jarang kebobolan",
-        "Seimbang": "di atas rata-rata liga di kedua sisi",
-        "Menyerang": "serangan cukup hidup tapi pertahanan bocor",
-        "Bertahan": "rapat di belakang tapi kurang tajam di depan",
-        "Tumpul dan rapuh": "di bawah rata-rata liga di kedua sisi"}
+WARNA = {"Title Contenders": "#157D7B", "Well-Balanced": "#2F6F8A", "Attack-Minded": "#B4470D",
+         "Defence-First": "#6B4E9B", "Struggling": "#5F7883"}
+ARTI = {"Title Contenders": "Strong at both ends",
+        "Well-Balanced": "Above average at both ends",
+        "Attack-Minded": "Score plenty, concede plenty",
+        "Defence-First": "Hard to beat, few goals",
+        "Struggling": "Below average at both ends"}
 
 # Batas sumbu peta tetap untuk semua musim (data 2000/01-2026/27 berkisar -2,3 sampai 2,7),
 # supaya posisi klub bisa dibandingkan antarmusim.
@@ -110,10 +110,10 @@ def peta(sub: pd.DataFrame, musim: str) -> str:
             f'<small>{int(r.poin)} poin dari {int(r.main)} laga</small></span></span>'
         )
     kuadran = (
-        '<div class="peta-kuadran ka">Tajam dan rapat</div>'
-        '<div class="peta-kuadran ki">Rapat, kurang tajam</div>'
-        '<div class="peta-kuadran ba">Tajam, mudah kebobolan</div>'
-        '<div class="peta-kuadran bi">Tumpul dan rapuh</div>'
+        '<div class="peta-kuadran ka">Strong both ends</div>'
+        '<div class="peta-kuadran ki">Defence-first</div>'
+        '<div class="peta-kuadran ba">Attack-minded</div>'
+        '<div class="peta-kuadran bi">Struggling</div>'
     )
     return (
         '<div class="blok gaya-peta"><div class="blok-judul"><b>Peta gaya bermain</b>'

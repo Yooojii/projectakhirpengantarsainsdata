@@ -77,9 +77,9 @@ def main() -> None:
     t["klaster"] = km.labels_
     pusat = pd.DataFrame(km.cluster_centers_, columns=["a", "d"])
     urut = (pusat.a + pusat.d).sort_values(ascending=False).index
-    nama = {urut[0]: "Elite", urut[1]: "Seimbang", urut[-1]: "Tumpul dan rapuh"}
+    nama = {urut[0]: "Title Contenders", urut[1]: "Well-Balanced", urut[-1]: "Struggling"}
     for c in urut[2:-1]:
-        nama[c] = "Menyerang" if pusat.a[c] > pusat.d[c] else "Bertahan"
+        nama[c] = "Attack-Minded" if pusat.a[c] > pusat.d[c] else "Defence-First"
     t["kategori"] = t.klaster.map(nama)
     t["serangan_terbaik"] = t.indeks_serangan == t.groupby("musim").indeks_serangan.transform("max")
     t["pertahanan_terbaik"] = t.indeks_pertahanan == t.groupby("musim").indeks_pertahanan.transform("max")

@@ -19,7 +19,7 @@
   "tembakan_tepat_kebobolan"
  ],
  "kategori": {
-  "Elite": {
+  "Title Contenders": {
    "jumlah": 85,
    "poin_per_38": 79.3,
    "indeks_serangan": 1.54,
@@ -32,7 +32,7 @@
    "tembakan_kebobolan": 8.93,
    "tembakan_tepat_kebobolan": 3.86
   },
-  "Seimbang": {
+  "Well-Balanced": {
    "jumlah": 88,
    "poin_per_38": 63.8,
    "indeks_serangan": 0.57,
@@ -45,7 +45,7 @@
    "tembakan_kebobolan": 10.97,
    "tembakan_tepat_kebobolan": 4.45
   },
-  "Tumpul dan rapuh": {
+  "Struggling": {
    "jumlah": 129,
    "poin_per_38": 35.4,
    "indeks_serangan": -0.86,
@@ -58,7 +58,7 @@
    "tembakan_kebobolan": 14.71,
    "tembakan_tepat_kebobolan": 6.39
   },
-  "Menyerang": {
+  "Attack-Minded": {
    "jumlah": 116,
    "poin_per_38": 49.1,
    "indeks_serangan": 0.05,
@@ -71,7 +71,7 @@
    "tembakan_kebobolan": 12.99,
    "tembakan_tepat_kebobolan": 5.63
   },
-  "Bertahan": {
+  "Defence-First": {
    "jumlah": 122,
    "poin_per_38": 45.9,
    "indeks_serangan": -0.61,
