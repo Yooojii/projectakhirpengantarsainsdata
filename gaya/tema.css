@@ -1382,3 +1382,8 @@ a.form-kotak, a.form-kotak:hover { color: #fff; text-decoration: none; cursor: p
 .ov-judul-grafik { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; }
 .ov-judul-grafik span { font-size: 13px; color: var(--teks-2); }
 .ov-isi { display: block; width: 100%; min-width: 0; }
+.kpi-sel.kpi-lengkap { height: auto; min-height: 96px; gap: 4px; }
+.ov-jadwal em.di-kandang, .ov-jadwal em.di-tandang { padding: 0 8px; border-radius: 999px; font-size: 12px; }
+.ov-jadwal em.di-kandang { background: #DCFCE7; color: #15803D; }
+.ov-jadwal em.di-tandang { background: var(--sumur); color: var(--teks-2); }
+.ov-kepala-klub .ov-form { flex-wrap: nowrap; }

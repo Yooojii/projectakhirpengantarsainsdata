@@ -88,7 +88,7 @@ def kpi_klub(df: pd.DataFrame, klub: str) -> str:
         rank = int(t[kol].rank(ascending=kecil, method="min")[klub])
         kelas = "atas" if rank <= 4 else "bawah" if rank > n - 4 else ""
         bagian.append(
-            f'<div class="kpi-sel"><div class="label">{label}</div><div class="kpi-baris">'
+            f'<div class="kpi-sel kpi-lengkap"><div class="label">{label}</div><div class="kpi-baris">'
             f'<div class="nilai">{_koma(r[kol], d)}<small>{akhir}</small></div>'
             f'<div class="kpi-peringkat {kelas}">ke-{rank}<small> dari {n}</small></div></div>'
             f'<div class="kpi-liga">rata-rata liga {_koma(t[kol].mean(), d)}{akhir}</div></div>')
@@ -163,8 +163,9 @@ def laga_berikut(klub: str, n: int = 5) -> str:
                        f'<i class="form-S" style="flex:{s:.3f}"></i><i class="form-K" style="flex:{k:.3f}"></i>'
                        f'</span><b>{round(100 * m)}%</b>')
         baris.append(f'<div class="ov-jadwal"><small>{_tgl(r.tanggal)}</small>'
-                     f'<span>{"vs" if kandang else "di"} {_logo(lawan)} {escape(lawan)} '
-                     f'<em>{"kandang" if kandang else "tandang"}</em></span>{peluang}</div>')
+                     f'<span>{_logo(lawan)} {escape(lawan)} '
+                     f'<em class="{"di-kandang" if kandang else "di-tandang"}">{"Kandang" if kandang else "Tandang"}</em>'
+                     f'</span>{peluang}</div>')
     if not baris:
         return ""
     ket = f"Perkiraan {_koma(total, 1)} poin dari {len(baris)} laga, angka kanan = peluang menang"
