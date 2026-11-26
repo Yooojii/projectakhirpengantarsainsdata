@@ -286,10 +286,3 @@ def tampil() -> None:
     with st.container(key="klasemen-history"):
         musim_kl = pilih_musim(df, "hist_musim_klasemen")
         st.markdown(panel_klasemen(df, musim_kl, sorot=klub, lawan=lawan), unsafe_allow_html=True)
-    from halaman.overview import _panel_hasil, _panel_kandang
-    with st.container(key="hist-sejarah"):
-        kol_a, kol_b = st.columns(2, gap="small", vertical_alignment="top")
-        with kol_a:
-            st.markdown(_panel_kandang(df, klub, aksen), unsafe_allow_html=True)
-        with kol_b:
-            st.markdown(_panel_hasil(df, klub, None, aksen), unsafe_allow_html=True)
