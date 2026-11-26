@@ -20,7 +20,7 @@ BULAN = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "
 
 
 def _logo(klub: str) -> str:
-    return logo_kecil(klub).replace("<img ", '<img style="width:18px;min-width:18px;height:18px" ')
+    return logo_kecil(klub, "logo-klasemen").replace("<img ", '<img width="20" height="20" ')
 
 
 def _form(sub: pd.DataFrame, klub: str) -> str:
