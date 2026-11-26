@@ -1287,3 +1287,33 @@ table.klasemen td.poin { font-weight: 700; }
   .stApp .bentuk-duo > div:first-child .bentuk > span .tip::after,
   .stApp .bentuk-duo > div:last-child .bentuk > span .tip::after { left: calc(var(--i, 0) * 28px + 12px); right: auto; }
 }
+
+/* Klasemen Overview: zona kompetisi, form lima laga, lawan berikutnya */
+.klasemen-liga tbody tr td:first-child { border-left: 3px solid transparent; }
+.klasemen-liga tr.zona-ucl td:first-child { border-left-color: #22C55E; }
+.klasemen-liga tr.zona-uel td:first-child { border-left-color: #2563EB; }
+.klasemen-liga tr.zona-uecl td:first-child { border-left-color: #14B8A6; }
+.klasemen-liga tr.zona-degradasi td:first-child { border-left-color: #EF4444; }
+.klasemen-liga tr.sorot td { font-weight: 700; }
+.klasemen-liga .sel-form { white-space: nowrap; }
+.form-kotak { position: relative; display: inline-flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px; margin: 0 4px 0 0; border-radius: 8px; color: #fff; font-size: .75rem;
+  font-weight: 700; cursor: default; }
+.form-kotak.form-M { background: #16A34A; }
+.form-kotak.form-S { background: #94A3B8; }
+.form-kotak.form-K { background: #DC2626; }
+.form-kotak.terbaru { box-shadow: inset 0 -3px 0 rgba(0,0,0,.35); }
+.form-kotak.lawan { background: transparent; }
+.form-info { display: none; position: absolute; bottom: 130%; right: 0; z-index: 20; white-space: nowrap;
+  background: #1E293B; color: #F8FAFC; padding: .4rem .6rem; border-radius: 8px; font-weight: 400;
+  font-size: .78rem; text-align: center; box-shadow: var(--bayangan); }
+.form-info small { display: block; opacity: .75; margin-bottom: .15rem; }
+.form-info span { display: inline-flex; align-items: center; gap: .3rem; }
+.form-kotak:hover .form-info { display: block; }
+.legenda-zona { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: .7rem; font-size: .8rem; }
+.legenda::before { content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 50%;
+  margin-right: .35rem; background: var(--w); }
+.legenda.zona-ucl { --w: #22C55E; } .legenda.zona-uel { --w: #2563EB; }
+.legenda.zona-uecl { --w: #14B8A6; } .legenda.zona-degradasi { --w: #EF4444; }
+.klasemen-liga td, .klasemen-liga th { white-space: nowrap; padding-left: .35rem; padding-right: .35rem; }
+.klasemen-liga { overflow-x: auto; }

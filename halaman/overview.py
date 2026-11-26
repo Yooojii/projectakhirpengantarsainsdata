@@ -559,4 +559,6 @@ def tampil() -> None:
                 st.markdown(_panel_juara(df_aktif, klub, aksen), unsafe_allow_html=True)
             with gol_col:
                 st.markdown(_panel_gol(df_aktif, klub, None, aksen), unsafe_allow_html=True)
+        from halaman.klasemen_liga import panel_klasemen
+        st.markdown(panel_klasemen(df, klub), unsafe_allow_html=True)
     _dokumentasi(df)

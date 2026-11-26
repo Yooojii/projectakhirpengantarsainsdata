@@ -121,11 +121,17 @@ def angka_sah(teks: str, d: dict) -> bool:
     return True
 
 
+class KuotaHabis(RuntimeError):
+    pass
+
+
 def tanya_gemini(kunci: str, prompt: str) -> str:
     badan = {"contents": [{"parts": [{"text": prompt}]}],
              "generationConfig": {"temperature": 0.6, "maxOutputTokens": 400}}
     for coba in range(4):
         r = requests.post(URL, headers={"x-goog-api-key": kunci}, json=badan, timeout=120)
+        if r.status_code == 429 and "PerDay" in r.text:
+            raise KuotaHabis("kuota harian Gemini habis, coba lagi besok")
         if r.status_code == 429 or r.status_code >= 500:
             time.sleep(30 * (coba + 1))
             continue
@@ -159,6 +165,9 @@ def main(ulang: bool = False) -> None:
             teks = tanya_gemini(kunci, prompt)
             teks = teks.replace("—", ",").replace("–", "-")
             sumber = "gemini" if angka_sah(teks, d) else "template"
+        except KuotaHabis as e:
+            print(f"Berhenti: {e}")
+            break
         except Exception as e:
             print(f"  {kunci_laga}: Gemini gagal ({type(e).__name__}), pakai template")
             sumber = "template"
