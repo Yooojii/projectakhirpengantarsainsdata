@@ -170,10 +170,10 @@ def _duel(df: pd.DataFrame, klub: str, lawan: str, aksen: str) -> str:
     return (
         '<div class="duel"><div class="duel-baris">'
         f'<div class="duel-tim">{_logo_duel(klub)}<div><b>{escape(klub)}</b>'
-        '<small>Klub pilihan</small></div></div>'
+        '</div></div>'
         f'{angka}'
         f'<div class="duel-tim kanan">{_logo_duel(lawan)}<div><b>{escape(lawan)}</b>'
-        '<small>Lawan</small></div></div>'
+        '</div></div>'
         f'</div>{batang}{catatan}</div>'
     )
 
@@ -195,7 +195,7 @@ def _lini_pertemuan(df: pd.DataFrame, klub: str, lawan: str) -> str:
             )
         isi = f'<div class="lini">{"".join(baris)}</div>'
     return (f'<div class="blok" style="--urutan:1"><div class="blok-judul"><b>Pertemuan terakhir</b>'
-            f'<span>Sisi {escape(klub)}</span></div>{isi}</div>')
+            f'</div>{isi}</div>')
 
 
 def _blok_bentuk(df: pd.DataFrame, klub: str, lawan: str) -> str:
@@ -211,8 +211,8 @@ def _blok_bentuk(df: pd.DataFrame, klub: str, lawan: str) -> str:
             f'<span>{escape(nama)}</span></div><span class="bentuk-poin">{poin} poin</span></div>'
             f'<div class="bentuk">{lencana}</div>'
         )
-    return (f'<div class="blok" style="--urutan:2"><div class="blok-judul"><b>Bentuk permainan</b>'
-            f'<span>Sepuluh laga terakhir</span></div>{"".join(baris)}'
+    return (f'<div class="blok" style="--urutan:2"><div class="blok-judul"><b>Form</b>'
+            f'<span>10 laga terakhir</span></div>{"".join(baris)}'
             '<div class="klasemen-legenda"><span><i style="background:#15803D"></i>M menang</span>'
             '<span><i style="background:#CFD6CC"></i>S seri</span>'
             '<span><i style="background:#A4161A"></i>K kalah</span></div></div>')
@@ -263,7 +263,7 @@ def tampil() -> None:
     with kol_judul:
         st.markdown(
             '<div class="kepala-hal"><div><h2>History</h2>'
-            '<p>Rekor pertemuan dua klub, bentuk terkini, dan klasemen musim berjalan.</p></div></div>',
+            '<p>Head-to-head dan klasemen</p></div></div>',
             unsafe_allow_html=True,
         )
     with kol_klub:

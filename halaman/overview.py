@@ -346,9 +346,9 @@ def _panel_kandang(df: pd.DataFrame, klub: str | None, aksen: str) -> str:
     poin = next(b for b in baris if b["label"] == "Poin per laga")
     pk, pt = _koma(poin["kandang"], 2), _koma(poin["tandang"], 2)
     if klub is None:
-        ket = f"Tuan rumah meraih {pk} poin per laga, tamu {pt}"
+        ket = f"Kandang {pk} poin/laga, tandang {pt}"
     else:
-        ket = f"{klub} meraih {pk} poin per laga di kandang, {pt} di tandang"
+        ket = f"Kandang {pk} poin/laga, tandang {pt}"
     return _kartu(judul, ket, panel.kandang_tandang(baris, aksen))
 
 
@@ -397,7 +397,7 @@ def _panel_gol(df: pd.DataFrame, klub: str | None, musim: str | None, aksen: str
     tertinggi = max(items, key=lambda b: b["persen"])
     isi = panel.batang_tegak(items, aksen)
     persen = f'{tertinggi["persen"]:.1f}'.replace(".", ",")
-    ket = f'Paling sering {tertinggi["gol"]} gol (dua tim), {persen}% laga'
+    ket = f'Skor paling sering: total {tertinggi["gol"]} gol ({persen}%)'
     return _kartu(judul, ket, isi)
 
 

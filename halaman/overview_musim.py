@@ -67,11 +67,10 @@ def kepala_klub(df: pd.DataFrame, klub: str) -> str:
     r = papan[papan.klub == klub].iloc[0]
     k = _baca(str(JALUR_KLASTER))
     kat = k[(k.musim == MUSIM_BERJALAN) & (k.klub == klub)].kategori if not k.empty else []
-    gaya = f'<span class="ov-chip">Gaya bermain: {escape(kat.iloc[0])}</span>' if len(kat) else ""
+    gaya = f'<span class="ov-chip">{escape(kat.iloc[0])}</span>' if len(kat) else ""
     form = _form(df[df.musim == MUSIM_BERJALAN], klub)
     return (f'<div class="ov-kepala-klub"><span class="ov-pos">{pos}</span>'
-            f'<span>Peringkat <b>{pos}</b> dari {len(papan)}, <b>{r.poin}</b> poin dari {r.main} laga '
-            f'musim {MUSIM_BERJALAN}</span>{gaya}<span class="ov-form">{form}</span></div>')
+            f'<span>Peringkat <b>{pos}</b> · <b>{r.poin}</b> poin · {r.main} laga</span>{gaya}<span class="ov-form">{form}</span></div>')
 
 
 def kpi_klub(df: pd.DataFrame, klub: str) -> str:
@@ -91,7 +90,7 @@ def kpi_klub(df: pd.DataFrame, klub: str) -> str:
             f'<div class="kpi-sel kpi-lengkap"><div class="label">{label}</div><div class="kpi-baris">'
             f'<div class="nilai">{_koma(r[kol], d)}<small>{akhir}</small></div>'
             f'<div class="kpi-peringkat {kelas}">ke-{rank}<small> dari {n}</small></div></div>'
-            f'<div class="kpi-liga">rata-rata liga {_koma(t[kol].mean(), d)}{akhir}</div></div>')
+            f'<div class="kpi-liga">liga {_koma(t[kol].mean(), d)}{akhir}</div></div>')
     return '<div class="kpi">' + "".join(bagian) + "</div>"
 
 
@@ -105,10 +104,11 @@ def proyeksi_klub(klub: str) -> str:
         f'<b>{round(100 * v)}%</b></div>'
         for label, v in [("Juara", r.peluang_juara), ("Empat besar", r.peluang_empat_besar),
                          ("Degradasi", r.peluang_degradasi)])
-    isi = (bar + f'<div class="ov-poin">Perkiraan poin akhir <b>{round(r.poin_harapan)}</b> '
-           f'(sekarang {int(r.poin_sekarang)}, sisa {int(r.laga_sisa)} laga), rata-rata finis di posisi '
-           f'<b>{_koma(r.posisi_rata_rata, 1)}</b></div>')
-    return _kartu("Proyeksi akhir musim", "Simulasi Monte Carlo 20.000 kali dari model ensemble", isi)
+    bawah, atas = int(r.posisi_rata_rata), -int(-r.posisi_rata_rata // 1)
+    posisi = f"{bawah}–{atas}" if atas != bawah else f"{bawah}"
+    isi = (bar + f'<div class="ov-poin">Perkiraan poin akhir: <b>{round(r.poin_harapan)}</b> · '
+           f'Perkiraan posisi: <b>{posisi}</b></div>')
+    return _kartu("Proyeksi akhir musim", "Berdasarkan simulasi sisa musim", isi)
 
 
 def gol_vs_xg(df: pd.DataFrame, klub: str) -> None:
@@ -123,12 +123,10 @@ def gol_vs_xg(df: pd.DataFrame, klub: str) -> None:
     if d.xG.isna().all():
         return
     selisih = d.Gol.iloc[-1] - d.xG.iloc[-1]
-    nada = ("di atas harapan: penyelesaian sedang tajam, atau sedikit beruntung" if selisih > 1.5
-            else "di bawah harapan: banyak peluang terbuang" if selisih < -1.5
-            else "sesuai dengan kualitas peluangnya")
+    nada = (" · Lebih tajam dari xG-nya" if selisih > 1.5
+            else " · Banyak peluang terbuang" if selisih < -1.5 else "")
     st.markdown(f'<div class="ov-judul-grafik"><b>Gol vs xG kumulatif</b>'
-                f'<span>{escape(klub)} mencetak {int(d.Gol.iloc[-1])} gol dari xG {_koma(d.xG.iloc[-1], 1)}, '
-                f'{nada}</span></div>', unsafe_allow_html=True)
+                f'<span>{int(d.Gol.iloc[-1])} gol dari xG {_koma(d.xG.iloc[-1], 1)}{nada}</span></div>', unsafe_allow_html=True)
     panjang = d.melt("laga", var_name="seri", value_name="nilai")
     grafik = alt.Chart(panjang).mark_line(point=True, strokeWidth=2.5).encode(
         x=alt.X("laga:Q", title="Laga ke-", axis=alt.Axis(tickMinStep=1)),
@@ -168,8 +166,8 @@ def laga_berikut(klub: str, n: int = 5) -> str:
                      f'</span>{peluang}</div>')
     if not baris:
         return ""
-    ket = f"Perkiraan {_koma(total, 1)} poin dari {len(baris)} laga, angka kanan = peluang menang"
-    return _kartu(f"{len(baris)} laga berikutnya", ket, "".join(baris))
+    kepala = '<div class="ov-jadwal ov-jadwal-kepala"><span></span><b>Menang</b></div>'
+    return _kartu(f"{len(baris)} laga berikutnya", f"Perkiraan {round(total)} poin", kepala + "".join(baris))
 
 
 # ---------------------------------------------------------------- tampilan liga
@@ -186,7 +184,7 @@ def perburuan() -> str:
             f'<div class="ov-bar"><span>{_logo(r.tim)} {escape(r.tim)}</span>'
             f'<div><i style="width:{100 * getattr(r, kol):.1f}%"></i></div>'
             f'<b>{round(100 * getattr(r, kol))}%</b></div>' for r in top.itertuples())
-        kartu.append(_kartu(judul, "Peluang dari 20.000 simulasi sisa musim", isi))
+        kartu.append(_kartu(judul, "", isi))
     return '<div class="ov-tiga">' + "".join(kartu) + "</div>"
 
 
@@ -203,7 +201,7 @@ def tajam_boros(df: pd.DataFrame) -> str:
                        f'<b>{"+" if v > 0 else ""}{_koma(v, 1)}</b></div>' for k, v in bagian.items())
     isi = (f'<div class="ov-dua"><div><small>Gol di atas xG</small>{daftar(urut.head(5))}</div>'
            f'<div><small>Gol di bawah xG</small>{daftar(urut.tail(5)[::-1])}</div></div>')
-    return _kartu("Paling tajam vs paling boros", "Selisih gol nyata dan xG musim ini", isi)
+    return _kartu("Paling tajam vs paling boros", "Gol dibanding xG", isi)
 
 
 def sorotan_pekan() -> str:
@@ -225,7 +223,7 @@ def sorotan_pekan() -> str:
         return (f'{_logo(r.tim_kandang)} {escape(r.tim_kandang)} <b>{int(r.gol_kandang)}-{int(r.gol_tandang)}</b> '
                 f'{escape(r.tim_tandang)} {_logo(r.tim_tandang)}')
     isi = (f'<div class="ov-sorot"><small>Kejutan terbesar</small><div>{laga(kejutan)}</div>'
-           f'<em>model hanya memberi peluang {round(100 * kejutan.peluang_hasil)}% untuk hasil ini</em></div>'
+           f'<em>Peluang menurut model: {round(100 * kejutan.peluang_hasil)}%</em></div>'
            f'<div class="ov-sorot"><small>Laga paling banyak gol</small><div>{laga(seru)}</div>'
            f'<em>{int(seru.total_gol)} gol</em></div>')
-    return _kartu(f"Sorotan pekan {int(pekan)}", "Hasil yang paling jauh dari perkiraan model", isi)
+    return _kartu(f"Sorotan pekan {int(pekan)}", "", isi)

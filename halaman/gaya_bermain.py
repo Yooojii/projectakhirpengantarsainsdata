@@ -42,13 +42,13 @@ def muat() -> pd.DataFrame:
 # (judul, kolom, kecil lebih baik?, format nilai, satuan singkat)
 PERINGKAT = {
     "Serangan": [
-        ("Serangan terbaik", "indeks_serangan", False, "{:+.2f}", "indeks"),
+        ("Serangan terbaik", "indeks_serangan", False, "{:+.2f}", "skor"),
         ("Paling produktif", "gol", False, "{:.2f}", "gol per laga"),
         ("Paling rajin menembak", "tembakan", False, "{:.1f}", "tembakan per laga"),
         ("Paling banyak sepak pojok", "sepak_pojok", False, "{:.1f}", "per laga"),
     ],
     "Pertahanan": [
-        ("Pertahanan terbaik", "indeks_pertahanan", False, "{:+.2f}", "indeks"),
+        ("Pertahanan terbaik", "indeks_pertahanan", False, "{:+.2f}", "skor"),
         ("Paling jarang kebobolan", "gol_kebobolan", True, "{:.2f}", "gol per laga"),
         ("Clean sheet terbanyak", "clean_sheet", False, "{:.0f}", "laga"),
         ("Benteng kandang terkuat", "poin_kandang", False, "{:.2f}", "poin per laga"),
@@ -60,16 +60,18 @@ PERINGKAT = {
         ("Akurasi umpan terbaik", "akurasi_umpan", False, "{:.1f}", "% umpan tepat"),
     ],
     "Mental": [
-        ("Raja comeback", "poin_comeback", False, "{:.0f}", "poin setelah tertinggal saat jeda"),
+        ("Raja comeback", "poin_comeback", False, "{:.0f}", "poin saat tertinggal di jeda"),
         ("Paling sering kehilangan keunggulan", "hilang_unggul", False, "{:.0f}", "laga"),
         ("Tim babak kedua", "selisih_babak2", False, "{:+.0f}", "selisih gol babak kedua"),
         ("Jago tandang", "poin_tandang", False, "{:.2f}", "poin per laga"),
     ],
-    "Disiplin dan terlemah": [
+    "Disiplin": [
         ("Tim paling bersih", "kartu", True, "{:.2f}", "kartu per laga"),
         ("Tim paling kasar", "kartu", False, "{:.2f}", "kartu per laga"),
-        ("Serangan terlemah", "indeks_serangan", True, "{:+.2f}", "indeks"),
-        ("Pertahanan terlemah", "indeks_pertahanan", True, "{:+.2f}", "indeks"),
+    ],
+    "Terlemah": [
+        ("Serangan terlemah", "indeks_serangan", True, "{:+.2f}", "skor"),
+        ("Pertahanan terlemah", "indeks_pertahanan", True, "{:+.2f}", "skor"),
     ],
 }
 
@@ -105,8 +107,8 @@ def peta(sub: pd.DataFrame, musim: str) -> str:
             f'{logo_kecil(r.klub, "peta-logo")}'
             f'<span class="peta-tip" aria-hidden="true"><b>{escape(r.klub)}</b>'
             f'<i style="color:{warna}">{escape(r.kategori)}</i>'
-            f'<small>Serangan {_koma(f"{r.indeks_serangan:+.2f}")}, '
-            f'pertahanan {_koma(f"{r.indeks_pertahanan:+.2f}")}</small>'
+            f'<small>Serangan {_koma(f"{r.indeks_serangan:+.1f}")} · '
+            f'Pertahanan {_koma(f"{r.indeks_pertahanan:+.1f}")}</small>'
             f'<small>{int(r.poin)} poin dari {int(r.main)} laga</small></span></span>'
         )
     kuadran = (
@@ -200,8 +202,7 @@ def tampil() -> None:
     kol_judul, kol_musim = st.columns([4, 1.3], vertical_alignment="top")
     with kol_judul:
         st.markdown('<div class="kepala-hal"><div><h2>Team Styles</h2>'
-                    '<p>Gaya bermain klub, dikelompokkan dengan K-Means dari statistik serangan '
-                    'dan pertahanan per laga.</p></div></div>', unsafe_allow_html=True)
+                    '<p>Gaya bermain tiap klub</p></div></div>', unsafe_allow_html=True)
     with kol_musim:
         musim = st.selectbox("Musim", daftar, key="gaya_musim")
     sub = df[df.musim == musim].copy()
@@ -225,6 +226,3 @@ def tampil() -> None:
         putar = _putaran("gaya_rk", (tema, musim))
         st.markdown(f'<div class="rk-grid{putar}">{kartu}</div>', unsafe_allow_html=True)
 
-    st.caption("Indeks dibakukan per musim dari gol, tembakan, tembakan tepat, dan sepak pojok "
-               "(serangan) serta gol, tembakan, dan tembakan tepat lawan (pertahanan). "
-               "K-Means dengan 5 klaster dilatih pada 540 klub-musim sejak 2000/01.")

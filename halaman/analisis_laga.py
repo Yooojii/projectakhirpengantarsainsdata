@@ -213,14 +213,11 @@ def _ringkas_model(k: str, t: str, gk: int, gt: int, ens: dict) -> str:
     skor = ens.get("skor_dugaan")
     tepat = tebak == asli
     tanda = (f'<span class="tanda-model {"tepat" if tepat else "meleset"}">'
-             f'{"hasil tepat" if tepat else "hasil meleset"}'
-             f'{", skor tepat" if skor == f"{gk}-{gt}" else ""}</span>')
+             f'{"Tepat" if tepat else "Meleset"}{", skor juga tepat" if skor == f"{gk}-{gt}" else ""}</span>')
     return (
-        f'<div class="ringkas-model"><div class="stat-judul">Prediksi model sebelum laga{tanda}</div>'
-        f'<p>{escape(k)} menang <b>{round(100 * pk)}%</b>, seri <b>{round(100 * ps)}%</b>, '
-        f'{escape(t)} menang <b>{round(100 * pt)}%</b>. Unggulan model: <b>{nama[tebak]}</b>'
-        f'{f", skor paling mungkin <b>{escape(skor)}</b>" if skor else ""}. '
-        f'Hasil akhir <b>{gk}-{gt}</b>.</p></div>'
+        f'<div class="ringkas-model"><div class="stat-judul">Prediksi sebelum laga{tanda}</div>'
+        f'<p>{escape(k)} <b>{round(100 * pk)}%</b> · Seri <b>{round(100 * ps)}%</b> · '
+        f'{escape(t)} <b>{round(100 * pt)}%</b>{f" · Skor <b>{escape(skor)}</b>" if skor else ""}</p></div>'
     )
 
 
@@ -253,9 +250,9 @@ def _bentuk_html(klub: str, laga: pd.DataFrame) -> str:
 def _bentuk_duo(df: pd.DataFrame, klub_k: str, klub_t: str, sebelum: pd.Timestamp) -> str:
     return (
         '<div class="bentuk-duo">'
-        f'<div><small>{escape(klub_k)}, lima laga sebelumnya</small>'
+        f'<div><small>Form {escape(klub_k)}</small>'
         f'{_bentuk_html(klub_k, laga_sebelum(df, klub_k, sebelum))}</div>'
-        f'<div><small>{escape(klub_t)}, lima laga sebelumnya</small>'
+        f'<div><small>Form {escape(klub_t)}</small>'
         f'{_bentuk_html(klub_t, laga_sebelum(df, klub_t, sebelum))}</div>'
         '</div>'
     )
@@ -274,7 +271,7 @@ def _kesimpulan(musim: str, klub_k: str, klub_t: str, status: str) -> str:
     if not isi or isi.get("status") != status:
         return ""
     judul = "Kesimpulan laga" if status == "selesai" else "Pratinjau laga"
-    sumber = "ditulis AI (Gemini) dari data laga" if isi.get("sumber") == "gemini" else "disusun otomatis dari data laga"
+    sumber = "Ringkasan AI" if isi.get("sumber") == "gemini" else "Ringkasan otomatis"
     return (f'<div class="kesimpulan"><div class="stat-judul">{judul}<span>{sumber}</span></div>'
             f'<p>{escape(isi["teks"])}</p></div>')
 
@@ -309,11 +306,10 @@ def catatan_laga(r: pd.Series) -> list[str]:
     if max(tk, tt) >= 1.5 * max(min(tk, tt), 1):
         dominan, kalah = (k, t) if tk > tt else (t, k)
         catatan.append(
-            f"<b>{dominan}</b> menguasai serangan dengan {_koma(max(tk, tt))} tembakan, "
-            f"berbanding {_koma(min(tk, tt))} milik {kalah}."
+            f"Tembakan {_koma(max(tk, tt))}–{_koma(min(tk, tt))} untuk <b>{dominan}</b>"
         )
     else:
-        catatan.append(f"Serangan relatif berimbang: {_koma(tk)} lawan {_koma(tt)} tembakan.")
+        catatan.append(f"Tembakan seimbang, {_koma(tk)}–{_koma(tt)}")
 
     xk = r.get("xg_kandang") if _ada(r.get("xg_kandang")) else r.get("xg_api_kandang")
     xt = r.get("xg_tandang") if _ada(r.get("xg_tandang")) else r.get("xg_api_tandang")
@@ -321,17 +317,15 @@ def catatan_laga(r: pd.Series) -> list[str]:
         xk, xt = float(xk), float(xt)
         if gk - xk >= 0.8 or gt - xt >= 0.8:
             nama, g, x = (k, gk, xk) if gk - xk >= gt - xt else (t, gt, xt)
-            catatan.append(f"<b>{nama}</b> klinis: {g} gol dari peluang senilai xG {_koma(x, 2)}.")
+            catatan.append(f"<b>{nama}</b> klinis: {g} gol dari xG {_koma(x, 2)}")
         elif xk - gk >= 0.8 or xt - gt >= 0.8:
             nama, g, x = (k, gk, xk) if xk - gk >= xt - gt else (t, gt, xt)
-            catatan.append(f"<b>{nama}</b> boros peluang: xG {_koma(x, 2)} hanya menjadi {g} gol.")
-        else:
-            catatan.append(f"Skor sesuai kualitas peluang: xG {_koma(xk, 2)} lawan {_koma(xt, 2)}.")
+            catatan.append(f"<b>{nama}</b> boros: xG {_koma(x, 2)}, cuma {g} gol")
     elif pk + pt > 0:
         akurasi_k = 100 * pk / max(tk, 1)
         akurasi_t = 100 * pt / max(tt, 1)
         catatan.append(
-            f"Akurasi tembakan {k} {_koma(akurasi_k)}%, {t} {_koma(akurasi_t)}%."
+            f"Akurasi tembakan: {k} {_koma(akurasi_k)}%, {t} {_koma(akurasi_t)}%"
         )
 
     hk, ht = r.get("gol_kandang_babak1"), r.get("gol_tandang_babak1")
@@ -341,15 +335,15 @@ def catatan_laga(r: pd.Series) -> list[str]:
         tanda_ft = (gk > gt) - (gk < gt)
         if tanda_ht != 0 and tanda_ft == -tanda_ht:
             pemenang = k if tanda_ft > 0 else t
-            catatan.append(f"<b>{pemenang}</b> membalikkan keadaan setelah tertinggal {hk}-{ht} di babak pertama.")
+            catatan.append(f"Comeback <b>{pemenang}</b> setelah tertinggal {min(hk, ht)}-{max(hk, ht)}")
         elif tanda_ht == 0 and tanda_ft != 0:
             pemenang = k if tanda_ft > 0 else t
-            catatan.append(f"Imbang {hk}-{ht} saat jeda; gol penentu {pemenang} lahir di babak kedua.")
+            catatan.append(f"{hk}-{ht} saat jeda, <b>{pemenang}</b> menang di babak kedua")
 
     mk, mt = int(r.get("kartu_merah_kandang", 0) or 0), int(r.get("kartu_merah_tandang", 0) or 0)
     if mk or mt:
         nama, n = (k, mk) if mk >= mt else (t, mt)
-        catatan.append(f"<b>{nama}</b> harus bermain dengan {n} kartu merah.")
+        catatan.append(f"<b>{nama}</b> dapat {n} kartu merah")
     return catatan[:3]
 
 
@@ -390,7 +384,7 @@ def panel_laga(df: pd.DataFrame, indeks: int) -> str:
         if kunci in duga:  # gol harapan model dibandingkan dengan xG
             stat += _baris_model(*duga[kunci], max(d, 1) if kunci == "gol" else d, wk, wt, i, s)
     ringkas = _ringkas_model(k, t, int(r["gol_kandang"]), int(r["gol_tandang"]), ens) if ens else ""
-    ket = (f"{escape(k)} kiri, {escape(t)} kanan" + (", baris tipis = prediksi model" if ens else ""))
+    ket = ('<i class="leg-asli"></i>asli <i class="leg-model"></i>model' if ens else "")
 
     return (
         '<div class="analisis">'
@@ -429,31 +423,27 @@ def catatan_simulasi(df: pd.DataFrame, klub_k: str, klub_t: str, p: dict,
     terkuat = max(peluang, key=peluang.get)
     persen = round(100 * peluang[terkuat])
     if terkuat == "s":
-        catatan = [f"Model condong ke hasil imbang ({persen}%); kedua klub nyaris setara."]
+        catatan = [f"Diprediksi imbang ({persen}%)"]
     else:
         nama = k if terkuat == "k" else t
-        selisih = round(100 * abs(peluang["k"] - peluang["t"]))
-        catatan = [f"<b>{nama}</b> diunggulkan dengan peluang menang {persen}%, "
-                   f"selisih {selisih} poin persen dari lawannya."]
+        catatan = [f"<b>{nama}</b> diunggulkan ({persen}%)"]
 
     rekor = rekor_pertemuan(df, klub_k, klub_t)
     if rekor["total"]:
         catatan.append(
-            f"Dari {rekor['total']} pertemuan di Premier League, {k} menang {rekor['menang']}, "
-            f"seri {rekor['seri']}, dan {t} menang {rekor['kalah']}."
+            f"Head-to-head {rekor['total']} laga: {k} {rekor['menang']} menang, "
+            f"{rekor['seri']} seri, {t} {rekor['kalah']} menang"
         )
     else:
-        catatan.append(f"{k} dan {t} belum pernah bertemu di Premier League.")
+        catatan.append(f"Belum pernah bertemu di Premier League")
 
     poin = lambda b: sum(3 if h == "M" else 1 if h == "S" else 0 for h in b)
     pk = poin(bentuk_sebelum(df, klub_k, tanggal))
     pt = poin(bentuk_sebelum(df, klub_t, tanggal))
     if pk != pt:
-        lebih, kurang = (k, t) if pk > pt else (t, k)
-        catatan.append(f"Bentuk terkini {lebih} lebih baik: {max(pk, pt)} poin dari lima laga, "
-                       f"{kurang} {min(pk, pt)} poin.")
+        catatan.append(f"Form 5 laga: {k} {pk} poin, {t} {pt}")
     else:
-        catatan.append(f"Bentuk terkini sama kuat: masing-masing {pk} poin dari lima laga.")
+        catatan.append(f"Form 5 laga sama: {pk} poin")
     return catatan
 
 
@@ -513,7 +503,7 @@ def tampil_simulasi(df: pd.DataFrame, klub_k: str, klub_t: str, jadwal: str | No
         stat = "".join(_baris_stat(l, a, b, d, wk, wt, i) for i, (l, a, b, d)
                        in enumerate(perkiraan_statistik(df, klub_k, klub_t, tanggal, skor)))
         st.markdown(
-            '<div class="bagian-stat"><div class="stat-judul">Statistik pertandingan (perkiraan)</div>'
+            '<div class="bagian-stat"><div class="stat-judul">Perkiraan statistik</div>'
             f'{stat}</div>'
             f'{_kesimpulan(MUSIM_BERJALAN, klub_k, klub_t, "mendatang")}'
             f'{_bentuk_duo(df, klub_k, klub_t, tanggal)}'
@@ -584,7 +574,7 @@ def _laga_mendatang(klub: str, pilihan: dict, n: int = 5) -> None:
 def _daftar_laga(df: pd.DataFrame, klub_saya: str) -> pd.DataFrame:
     with st.container(key="kartu-daftar"):
         st.markdown('<div class="judul-blok"><b>Jadwal & hasil terbaru</b>'
-                    '<span>Klik kartu untuk analisis</span></div>', unsafe_allow_html=True)
+                    '</div>', unsafe_allow_html=True)
         semua_musim = sorted(df["musim"].unique(), reverse=True)
         kol_m, kol_k = st.columns(2)
         with kol_m:
@@ -614,7 +604,6 @@ def _daftar_laga(df: pd.DataFrame, klub_saya: str) -> pd.DataFrame:
             _laga_mendatang(klub, pilihan)
             st.markdown('<div class="sub-daftar">Hasil terbaru</div>', unsafe_allow_html=True)
         batas = st.session_state.get("ma_batas", JUMLAH_AWAL)
-        st.caption(f"{len(laga)} pertandingan")
         with st.container(key="daftar-laga"):
             for i, r in enumerate(laga.head(batas).itertuples()):
                 with st.container(key=f"kartu-laga-{r.Index}"):
@@ -641,7 +630,7 @@ def tampil() -> None:
 
     st.markdown(
         '<div class="kepala-hal"><div><h2>Match Analysis</h2>'
-        '<p>Simulasikan laga dua klub, atau buka statistik laga yang sudah dimainkan.</p></div></div>',
+        '<p>Prediksi laga dan statistik pertandingan</p></div></div>',
         unsafe_allow_html=True,
     )
     kol_kiri, kol_kanan = st.columns([1, 1.7], gap="medium")
@@ -653,7 +642,7 @@ def tampil() -> None:
         with st.container(key="kolom-analisis"):
             pilihan = st.session_state.get("analisis")
             if pilihan is None:
-                st.markdown('<div class="kartu-kosong">Pilih laga di kiri atau jalankan simulasi.</div>',
+                st.markdown('<div class="kartu-kosong">Pilih laga atau jalankan simulasi</div>',
                             unsafe_allow_html=True)
             elif pilihan["mode"] == "sim":
                 tampil_simulasi(df, pilihan["k"], pilihan["t"], pilihan.get("jadwal"))

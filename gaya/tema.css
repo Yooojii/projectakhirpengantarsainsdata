@@ -1387,3 +1387,8 @@ a.form-kotak, a.form-kotak:hover { color: #fff; text-decoration: none; cursor: p
 .ov-jadwal em.di-kandang { background: #DCFCE7; color: #15803D; }
 .ov-jadwal em.di-tandang { background: var(--sumur); color: var(--teks-2); }
 .ov-kepala-klub .ov-form { flex-wrap: nowrap; }
+.stat-judul .leg-asli, .stat-judul .leg-model { display: inline-block; width: 16px; height: 4px; margin: 0 4px 0 12px;
+  border-radius: 999px; background: var(--teks-2); vertical-align: middle; }
+.stat-judul .leg-model { opacity: .45; }
+.ov-jadwal-kepala { padding: 0 0 4px; font-size: 12px; color: var(--teks-2); border-bottom: 0; }
+.ov-jadwal-kepala b { font-weight: 500; }
